@@ -1,0 +1,13 @@
+\.pyc$
+.*\.orig$
+.*~$
+\.\#.*$
+\#.*\#$
+\.project$
+\.pydevproject$
+\.settings$
+\.swp$
+.coverage
+.cache
+temp
+
