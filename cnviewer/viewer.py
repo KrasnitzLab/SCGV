@@ -6,7 +6,7 @@ Created on Dec 2, 2016
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import matplotlib.patches as patches
 
 from utils.loader import load_df
 from scipy.cluster.hierarchy import linkage, dendrogram
@@ -19,6 +19,8 @@ class Viewer(object):
         "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y"
     ]
 
+    COPYNUM_LABELS = ["0", "1", "2", "3", "4", "5+"]
+
     def __init__(self, df):
         self.df = df
         self.data = df.ix[:, 3:].values
@@ -26,6 +28,7 @@ class Viewer(object):
         self.interval_length = None
         self.Z = None
         self.lmat = None
+        self.cmap = ColorMap.make_cmap01()
 
     def make_chrom_lines(self):
         assert self.df is not None
@@ -59,17 +62,24 @@ class Viewer(object):
         ax.set_xticks(self.label_midpoints)
         ax.set_xticklabels([''] * len(self.column_labels))
 
+    def make_legend(self):
+        copynumPatches = []
+        for a in self.cmap.colors.colors:
+            copynumPatches.append(patches.Rectangle((0, 0), 0, 0, facecolor=a))
+
+        plt.figlegend(copynumPatches, self.COPYNUM_LABELS, "upper right",
+                      title="Copy #", prop={'size': 10})
+
     def draw_heatmap(self, ax):
         heat_extent = (0, self.samples * self.interval_length,
                        self.bins, 0)
         data = np.round(self.data)
-        cmap = ColorMap.make_cmap01()
 
         ax.imshow(data[:, self.direct_lookup],
                   aspect='auto',
                   interpolation='nearest',
-                  cmap=cmap.colors,
-                  norm=cmap.norm,
+                  cmap=self.cmap.colors,
+                  norm=self.cmap.norm,
                   extent=heat_extent)
         ax.set_xticks(self.label_midpoints)
         ax.set_xticklabels(self.column_labels,
@@ -79,7 +89,6 @@ class Viewer(object):
         for chrom_line in chrom_lines:
             plt.axhline(y=chrom_line, color="#000000", linewidth=1)
         chrom_labelspos = self.make_chrom_labelspos(chrom_lines)
-        print(chrom_labelspos)
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
 
@@ -102,6 +111,7 @@ def main():
     ax_heat = fig.add_axes(
         [0.1, 0.10, 0.8, 0.65], frame_on=True, sharex=ax_dendro)
     viewer.draw_heatmap(ax_heat)
+    viewer.make_legend()
 
     plt.show()
 
