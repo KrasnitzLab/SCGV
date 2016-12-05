@@ -17,10 +17,10 @@ class ColorMap(object):
     def make_cmap01():
         cmap01 = ColorMap()
         cmap01.colors = col.ListedColormap(
-            ['blue', 'white', 'red'], 'indexed')
-        cmap01.bounds = [-2.0, -0.5, 0.5, 1.5]
-        cmap01.norm = col.BoundaryNorm(
-            cmap01.bounds, cmap01.colors.N)
+            ['#DDDD00', '#0000DD', 'white', 'orange', '#DD0000', 'magenta'],
+            'indexed')
+        cmap01.bounds = [0, 0.5, 1.5, 2.5, 3.5, 4.5, 999999]
+        cmap01.norm = col.BoundaryNorm(cmap01.bounds, cmap01.colors.N)
         return cmap01
 
     @staticmethod
