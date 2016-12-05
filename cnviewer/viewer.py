@@ -63,11 +63,11 @@ class Viewer(object):
         ax.set_xticklabels([''] * len(self.column_labels))
 
     def make_legend(self):
-        copynumPatches = []
-        for a in self.cmap.colors.colors:
-            copynumPatches.append(patches.Rectangle((0, 0), 0, 0, facecolor=a))
-
-        plt.figlegend(copynumPatches, self.COPYNUM_LABELS, "upper right",
+        copynum_patches = []
+        for color in self.cmap.colors.colors:
+            copynum_patches.append(
+                patches.Rectangle((0, 0), 0, 0, facecolor=color))
+        plt.figlegend(copynum_patches, self.COPYNUM_LABELS, "upper right",
                       title="Copy #", prop={'size': 10})
 
     def draw_heatmap(self, ax):
