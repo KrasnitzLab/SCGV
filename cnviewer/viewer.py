@@ -22,7 +22,7 @@ class ViewerBase(object):
     COPYNUM_LABELS = ["0", "1", "2", "3", "4", "5+"]
 
     @staticmethod
-    def calc_chrom_lines(df):
+    def calc_chrom_lines_pos(df):
         assert df is not None
         chrom_pos = df.chrom.values
         chrom_shift = np.roll(chrom_pos, -1)
@@ -32,7 +32,7 @@ class ViewerBase(object):
         return chrom_lines[0]
 
     @staticmethod
-    def calc_chrom_labelspos(chrom_lines):
+    def calc_chrom_labels_pos(chrom_lines):
         yt = (np.roll(chrom_lines, -1) - chrom_lines) / 2.0
         return (chrom_lines + yt)[:-1]
 
@@ -128,10 +128,10 @@ class HeatmapViewer(ViewerBase):
         ax.set_xticklabels(self.column_labels,
                            rotation='vertical',
                            fontsize=10)
-        chrom_lines = self.calc_chrom_lines(self.seg_df)
+        chrom_lines = self.calc_chrom_lines_pos(self.seg_df)
         for chrom_line in chrom_lines:
             plt.axhline(y=chrom_line, color="#000000", linewidth=1)
-        chrom_labelspos = self.calc_chrom_labelspos(chrom_lines)
+        chrom_labelspos = self.calc_chrom_label_spos(chrom_lines)
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
 
@@ -204,15 +204,33 @@ class SampleViewer(ViewerBase):
         self.ratio_data = ratio_df.ix[:, 3:].values
         self.sample_list = sample_list
 
+    def calc_chrom_lines(self):
+        chrom_lines = self.calc_chrom_lines_pos(self.seg_df)
+        return self.seg_df['abspos'][chrom_lines]
+
+    def calc_ploidy(self, sample):
+        return np.mean(self.seg_data[sample])
+
+    def upto_chrom_x(self, df):
+        chrom_x_index = np.where(self.seg_df['chrom'] == 23)
+        print(chrom_x_index)
+        return chrom_x_index
+
+    def calc_error(self):
+        pass
+
+    def calc_shredded(self):
+        pass
+
     def draw_samples(self):
         fig = plt.figure(figsize=(12, 8))
 
+        chrom_lines = self.calc_chrom_lines()
+
         for num, sample in enumerate(self.sample_list):
             ax = fig.add_subplot(len(self.sample_list), 1, num + 1)
-            chrom_lines = self.calc_chrom_lines(self.seg_df)
-            print(chrom_lines)
 
-            for chrom_line in self.seg_df['abspos'][chrom_lines]:
+            for chrom_line in chrom_lines:
                 ax.axvline(x=chrom_line, color="#000000", linewidth=1)
             for hl in [1, 2, 3, 4, 5, 6]:
                 ax.axhline(y=hl, color="#000000", linewidth=1, linestyle="--")
@@ -239,6 +257,12 @@ class SampleViewer(ViewerBase):
 
             ax.set_xticks([])
             ax.set_xticklabels([])
+
+            chrom_labels_pos = self.calc_chrom_labels_pos(chrom_lines)
+            for num, label_pos in enumerate(chrom_labels_pos):
+                ax.text(
+                    label_pos, 10, self.CHROM_LABELS[num],
+                    fontsize=10, horizontalalignment='center')
 
 
 def main_sampleviewer():
