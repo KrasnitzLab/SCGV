@@ -13,7 +13,7 @@ from scipy.cluster.hierarchy import linkage, dendrogram
 from utils.color_map import ColorMap
 
 
-class Viewer(object):
+class ViewerBase(object):
     CHROM_LABELS = [
         "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
         "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y"
@@ -21,34 +21,41 @@ class Viewer(object):
 
     COPYNUM_LABELS = ["0", "1", "2", "3", "4", "5+"]
 
-    def __init__(self, df):
-        self.df = df
-        self.data = df.ix[:, 3:].values
-        self.bins, self.samples = self.data.shape
-        self.interval_length = None
-        self.Z = None
-        self.lmat = None
-        self.cmap = ColorMap.make_cmap01()
-
-    def make_chrom_lines(self):
-        assert self.df is not None
-        chrom_pos = self.df.chrom.values
+    @staticmethod
+    def calc_chrom_lines(df):
+        assert df is not None
+        chrom_pos = df.chrom.values
         chrom_shift = np.roll(chrom_pos, -1)
         chrom_boundaries = chrom_pos != chrom_shift
         chrom_boundaries[0] = True
         chrom_lines = np.where(chrom_boundaries)
         return chrom_lines[0]
 
-    def make_chrom_labelspos(self, chrom_lines):
+    @staticmethod
+    def calc_chrom_labelspos(chrom_lines):
         yt = (np.roll(chrom_lines, -1) - chrom_lines) / 2.0
         return (chrom_lines + yt)[:-1]
 
+
+class Viewer(ViewerBase):
+
+    def __init__(self, seg):
+        super(Viewer, self).__init__()
+        self.seg_df = seg
+        self.seg_data = seg.ix[:, 3:].values
+        self.bins, self.samples = self.seg_data.shape
+        self.interval_length = None
+        self.Z = None
+        self.lmat = None
+        self.cmap = ColorMap.make_cmap01()
+        self.sample_list = []
+
     def make_column_labels(self):
         assert self.direct_lookup
-        assert self.df is not None
+        assert self.seg_df is not None
 
         self.column_labels = \
-            np.array(self.df.columns[3:])[self.direct_lookup]
+            np.array(self.seg_df.columns[3:])[self.direct_lookup]
         return self.column_labels
 
     def make_dendrogram(self, ax, no_plot=False):
@@ -66,10 +73,10 @@ class Viewer(object):
     def make_linkage(self):
         if self.lmat is not None:
             return
-        self.lmat = linkage(self.data.transpose(), method='ward')
+        self.lmat = linkage(self.seg_data.transpose(), method='ward')
 
     def draw_dendogram(self, ax):
-        assert self.data is not None
+        assert self.seg_data is not None
         self.make_linkage()
         self.make_dendrogram(ax)
 
@@ -87,7 +94,7 @@ class Viewer(object):
     def draw_heatmap(self, ax):
         heat_extent = (0, self.samples * self.interval_length,
                        self.bins, 0)
-        data = np.round(self.data)
+        data = np.round(self.seg_data)
 
         ax.imshow(data[:, self.direct_lookup],
                   aspect='auto',
@@ -99,10 +106,10 @@ class Viewer(object):
         ax.set_xticklabels(self.column_labels,
                            rotation='vertical',
                            fontsize=10)
-        chrom_lines = self.make_chrom_lines()
+        chrom_lines = self.calc_chrom_lines(self.seg_df)
         for chrom_line in chrom_lines:
             plt.axhline(y=chrom_line, color="#000000", linewidth=1)
-        chrom_labelspos = self.make_chrom_labelspos(chrom_lines)
+        chrom_labelspos = self.calc_chrom_labelspos(chrom_lines)
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
 
@@ -139,11 +146,28 @@ class Viewer(object):
     def event_handler(self, event):
         print("event tester called...")
         Viewer.debug_event(event)
-        self.locate_sample_click(event)
+        if event.name == 'button_press_event':
+            sample = self.locate_sample_click(event)
+            self.add_sample(sample)
+        elif event.name == 'key_press_event' and event.key == 'd':
+            print(self.sample_list)
+
+            self.display_samples()
+            self.sample_list = []
 
     def event_loop_connect(self, fig):
         fig.canvas.mpl_connect('button_press_event', self.event_handler)
         fig.canvas.mpl_connect('key_press_event', self.event_handler)
+
+    def add_sample(self, sample):
+        if sample is None:
+            return
+        if sample in self.sample_list:
+            return
+        self.sample_list.append(sample)
+
+    def display_samples(self):
+        pass
 
 
 def main():
