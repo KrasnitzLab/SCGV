@@ -36,13 +36,35 @@ class ViewerBase(object):
         yt = (np.roll(chrom_lines, -1) - chrom_lines) / 2.0
         return (chrom_lines + yt)[:-1]
 
+    @staticmethod
+    def debug_event(event):
+        # print(event)
+        if event.name == 'button_press_event':
+            print("MOUSE: name={}; xy=({},{}); xydata=({},{}); "
+                  "button={}; dblclick={}".format(
+                      event.name,
+                      event.x, event.y,
+                      event.xdata, event.ydata,
+                      event.button, event.dblclick
+                  ))
+        elif event.name == 'key_press_event':
+            print("KEY: name={}; xy=({},{}); xydata=({},{}); "
+                  "key={}".format(
+                      event.name,
+                      event.x, event.y,
+                      event.xdata, event.ydata,
+                      event.key
+                  ))
+        else:
+            print("???: {}".format(event.name))
 
-class Viewer(ViewerBase):
 
-    def __init__(self, seg):
-        super(Viewer, self).__init__()
-        self.seg_df = seg
-        self.seg_data = seg.ix[:, 3:].values
+class HeatmapViewer(ViewerBase):
+
+    def __init__(self, seg_df):
+        super(HeatmapViewer, self).__init__()
+        self.seg_df = seg_df
+        self.seg_data = seg_df.ix[:, 3:].values
         self.bins, self.samples = self.seg_data.shape
         self.interval_length = None
         self.Z = None
@@ -113,28 +135,6 @@ class Viewer(ViewerBase):
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
 
-    @staticmethod
-    def debug_event(event):
-        # print(event)
-        if event.name == 'button_press_event':
-            print("MOUSE: name={}; xy=({},{}); xydata=({},{}); "
-                  "button={}; dblclick={}".format(
-                      event.name,
-                      event.x, event.y,
-                      event.xdata, event.ydata,
-                      event.button, event.dblclick
-                  ))
-        elif event.name == 'key_press_event':
-            print("KEY: name={}; xy=({},{}); xydata=({},{}); "
-                  "key={}".format(
-                      event.name,
-                      event.x, event.y,
-                      event.xdata, event.ydata,
-                      event.key
-                  ))
-        else:
-            print("???: {}".format(event.name))
-
     def locate_sample_click(self, event):
         if event.xdata is None:
             return None
@@ -145,7 +145,7 @@ class Viewer(ViewerBase):
 
     def event_handler(self, event):
         print("event tester called...")
-        Viewer.debug_event(event)
+        self.debug_event(event)
         if event.name == 'button_press_event':
             sample = self.locate_sample_click(event)
             self.add_sample(sample)
@@ -170,13 +170,13 @@ class Viewer(ViewerBase):
         pass
 
 
-def main():
+def main_heatmap():
     seg_filename = 'tests/data/sample.YL2671P11.5k.seg.quantal.primary.txt'
-    df = load_df(seg_filename)
+    seg_df = load_df(seg_filename)
 
-    assert df is not None
+    assert seg_df is not None
 
-    viewer = Viewer(df)
+    viewer = HeatmapViewer(seg_df)
 
     fig = plt.figure(0, figsize=(12, 8))
     fig.suptitle(seg_filename, fontsize=10)
@@ -194,5 +194,72 @@ def main():
 
     plt.show()
 
+
+class SampleViewer(ViewerBase):
+
+    def __init__(self, seg_df, ratio_df, sample_list):
+        self.seg_df = seg_df
+        self.ratio_df = ratio_df
+        self.seg_data = seg_df.ix[:, 3:].values
+        self.ratio_data = ratio_df.ix[:, 3:].values
+        self.sample_list = sample_list
+
+    def draw_samples(self):
+        fig = plt.figure(figsize=(12, 8))
+
+        for num, sample in enumerate(self.sample_list):
+            ax = fig.add_subplot(len(self.sample_list), 1, num + 1)
+            chrom_lines = self.calc_chrom_lines(self.seg_df)
+            print(chrom_lines)
+
+            for chrom_line in self.seg_df['abspos'][chrom_lines]:
+                ax.axvline(x=chrom_line, color="#000000", linewidth=1)
+            for hl in [1, 2, 3, 4, 5, 6]:
+                ax.axhline(y=hl, color="#000000", linewidth=1, linestyle="--")
+
+            ax.plot(
+                self.ratio_df['abspos'], self.ratio_df[sample],
+                color="#bbbbbb", alpha=0.8)
+            ax.plot(
+                self.seg_df['abspos'], self.seg_df[sample],
+                color='b', alpha=0.8)
+            ax.set_yscale('log')
+
+            ax.set_xlim((0, self.ratio_df['abspos'].values[-1]))
+            ax.set_ylim((0.05, 20))
+
+            ploidy = 0
+            error = 0
+            shredded = 0
+
+            ax.set_title(
+                sample + " Ploidy=" + ("%.2f" % ploidy) +
+                         " Error=" + ("%.2f" % error) +
+                         " Shredded=" + ("%.2f" % shredded))
+
+            ax.set_xticks([])
+            ax.set_xticklabels([])
+
+
+def main_sampleviewer():
+    seg_filename = \
+        'tests/data/sample.YL2671P11.5k.seg.quantal.primary.txt'
+    seg_df = load_df(seg_filename)
+
+    assert seg_df is not None
+
+    ratio_filename = \
+        'tests/data/sample.YL2671P11.5k.lowratio.quantal.primary.txt'
+    ratio_df = load_df(ratio_filename)
+
+    assert ratio_df is not None
+
+    viewer = SampleViewer(seg_df, ratio_df, ['CTB4543'])
+    viewer.draw_samples()
+
+    plt.show()
+
+
 if __name__ == '__main__':
-    main()
+    # main_heatmap()
+    main_sampleviewer()
