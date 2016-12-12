@@ -129,7 +129,6 @@ class Viewer(object):
             print("???: {}".format(event.name))
 
     def locate_sample_click(self, event):
-        Viewer.debug_event(event)
         if event.xdata is None:
             return None
         xloc = int(event.xdata / self.interval_length)
@@ -139,6 +138,7 @@ class Viewer(object):
 
     def event_handler(self, event):
         print("event tester called...")
+        Viewer.debug_event(event)
         self.locate_sample_click(event)
 
     def event_loop_connect(self, fig):
