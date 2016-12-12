@@ -51,20 +51,27 @@ class Viewer(object):
             np.array(self.df.columns[3:])[self.direct_lookup]
         return self.column_labels
 
+    def make_dendrogram(self, ax, no_plot=False):
+        if self.Z is not None:
+            return
+        self.Z = dendrogram(self.lmat, ax=ax, no_plot=no_plot)
+        min_x = np.min(self.Z['icoord'])
+        max_x = np.max(self.Z['icoord'])
+        self.interval_length = (max_x - min_x) / (self.samples - 1)
+        self.direct_lookup = self.Z['leaves']
+        self.label_midpoints = (
+            np.arange(self.samples) + 0.5) * self.interval_length
+        self.make_column_labels()
+
+    def make_linkage(self):
+        if self.lmat is not None:
+            return
+        self.lmat = linkage(self.data.transpose(), method='ward')
+
     def draw_dendogram(self, ax):
         assert self.data is not None
-        if self.lmat is None:
-            self.lmat = linkage(self.data.transpose(), method='ward')
-        if self.Z is None:
-            self.Z = dendrogram(self.lmat, ax=ax)
-            min_x = np.min(self.Z['icoord'])
-            max_x = np.max(self.Z['icoord'])
-            self.interval_length = \
-                (max_x - min_x) / (self.samples - 1)
-            self.direct_lookup = self.Z['leaves']
-            self.label_midpoints = \
-                (np.arange(self.samples) + 0.5) * self.interval_length
-            self.make_column_labels()
+        self.make_linkage()
+        self.make_dendrogram(ax)
 
         ax.set_xticks(self.label_midpoints)
         ax.set_xticklabels([''] * len(self.column_labels))
@@ -99,7 +106,32 @@ class Viewer(object):
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
 
+    @staticmethod
+    def debug_event(event):
+        # print(event)
+        if event.name == 'button_press_event':
+            print("MOUSE: name={}; xy=({},{}); xydata=({},{}); "
+                  "button={}; dblclick={}".format(
+                      event.name,
+                      event.x, event.y,
+                      event.xdata, event.ydata,
+                      event.button, event.dblclick
+                  ))
+        elif event.name == 'key_press_event':
+            print("KEY: name={}; xy=({},{}); xydata=({},{}); "
+                  "key={}".format(
+                      event.name,
+                      event.x, event.y,
+                      event.xdata, event.ydata,
+                      event.key
+                  ))
+        else:
+            print("???: {}".format(event.name))
+
     def locate_sample_click(self, event):
+        Viewer.debug_event(event)
+        if event.xdata is None:
+            return None
         xloc = int(event.xdata / self.interval_length)
         sample_name = self.column_labels[xloc]
         print("xloc: {}; sample name: {}".format(xloc, sample_name))
