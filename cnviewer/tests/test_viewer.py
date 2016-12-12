@@ -3,6 +3,7 @@ Created on Dec 12, 2016
 
 @author: lubo
 '''
+import mock
 
 
 def test_column_labels(viewer):
@@ -14,8 +15,8 @@ def test_column_labels(viewer):
 
 
 def test_locate_sample_click(viewer):
-    event = object()
+    event = mock.MagicMock()
     event.xdata = 1
+
     sample = viewer.locate_sample_click(event)
-    print(sample)
-    assert sample is not None
+    assert 'CTB4517' == sample
