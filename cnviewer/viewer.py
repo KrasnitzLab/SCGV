@@ -11,6 +11,7 @@ import matplotlib.patches as patches
 from utils.loader import load_df
 from scipy.cluster.hierarchy import linkage, dendrogram
 from utils.color_map import ColorMap
+from numpy.core.defchararray import index
 
 
 class ViewerBase(object):
@@ -208,19 +209,27 @@ class SampleViewer(ViewerBase):
         chrom_lines = self.calc_chrom_lines_pos(self.seg_df)
         return self.seg_df['abspos'][chrom_lines]
 
-    def calc_ploidy(self, sample):
-        return np.mean(self.seg_data[sample])
+    def calc_ploidy(self, sample_name):
+        return self.seg_df[sample_name].mean()
 
-    def upto_chrom_x(self, df):
-        chrom_x_index = np.where(self.seg_df['chrom'] == 23)
-        print(chrom_x_index)
-        return chrom_x_index
+    @property
+    def chrom_x_index(self):
+        index = np.where(self.seg_df['chrom'] == 23)[0][0]
+        return index
 
-    def calc_error(self):
-        pass
+    def upto_chrom_x(self, data):
+        assert len(data) == len(self.seg_df)
+        return data[0:self.chrom_x_index]
 
-    def calc_shredded(self):
-        pass
+    def calc_error(self, sample_name):
+        df_r = self.upto_chrom_x(self.ratio_df[sample_name].values)
+        df_s = self.upto_chrom_x(self.seg_df[sample_name].values)
+        return np.sqrt(np.sum(((df_r - df_s) / df_s)**2))
+
+    def calc_shredded(self, sample_name):
+        upto_x_data = self.seg_df[sample_name].values[0:self.chrom_x_index]
+        shredded = np.sum(upto_x_data < 0.4) / float(self.chrom_x_index)
+        return shredded
 
     def draw_samples(self):
         fig = plt.figure(figsize=(12, 8))

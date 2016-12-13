@@ -6,7 +6,7 @@ Created on Dec 2, 2016
 import pytest
 import os
 from utils.loader import load_df
-from viewer import Viewer
+from viewer import HeatmapViewer, SampleViewer
 
 
 @pytest.fixture(scope='session')
@@ -24,11 +24,29 @@ def ratio_filename(request):
 
 
 @pytest.fixture(scope='session')
-def viewer(request, seg_filename):
-    seg_filename = 'tests/data/sample.YL2671P11.5k.seg.quantal.primary.txt'
+def seg_df(request, seg_filename):
     df = load_df(seg_filename)
-    viewer = Viewer(df)
+    return df
+
+
+@pytest.fixture(scope='session')
+def ratio_df(request, ratio_filename):
+    df = load_df(ratio_filename)
+    return df
+
+
+@pytest.fixture(scope='session')
+def heatmap(request, seg_filename):
+    df = load_df(seg_filename)
+    viewer = HeatmapViewer(df)
     viewer.make_linkage()
     viewer.make_dendrogram(ax=None, no_plot=True)
+
+    return viewer
+
+
+@pytest.fixture(scope='session')
+def sample_viewer(request, seg_df, ratio_df):
+    viewer = SampleViewer(seg_df, ratio_df, ['CTB4543'])
 
     return viewer
