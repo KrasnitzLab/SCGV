@@ -11,7 +11,6 @@ import matplotlib.patches as patches
 from utils.loader import load_df
 from scipy.cluster.hierarchy import linkage, dendrogram
 from utils.color_map import ColorMap
-from numpy.core.defchararray import index
 
 
 class ViewerBase(object):
@@ -236,7 +235,7 @@ class SampleViewer(ViewerBase):
 
         chrom_lines = self.calc_chrom_lines()
 
-        for num, sample in enumerate(self.sample_list):
+        for num, sample_name in enumerate(self.sample_list):
             ax = fig.add_subplot(len(self.sample_list), 1, num + 1)
 
             for chrom_line in chrom_lines:
@@ -245,24 +244,23 @@ class SampleViewer(ViewerBase):
                 ax.axhline(y=hl, color="#000000", linewidth=1, linestyle="--")
 
             ax.plot(
-                self.ratio_df['abspos'], self.ratio_df[sample],
+                self.ratio_df['abspos'], self.ratio_df[sample_name],
                 color="#bbbbbb", alpha=0.8)
             ax.plot(
-                self.seg_df['abspos'], self.seg_df[sample],
+                self.seg_df['abspos'], self.seg_df[sample_name],
                 color='b', alpha=0.8)
             ax.set_yscale('log')
 
             ax.set_xlim((0, self.ratio_df['abspos'].values[-1]))
             ax.set_ylim((0.05, 20))
 
-            ploidy = 0
-            error = 0
-            shredded = 0
+            ploidy = self.calc_ploidy(sample_name)
+            error = self.calc_error(sample_name)
+            shredded = self.calc_shredded(sample_name)
 
             ax.set_title(
-                sample + " Ploidy=" + ("%.2f" % ploidy) +
-                         " Error=" + ("%.2f" % error) +
-                         " Shredded=" + ("%.2f" % shredded))
+                "{} Ploidy={:.2f} Error={:.2f} Shredded={:.2f}".format(
+                    sample_name, ploidy, error, shredded))
 
             ax.set_xticks([])
             ax.set_xticklabels([])
@@ -287,7 +285,7 @@ def main_sampleviewer():
 
     assert ratio_df is not None
 
-    viewer = SampleViewer(seg_df, ratio_df, ['CTB4543'])
+    viewer = SampleViewer(seg_df, ratio_df, ['CTB4517', 'CTB4543'])
     viewer.draw_samples()
 
     plt.show()

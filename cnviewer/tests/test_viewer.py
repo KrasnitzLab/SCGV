@@ -34,20 +34,23 @@ def test_upto_chrom_x(sample_viewer, seg_df):
 
 def test_calc_error(sample_viewer):
     error = sample_viewer.calc_error('CTB4517')
-    print(error)
-
     assert pytest.approx(39.77, abs=1e-2) == error
+
+    error = sample_viewer.calc_error('CTB4543')
+    assert pytest.approx(18.88, abs=1e-2) == error
 
 
 def test_calc_ploidy(sample_viewer):
     ploidy = sample_viewer.calc_ploidy('CTB4517')
-    print(ploidy)
-
     assert pytest.approx(1.75, abs=1e-2) == ploidy
+
+    ploidy = sample_viewer.calc_ploidy('CTB4543')
+    assert pytest.approx(3.66, abs=1e-2) == ploidy
 
 
 def test_calc_shredded(sample_viewer):
     shredded = sample_viewer.calc_shredded('CTB4517')
-    print(shredded)
-
     assert pytest.approx(0.27, abs=1e-2) == shredded
+
+    shredded = sample_viewer.calc_shredded('CTB4543')
+    assert pytest.approx(0.0, abs=1e-2) == shredded
