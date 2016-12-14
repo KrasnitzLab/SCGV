@@ -25,6 +25,7 @@ class DendrogramViewer(ViewerBase):
         if tree_df is None:
             return linkage(self.seg_data.transpose(), method='ward')
         else:
+            tree_df.height = -1 * tree_df.height
             max_height = tree_df.height.max()
             tree_df.height = 1.11 * max_height - tree_df.height
             return tree_df.values
@@ -45,6 +46,18 @@ class DendrogramViewer(ViewerBase):
         max_x = np.max(self.Z['icoord'])
         self.interval_length = (max_x - min_x) / (self.samples - 1)
         self.direct_lookup = self.Z['leaves']
+
+        print("leaves={}".format(len(self.Z['leaves'])))
+        print("samples={}".format(len(self.seg_df.columns) - 3))
+
         self.label_midpoints = (
             np.arange(self.samples) + 0.5) * self.interval_length
         self.make_column_labels()
+
+    def draw_dendrogram(self, ax):
+        self.make_dendrogram(ax, no_plot=False)
+
+        ax.set_xticks(self.label_midpoints)
+        ax.set_xticklabels(self.column_labels,
+                           rotation='vertical',
+                           fontsize=10)

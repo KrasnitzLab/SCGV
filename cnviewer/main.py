@@ -58,7 +58,7 @@ def main_sampleviewer():
 
 def main_dendrogram():
     seg_filename = \
-        'tests/data/sample.YL2671P11.5k.seg.quantal.primary.txt'
+        'tests/data/uber.YL2671P5_CORE_F.5k.seg.quantal.primary.csv'
     seg_df = load_df(seg_filename)
     assert seg_df is not None
 
@@ -70,9 +70,9 @@ def main_dendrogram():
     fig = plt.figure(0, figsize=(12, 8))
     fig.suptitle(seg_filename, fontsize=10)
 
-    viewer = DendrogramViewer(seg_df)
+    viewer = DendrogramViewer(seg_df, tree_df)
     ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
-    viewer.make_dendrogram(ax_dendro)
+    viewer.draw_dendrogram(ax_dendro)
     plt.show()
 
 
