@@ -15,7 +15,7 @@ class HeatmapViewer(DendrogramViewer):
 
     def __init__(self, seg_df, tree_df=None):
         super(HeatmapViewer, self).__init__(seg_df, tree_df)
-        self.cmap = ColorMap.make_cmap01()
+        self.cmap = ColorMap.make_cmap02()
         self.sample_list = []
 
     def make_legend(self):
