@@ -57,4 +57,4 @@ def main_sampleviewer():
 
 if __name__ == '__main__':
     # main_heatmap()
-    main_sampleviewer()
+    main_heatmap()

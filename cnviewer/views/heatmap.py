@@ -85,7 +85,7 @@ class HeatmapViewer(ViewerBase):
         chrom_lines = self.calc_chrom_lines_pos(self.seg_df)
         for chrom_line in chrom_lines:
             plt.axhline(y=chrom_line, color="#000000", linewidth=1)
-        chrom_labelspos = self.calc_chrom_label_spos(chrom_lines)
+        chrom_labelspos = self.calc_chrom_labels_pos(chrom_lines)
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
 
