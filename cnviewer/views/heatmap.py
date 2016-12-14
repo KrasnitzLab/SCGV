@@ -47,3 +47,16 @@ class HeatmapViewer(DendrogramViewer):
         chrom_labelspos = self.calc_chrom_labels_pos(chrom_lines)
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
+
+    def draw(self, fig=None):
+        if fig is None:
+            fig = plt.gcf()
+
+        ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
+        self.draw_dendrogram(ax_dendro)
+        self.clear_labels(ax_dendro)
+
+        ax_heat = fig.add_axes(
+            [0.1, 0.10, 0.8, 0.65], frame_on=True, sharex=ax_dendro)
+        self.draw_heatmap(ax_heat)
+        self.make_legend()

@@ -101,14 +101,7 @@ def main_controller():
     fig.suptitle(seg_filename, fontsize=10)
 
     heatmap_viewer = HeatmapViewer(seg_df, tree_df)
-    ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
-    heatmap_viewer.draw_dendrogram(ax_dendro)
-    heatmap_viewer.clear_labels(ax_dendro)
-
-    ax_heat = fig.add_axes(
-        [0.1, 0.10, 0.8, 0.65], frame_on=True, sharex=ax_dendro)
-    heatmap_viewer.draw_heatmap(ax_heat)
-    heatmap_viewer.make_legend()
+    heatmap_viewer.draw()
 
     controller = HeatmapController(heatmap_viewer, sample_viewer)
     controller.event_loop_connect(fig)
