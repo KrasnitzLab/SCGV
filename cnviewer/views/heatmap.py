@@ -3,61 +3,20 @@ Created on Dec 14, 2016
 
 @author: lubo
 '''
-from scipy.cluster.hierarchy import linkage, dendrogram
-
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
 import numpy as np
 from utils.color_map import ColorMap
-from views.base import ViewerBase
+from views.dendrogram import DendrogramViewer
 
 
-class HeatmapViewer(ViewerBase):
+class HeatmapViewer(DendrogramViewer):
 
-    def __init__(self, seg_df):
-        super(HeatmapViewer, self).__init__()
-        self.seg_df = seg_df
-        self.seg_data = seg_df.ix[:, 3:].values
-        self.bins, self.samples = self.seg_data.shape
-        self.interval_length = None
-        self.Z = None
-        self.lmat = None
+    def __init__(self, seg_df, tree_df=None):
+        super(HeatmapViewer, self).__init__(seg_df, tree_df)
         self.cmap = ColorMap.make_cmap01()
         self.sample_list = []
-
-    def make_column_labels(self):
-        assert self.direct_lookup
-        assert self.seg_df is not None
-
-        self.column_labels = \
-            np.array(self.seg_df.columns[3:])[self.direct_lookup]
-        return self.column_labels
-
-    def make_dendrogram(self, ax, no_plot=False):
-        if self.Z is not None:
-            return
-        self.Z = dendrogram(self.lmat, ax=ax, no_plot=no_plot)
-        min_x = np.min(self.Z['icoord'])
-        max_x = np.max(self.Z['icoord'])
-        self.interval_length = (max_x - min_x) / (self.samples - 1)
-        self.direct_lookup = self.Z['leaves']
-        self.label_midpoints = (
-            np.arange(self.samples) + 0.5) * self.interval_length
-        self.make_column_labels()
-
-    def make_linkage(self):
-        if self.lmat is not None:
-            return
-        self.lmat = linkage(self.seg_data.transpose(), method='ward')
-
-    def draw_dendogram(self, ax):
-        assert self.seg_data is not None
-        self.make_linkage()
-        self.make_dendrogram(ax)
-
-        ax.set_xticks(self.label_midpoints)
-        ax.set_xticklabels([''] * len(self.column_labels))
 
     def make_legend(self):
         copynum_patches = []
@@ -88,37 +47,3 @@ class HeatmapViewer(ViewerBase):
         chrom_labelspos = self.calc_chrom_labels_pos(chrom_lines)
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
-
-    def locate_sample_click(self, event):
-        if event.xdata is None:
-            return None
-        xloc = int(event.xdata / self.interval_length)
-        sample_name = self.column_labels[xloc]
-        print("xloc: {}; sample name: {}".format(xloc, sample_name))
-        return sample_name
-
-    def event_handler(self, event):
-        print("event tester called...")
-        self.debug_event(event)
-        if event.name == 'button_press_event':
-            sample = self.locate_sample_click(event)
-            self.add_sample(sample)
-        elif event.name == 'key_press_event' and event.key == 'd':
-            print(self.sample_list)
-
-            self.display_samples()
-            self.sample_list = []
-
-    def event_loop_connect(self, fig):
-        fig.canvas.mpl_connect('button_press_event', self.event_handler)
-        fig.canvas.mpl_connect('key_press_event', self.event_handler)
-
-    def add_sample(self, sample):
-        if sample is None:
-            return
-        if sample in self.sample_list:
-            return
-        self.sample_list.append(sample)
-
-    def display_samples(self):
-        pass

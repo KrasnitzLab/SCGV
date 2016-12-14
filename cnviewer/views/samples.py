@@ -10,12 +10,11 @@ from views.base import ViewerBase
 
 class SampleViewer(ViewerBase):
 
-    def __init__(self, seg_df, ratio_df, sample_list):
+    def __init__(self, seg_df, ratio_df):
         self.seg_df = seg_df
         self.ratio_df = ratio_df
         self.seg_data = seg_df.ix[:, 3:].values
         self.ratio_data = ratio_df.ix[:, 3:].values
-        self.sample_list = sample_list
 
     def calc_chrom_lines(self):
         chrom_lines = self.calc_chrom_lines_pos(self.seg_df)
@@ -43,13 +42,13 @@ class SampleViewer(ViewerBase):
         shredded = np.sum(upto_x_data < 0.4) / float(self.chrom_x_index)
         return shredded
 
-    def draw_samples(self):
+    def draw_samples(self, sample_list):
         fig = plt.figure(figsize=(12, 8))
 
         chrom_lines = self.calc_chrom_lines()
 
-        for num, sample_name in enumerate(self.sample_list):
-            ax = fig.add_subplot(len(self.sample_list), 1, num + 1)
+        for num, sample_name in enumerate(sample_list):
+            ax = fig.add_subplot(len(sample_list), 1, num + 1)
 
             for chrom_line in chrom_lines:
                 ax.axvline(x=chrom_line, color="#000000", linewidth=1)
@@ -83,3 +82,4 @@ class SampleViewer(ViewerBase):
                 ax.text(
                     label_pos, 10, self.CHROM_LABELS[num],
                     fontsize=10, horizontalalignment='center')
+        plt.show()

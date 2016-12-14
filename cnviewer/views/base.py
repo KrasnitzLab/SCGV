@@ -14,6 +14,11 @@ class ViewerBase(object):
 
     COPYNUM_LABELS = ["0", "1", "2", "3", "4", "5+"]
 
+    def __init__(self, seg_df):
+        self.seg_df = seg_df
+        self.seg_data = self.seg_df.ix[:, 3:].values
+        self.bins, self.samples = self.seg_data.shape
+
     @staticmethod
     def calc_chrom_lines_pos(df):
         assert df is not None
@@ -28,25 +33,3 @@ class ViewerBase(object):
     def calc_chrom_labels_pos(chrom_lines):
         yt = (np.roll(chrom_lines, -1) - chrom_lines) / 2.0
         return (chrom_lines + yt)[:-1]
-
-    @staticmethod
-    def debug_event(event):
-        # print(event)
-        if event.name == 'button_press_event':
-            print("MOUSE: name={}; xy=({},{}); xydata=({},{}); "
-                  "button={}; dblclick={}".format(
-                      event.name,
-                      event.x, event.y,
-                      event.xdata, event.ydata,
-                      event.button, event.dblclick
-                  ))
-        elif event.name == 'key_press_event':
-            print("KEY: name={}; xy=({},{}); xydata=({},{}); "
-                  "key={}".format(
-                      event.name,
-                      event.x, event.y,
-                      event.xdata, event.ydata,
-                      event.key
-                  ))
-        else:
-            print("???: {}".format(event.name))

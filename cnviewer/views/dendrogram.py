@@ -12,11 +12,7 @@ import numpy as np
 class DendrogramViewer(ViewerBase):
 
     def __init__(self, seg_df, tree_df=None):
-        super(DendrogramViewer, self).__init__()
-
-        self.seg_df = seg_df
-        self.seg_data = self.seg_df.ix[:, 3:].values
-        self.bins, self.samples = self.seg_data.shape
+        super(DendrogramViewer, self).__init__(seg_df)
 
         self.lmat = self.make_linkage(tree_df)
         self.Z = None
@@ -56,6 +52,11 @@ class DendrogramViewer(ViewerBase):
     def draw_dendrogram(self, ax):
         self.make_dendrogram(ax, no_plot=False)
 
+    def clear_labels(self, ax):
+        ax.set_xticks(self.label_midpoints)
+        ax.set_xticklabels([''] * len(self.column_labels))
+
+    def draw_labels(self, ax):
         ax.set_xticks(self.label_midpoints)
         ax.set_xticklabels(self.column_labels,
                            rotation='vertical',
