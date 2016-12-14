@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from utils.loader import load_df
 from views.heatmap import HeatmapViewer
 from views.samples import SampleViewer
+from views.dendrogram import DendrogramViewer
 
 
 def main_heatmap():
@@ -55,6 +56,27 @@ def main_sampleviewer():
     plt.show()
 
 
+def main_dendrogram():
+    seg_filename = \
+        'tests/data/sample.YL2671P11.5k.seg.quantal.primary.txt'
+    seg_df = load_df(seg_filename)
+    assert seg_df is not None
+
+    tree_filename = \
+        'tests/data/YL2671P5smear1bpFisherTreePyP4Cols.csv'
+    tree_df = load_df(tree_filename)
+    assert tree_df is not None
+
+    fig = plt.figure(0, figsize=(12, 8))
+    fig.suptitle(seg_filename, fontsize=10)
+
+    viewer = DendrogramViewer(seg_df)
+    ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
+    viewer.make_dendrogram(ax_dendro)
+    plt.show()
+
+
 if __name__ == '__main__':
     # main_heatmap()
-    main_heatmap()
+    # main_heatmap()
+    main_dendrogram()
