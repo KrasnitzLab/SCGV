@@ -108,3 +108,4 @@ class ColorMap(object):
             'indexed')
         cmap07.bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 999999999]
         cmap07.norm = col.BoundaryNorm(cmap07.bounds, cmap07.colors.N)
+        return cmap07

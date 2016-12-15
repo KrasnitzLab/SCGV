@@ -11,6 +11,7 @@ from views.heatmap import HeatmapViewer
 from views.samples import SampleViewer
 from views.dendrogram import DendrogramViewer
 from views.controller import HeatmapController
+from views.clone import CloneViewer
 
 
 def main_heatmap():
@@ -109,8 +110,43 @@ def main_controller():
     plt.show()
 
 
+def main_clone():
+    seg_filename = \
+        'tests/data/uber.YL2671P5_CORE_F.5k.seg.quantal.primary.csv'
+    seg_df = load_df(seg_filename)
+    assert seg_df is not None
+
+    tree_filename = \
+        'tests/data/YL2671P5smear1bpFisherTreePyP4Cols.csv'
+    tree_df = load_df(tree_filename)
+    assert tree_df is not None
+
+    clone_filename = \
+        'tests/data/YL2671P5smear1bpFisherPcloneTracks.csv'
+    clone_df = load_df(clone_filename)
+    assert clone_df is not None
+
+    dendrogram = DendrogramViewer(seg_df, tree_df)
+    dendrogram.make_dendrogram(ax=None, no_plot=True)
+
+    clone = CloneViewer(dendrogram, clone_df)
+    clone.make_clone()
+
+    fig = plt.figure(0, figsize=(12, 8))
+    fig.suptitle(seg_filename, fontsize=10)
+    ax_clone = fig.add_axes(
+        [0.1, 0.7625, 0.8, 0.0125], frame_on=True)
+    clone.draw_clone(ax_clone)
+    ax_subclone = fig.add_axes(
+        [0.1, 0.75, 0.8, 0.0125], frame_on=True)
+    clone.draw_subclone(ax_subclone)
+
+    plt.show()
+
+
 if __name__ == '__main__':
     # main_heatmap()
     # main_sample()
     # main_dendrogram()
-    main_controller()
+    # main_controller()
+    main_clone()

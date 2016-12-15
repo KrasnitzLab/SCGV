@@ -16,6 +16,8 @@ class DendrogramViewer(ViewerBase):
 
         self.lmat = self.make_linkage(tree_df)
         self.Z = None
+        self.direct_lookup = None
+        self.column_labels = None
 
     def make_linkage(self, tree_df):
         if tree_df is None:
@@ -36,7 +38,7 @@ class DendrogramViewer(ViewerBase):
             np.array(self.seg_df.columns[3:])[self.direct_lookup]
         return self.column_labels
 
-    def make_dendrogram(self, ax, no_plot=False):
+    def make_dendrogram(self, ax=None, no_plot=False):
         if self.Z is not None:
             return
         self.Z = dendrogram(self.lmat, ax=ax, no_plot=no_plot)
