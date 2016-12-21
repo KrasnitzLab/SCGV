@@ -92,7 +92,7 @@ def main_error_and_multiplier():
     model.make()
 
     multiplier = MultiplierViewer(model)
-    fig = plt.figure(0, figsize=(12, 8))
+    fig = plt.figure(0, figsize=(12, 10))
 
     ax_multiplier = fig.add_axes(
         [0.1, 0.125, 0.8, 0.025], frame_on=True)
@@ -110,18 +110,10 @@ def main_controller():
     model = DataModel('tests/data/cnviewer_data_example_00.zip')
     model.make()
 
-    sample_viewer = SampleViewer(model)
-
     fig = plt.figure(0, figsize=(12, 8))
 
-    heatmap_viewer = HeatmapViewer(model)
-    ax_heat = fig.add_axes(
-        [0.1, 0.10, 0.8, 0.65], frame_on=True)
-    heatmap_viewer.draw_heatmap(ax_heat)
-    heatmap_viewer.draw_legend()
-
-    controller = MainController(model, sample_viewer)
-    controller.event_loop_connect(fig)
+    controller = MainController(model)
+    controller.build_main(fig)
 
     plt.show()
 
