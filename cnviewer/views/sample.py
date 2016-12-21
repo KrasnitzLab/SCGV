@@ -10,36 +10,29 @@ from views.base import ViewerBase
 
 class SampleViewer(ViewerBase):
 
-    def __init__(self, seg_df, ratio_df):
-        self.seg_df = seg_df
-        self.ratio_df = ratio_df
-        self.seg_data = seg_df.ix[:, 3:].values
-        self.ratio_data = ratio_df.ix[:, 3:].values
+    def __init__(self, model):
+        super(SampleViewer, self).__init__(model)
 
     def calc_chrom_lines(self):
-        chrom_lines = self.calc_chrom_lines_pos(self.seg_df)
-        return self.seg_df['abspos'][chrom_lines]
+        chrom_lines = self.calc_chrom_lines_pos(self.model.seg_df)
+        return self.model.seg_df['abspos'][chrom_lines]
 
     def calc_ploidy(self, sample_name):
-        return self.seg_df[sample_name].mean()
-
-    @property
-    def chrom_x_index(self):
-        index = np.where(self.seg_df['chrom'] == 23)[0][0]
-        return index
+        return self.model.seg_df[sample_name].mean()
 
     def upto_chrom_x(self, data):
-        assert len(data) == len(self.seg_df)
-        return data[0:self.chrom_x_index]
+        assert len(data) == len(self.model.seg_df)
+        return data[0:self.model.chrom_x_index]
 
     def calc_error(self, sample_name):
-        df_r = self.upto_chrom_x(self.ratio_df[sample_name].values)
-        df_s = self.upto_chrom_x(self.seg_df[sample_name].values)
+        df_r = self.upto_chrom_x(self.model.ratio_df[sample_name].values)
+        df_s = self.upto_chrom_x(self.model.seg_df[sample_name].values)
         return np.sqrt(np.sum(((df_r - df_s) / df_s)**2))
 
     def calc_shredded(self, sample_name):
-        upto_x_data = self.seg_df[sample_name].values[0:self.chrom_x_index]
-        shredded = np.sum(upto_x_data < 0.4) / float(self.chrom_x_index)
+        upto_x_data = \
+            self.model.seg_df[sample_name].values[0:self.model.chrom_x_index]
+        shredded = np.sum(upto_x_data < 0.4) / float(self.model.chrom_x_index)
         return shredded
 
     def draw_samples(self, sample_list):
@@ -56,14 +49,16 @@ class SampleViewer(ViewerBase):
                 ax.axhline(y=hl, color="#000000", linewidth=1, linestyle="--")
 
             ax.plot(
-                self.ratio_df['abspos'], self.ratio_df[sample_name],
+                self.model.ratio_df['abspos'],
+                self.model.ratio_df[sample_name],
                 color="#bbbbbb", alpha=0.8)
             ax.plot(
-                self.seg_df['abspos'], self.seg_df[sample_name],
+                self.model.seg_df['abspos'],
+                self.model.seg_df[sample_name],
                 color='b', alpha=0.8)
             ax.set_yscale('log')
 
-            ax.set_xlim((0, self.ratio_df['abspos'].values[-1]))
+            ax.set_xlim((0, self.model.ratio_df['abspos'].values[-1]))
             ax.set_ylim((0.05, 20))
 
             ploidy = self.calc_ploidy(sample_name)

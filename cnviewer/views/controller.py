@@ -5,10 +5,10 @@ Created on Dec 14, 2016
 '''
 
 
-class HeatmapController(object):
+class MainController(object):
 
-    def __init__(self, heatmap_viewer, sample_viewer):
-        self.heatmap_viewer = heatmap_viewer
+    def __init__(self, model, sample_viewer):
+        self.model = model
         self.sample_viewer = sample_viewer
         self.sample_list = []
 
@@ -41,8 +41,8 @@ class HeatmapController(object):
     def locate_sample_click(self, event):
         if event.xdata is None:
             return None
-        xloc = int(event.xdata / self.heatmap_viewer.interval_length)
-        sample_name = self.heatmap_viewer.column_labels[xloc]
+        xloc = int(event.xdata / self.model.interval_length)
+        sample_name = self.model.column_labels[xloc]
         print("xloc: {}; sample name: {}".format(xloc, sample_name))
         return sample_name
 
