@@ -3,8 +3,9 @@ Created on Dec 21, 2016
 
 @author: lubo
 '''
-from matplotlib import cm
+# from matplotlib import cm
 from views.base import ViewerBase
+import matplotlib.pyplot as plt
 
 
 class MultiplierViewer(ViewerBase):
@@ -19,7 +20,9 @@ class MultiplierViewer(ViewerBase):
             [self.model.multiplier],
             aspect='auto',
             interpolation='nearest',
-            cmap=cm.coolwarm,  # @UndefinedVariable
+            # cmap=cm.coolwarm,  # @UndefinedVariable
+            cmap=plt.get_cmap('gray'),
+
             extent=self.model.bar_extent)
         ax.set_xticks([])
         ax.set_xticklabels([])
