@@ -14,6 +14,7 @@ from views.controller import HeatmapController
 from views.clone import CloneViewer
 from views.ploidy import PloidyViewer
 from views.multiplier import MultiplierViewer
+from views.error import ErrorViewer
 
 
 def main_heatmap():
@@ -188,10 +189,10 @@ def main_multiplier():
     tree_df = load_df(tree_filename)
     assert tree_df is not None
 
-    guide_filename = \
-        'tests/data/tbguide.csv'
-    guide_df = load_df(guide_filename)
-    assert guide_df is not None
+    ratio_filename = \
+        'tests/data/uber.YL2671P5_CORE_F.5k.lowratio.quantal.primary.csv'
+    ratio_df = load_df(ratio_filename)
+    assert ratio_df is not None
 
     dendrogram = DendrogramViewer(seg_df, tree_df)
     dendrogram.make_dendrogram(ax=None, no_plot=True)
@@ -205,6 +206,12 @@ def main_multiplier():
     ax_multiplier = fig.add_axes(
         [0.1, 0.125, 0.8, 0.025], frame_on=True)
     multiplier.draw_multiplier(ax_multiplier)
+
+    error = ErrorViewer(dendrogram, seg_df, ratio_df)
+    error.make_error()
+    ax_error = fig.add_axes(
+        [0.1, 0.10, 0.8, 0.025], frame_on=True)
+    error.draw_error(ax_error)
 
     plt.show()
 

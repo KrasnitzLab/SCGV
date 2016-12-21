@@ -23,11 +23,12 @@ class MultiplierViewer(BarViewerBase):
 
     def make_multiplier(self):
         data = self.seg_df.iloc[:self.chrom_x_index, 3:]
-        self.multiplier = data.mean(axis=1).ix[self.dendrogram.direct_lookup]
+        self.multiplier = data.mean(axis=1).ix[
+            self.dendrogram.direct_lookup].values
 
     def draw_multiplier(self, ax):
         ax.imshow(
-            [self.multiplier.values],
+            [self.multiplier],
             aspect='auto',
             interpolation='nearest',
             cmap=cm.coolwarm,  # @UndefinedVariable
