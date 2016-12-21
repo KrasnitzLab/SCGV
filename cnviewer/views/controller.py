@@ -123,9 +123,11 @@ class MainController(ControllerBase):
         multiplier_viewer.draw_multiplier(ax_multiplier)
 
         ax_error = fig.add_axes(
-            [0.1, 0.10, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
+            [0.1, 0.10, 0.8, 0.025], frame_on=True)  # , sharex=ax_dendro)
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
+
+        error_viewer.draw_xlabels(ax_error)
 
         self.sample_viewer = SampleViewer(self.model)
         self.event_loop_connect()

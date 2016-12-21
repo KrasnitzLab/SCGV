@@ -49,16 +49,6 @@ class DendrogramViewer(ViewerBase):
         self.clear_xlabels(ax)
         self.draw_ylabels(ax)
 
-    def clear_xlabels(self, ax):
-        ax.set_xticks(self.model.label_midpoints)
-        ax.set_xticklabels([''] * len(self.model.column_labels))
-
-    def draw_xlabels(self, ax):
-        ax.set_xticks(self.model.label_midpoints)
-        ax.set_xticklabels(self.model.column_labels,
-                           rotation='vertical',
-                           fontsize=10)
-
     def draw_ylabels(self, ax):
         max_y = np.max(self.model.Z['dcoord'])
         yticks = np.array([0, 0.25, 0.5, 0.75, 1.0]) * max_y

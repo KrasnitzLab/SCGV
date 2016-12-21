@@ -35,3 +35,13 @@ class ViewerBase(object):
     def calc_chrom_labels_pos(chrom_lines):
         yt = (np.roll(chrom_lines, -1) - chrom_lines) / 2.0
         return (chrom_lines + yt)[:-1]
+
+    def clear_xlabels(self, ax):
+        ax.set_xticks(self.model.label_midpoints)
+        ax.set_xticklabels([''] * len(self.model.column_labels))
+
+    def draw_xlabels(self, ax):
+        ax.set_xticks(self.model.label_midpoints)
+        ax.set_xticklabels(self.model.column_labels,
+                           rotation='vertical',
+                           fontsize=10)
