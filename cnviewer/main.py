@@ -13,6 +13,7 @@ from views.dendrogram import DendrogramViewer
 from views.controller import HeatmapController
 from views.clone import CloneViewer
 from views.ploidy import PloidyViewer
+from views.multiplier import MultiplierViewer
 
 
 def main_heatmap():
@@ -176,10 +177,43 @@ def main_ploidy():
     plt.show()
 
 
+def main_multiplier():
+    seg_filename = \
+        'tests/data/uber.YL2671P5_CORE_F.5k.seg.quantal.primary.csv'
+    seg_df = load_df(seg_filename)
+    assert seg_df is not None
+
+    tree_filename = \
+        'tests/data/YL2671P5smear1bpFisherTreePyP4Cols.csv'
+    tree_df = load_df(tree_filename)
+    assert tree_df is not None
+
+    guide_filename = \
+        'tests/data/tbguide.csv'
+    guide_df = load_df(guide_filename)
+    assert guide_df is not None
+
+    dendrogram = DendrogramViewer(seg_df, tree_df)
+    dendrogram.make_dendrogram(ax=None, no_plot=True)
+
+    multiplier = MultiplierViewer(dendrogram, seg_df)
+    multiplier.make_multiplier()
+
+    fig = plt.figure(0, figsize=(12, 8))
+    fig.suptitle(seg_filename, fontsize=10)
+
+    ax_multiplier = fig.add_axes(
+        [0.1, 0.125, 0.8, 0.025], frame_on=True)
+    multiplier.draw_multiplier(ax_multiplier)
+
+    plt.show()
+
+
 if __name__ == '__main__':
     # main_heatmap()
     # main_sample()
     # main_dendrogram()
     # main_controller()
     # main_clone()
-    main_ploidy()
+    # main_ploidy()
+    main_multiplier()
