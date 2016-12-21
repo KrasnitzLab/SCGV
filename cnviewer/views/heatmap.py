@@ -6,20 +6,17 @@ Created on Dec 14, 2016
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-import numpy as np
 from utils.color_map import ColorMap
-from views.dendrogram import DendrogramViewer
-# from matplotlib import cm
+from views.base import ViewerBase
 
 
-class HeatmapViewer(DendrogramViewer):
+class HeatmapViewer(ViewerBase):
 
-    def __init__(self, seg_df, tree_df=None):
-        super(HeatmapViewer, self).__init__(seg_df, tree_df)
+    def __init__(self, model):
+        super(HeatmapViewer, self).__init__(model)
         self.cmap = ColorMap.make_cmap02()
-        self.sample_list = []
 
-    def make_legend(self):
+    def draw_legend(self):
         copynum_patches = []
         for color in self.cmap.colors.colors:
             copynum_patches.append(
@@ -28,36 +25,34 @@ class HeatmapViewer(DendrogramViewer):
                       title="Copy #", prop={'size': 10})
 
     def draw_heatmap(self, ax):
-        heat_extent = (0, self.samples * self.interval_length,
-                       self.bins, 0)
-        data = np.round(self.seg_data)
+        assert self.model.heatmap is not None
 
-        ax.imshow(data[:, self.direct_lookup],
+        ax.imshow(self.model.heatmap,
                   aspect='auto',
                   interpolation='nearest',
                   cmap=self.cmap.colors,
                   norm=self.cmap.norm,
-                  extent=heat_extent)
-        ax.set_xticks(self.label_midpoints)
-        ax.set_xticklabels(self.column_labels,
+                  extent=self.model.heat_extent)
+        ax.set_xticks(self.model.label_midpoints)
+        ax.set_xticklabels(self.model.column_labels,
                            rotation='vertical',
                            fontsize=10)
-        chrom_lines = self.calc_chrom_lines_pos(self.seg_df)
+        chrom_lines = self.calc_chrom_lines_pos(self.model.seg_df)
         for chrom_line in chrom_lines:
             plt.axhline(y=chrom_line, color="#000000", linewidth=1)
         chrom_labelspos = self.calc_chrom_labels_pos(chrom_lines)
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
 
-    def draw(self, fig=None):
-        if fig is None:
-            fig = plt.gcf()
-
-        ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
-        self.draw_dendrogram(ax_dendro)
-        self.clear_xlabels(ax_dendro)
-
-        ax_heat = fig.add_axes(
-            [0.1, 0.10, 0.8, 0.65], frame_on=True, sharex=ax_dendro)
-        self.draw_heatmap(ax_heat)
-        self.make_legend()
+#     def draw(self, fig=None):
+#         if fig is None:
+#             fig = plt.gcf()
+#
+#         ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
+#         self.draw_dendrogram(ax_dendro)
+#         self.clear_xlabels(ax_dendro)
+#
+#         ax_heat = fig.add_axes(
+#             [0.1, 0.10, 0.8, 0.65], frame_on=True, sharex=ax_dendro)
+#         self.draw_heatmap(ax_heat)
+#         self.make_legend()

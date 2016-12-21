@@ -27,7 +27,12 @@ class DataModel(DataLoader):
         self.Z = None
 
         self._chrom_x_index = None
-        # self.make()
+        self._bar_extent = None
+
+    @property
+    def heat_extent(self):
+        return (0, self.samples * self.interval_length,
+                self.bins, 0)
 
     @property
     def chrom_x_index(self):
@@ -39,6 +44,7 @@ class DataModel(DataLoader):
     def make(self):
         self.make_linkage()
         self.make_dendrogram()
+        self.make_heatmap()
         self.make_clone()
         self.make_ploidy()
         self.make_multiplier()
@@ -60,12 +66,15 @@ class DataModel(DataLoader):
             return
         self.Z = dendrogram(self.lmat, ax=None, no_plot=True)
         self.icoord = np.array(self.Z['icoord'])
+        self.dcoord = np.array(self.Z['dcoord'])
         self.min_x = np.min(self.icoord)
         self.max_x = np.max(self.icoord)
         self.interval_length = (self.max_x - self.min_x) / (self.samples - 1)
         self.direct_lookup = self.Z['leaves']
         self.column_labels = \
             np.array(self.seg_df.columns[3:])[self.direct_lookup]
+        self.label_midpoints = (
+            np.arange(self.samples) + 0.5) * self.interval_length
 
     @staticmethod
     def _make_heatmap_array(df):
@@ -80,6 +89,10 @@ class DataModel(DataLoader):
                 color_counter += 1
 
         return result.values
+
+    def make_heatmap(self):
+        data = np.round(self.seg_data)
+        self.heatmap = data[:, self.direct_lookup]
 
     def make_clone(self):
         assert self.direct_lookup is not None
@@ -116,3 +129,11 @@ class DataModel(DataLoader):
         df_r = self.ratio_df.iloc[:self.chrom_x_index, 3:].values
         self.error = np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=1))[
             self.direct_lookup]
+
+    @property
+    def bar_extent(self):
+        if self._bar_extent is None:
+            self._bar_extent = (
+                0, self.samples * self.interval_length,
+                0, 1)
+        return self._bar_extent

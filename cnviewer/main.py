@@ -15,28 +15,21 @@ from views.clone import CloneViewer
 from views.ploidy import PloidyViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
+from utils.model import DataModel
 
 
 def main_heatmap():
-    seg_filename = 'tests/data/sample.YL2671P11.5k.seg.quantal.primary.txt'
-    seg_df = load_df(seg_filename)
+    model = DataModel('tests/data/cnviewer_data_example_00.zip')
+    model.make()
 
-    assert seg_df is not None
-
-    viewer = HeatmapViewer(seg_df)
+    viewer = HeatmapViewer(model)
 
     fig = plt.figure(0, figsize=(12, 8))
-    fig.suptitle(seg_filename, fontsize=10)
-
-    ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
-    # draw_dendrogram(df, ax_dendro)
-    viewer.draw_dendrogram(ax_dendro)
-    viewer.clear_labels(ax_dendro)
 
     ax_heat = fig.add_axes(
-        [0.1, 0.10, 0.8, 0.65], frame_on=True, sharex=ax_dendro)
+        [0.1, 0.10, 0.8, 0.65], frame_on=True)
     viewer.draw_heatmap(ax_heat)
-    viewer.make_legend()
+    viewer.draw_legend()
 
     plt.show()
 
@@ -61,20 +54,12 @@ def main_sample():
 
 
 def main_dendrogram():
-    seg_filename = \
-        'tests/data/uber.YL2671P5_CORE_F.5k.seg.quantal.primary.csv'
-    seg_df = load_df(seg_filename)
-    assert seg_df is not None
-
-    tree_filename = \
-        'tests/data/YL2671P5smear1bpFisherTreePyP4Cols.csv'
-    tree_df = load_df(tree_filename)
-    assert tree_df is not None
+    model = DataModel('tests/data/cnviewer_data_example_00.zip')
+    model.make()
 
     fig = plt.figure(0, figsize=(12, 8))
-    fig.suptitle(seg_filename, fontsize=10)
 
-    viewer = DendrogramViewer(seg_df, tree_df)
+    viewer = DendrogramViewer(model)
     ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
     viewer.draw_dendrogram(ax_dendro)
     # viewer.draw_labels(ax_dendro)
@@ -114,29 +99,11 @@ def main_controller():
 
 
 def main_clone():
-    seg_filename = \
-        'tests/data/uber.YL2671P5_CORE_F.5k.seg.quantal.primary.csv'
-    seg_df = load_df(seg_filename)
-    assert seg_df is not None
+    model = DataModel('tests/data/cnviewer_data_example_00.zip')
+    model.make()
 
-    tree_filename = \
-        'tests/data/YL2671P5smear1bpFisherTreePyP4Cols.csv'
-    tree_df = load_df(tree_filename)
-    assert tree_df is not None
-
-    clone_filename = \
-        'tests/data/YL2671P5smear1bpFisherPcloneTracks.csv'
-    clone_df = load_df(clone_filename)
-    assert clone_df is not None
-
-    dendrogram = DendrogramViewer(seg_df, tree_df)
-    dendrogram.make_dendrogram()
-
-    clone = CloneViewer(dendrogram, clone_df)
-    clone.make_clone()
-
+    clone = CloneViewer(model)
     fig = plt.figure(0, figsize=(12, 8))
-    fig.suptitle(seg_filename, fontsize=10)
     ax_clone = fig.add_axes(
         [0.1, 0.7625, 0.8, 0.0125], frame_on=True)
     clone.draw_clone(ax_clone)
@@ -148,29 +115,12 @@ def main_clone():
 
 
 def main_ploidy():
-    seg_filename = \
-        'tests/data/uber.YL2671P5_CORE_F.5k.seg.quantal.primary.csv'
-    seg_df = load_df(seg_filename)
-    assert seg_df is not None
+    model = DataModel('tests/data/cnviewer_data_example_00.zip')
+    model.make()
 
-    tree_filename = \
-        'tests/data/YL2671P5smear1bpFisherTreePyP4Cols.csv'
-    tree_df = load_df(tree_filename)
-    assert tree_df is not None
-
-    guide_filename = \
-        'tests/data/tbguide.csv'
-    guide_df = load_df(guide_filename)
-    assert guide_df is not None
-
-    dendrogram = DendrogramViewer(seg_df, tree_df)
-    dendrogram.make_dendrogram()
-
-    ploidy = PloidyViewer(dendrogram, guide_df)
-    ploidy.make_ploidy()
+    ploidy = PloidyViewer(model)
 
     fig = plt.figure(0, figsize=(12, 8))
-    fig.suptitle(seg_filename, fontsize=10)
     ax_ploidy = fig.add_axes(
         [0.1, 0.7625, 0.8, 0.0125], frame_on=True)
     ploidy.draw_ploidy(ax_ploidy)
@@ -178,37 +128,18 @@ def main_ploidy():
     plt.show()
 
 
-def main_multiplier():
-    seg_filename = \
-        'tests/data/uber.YL2671P5_CORE_F.5k.seg.quantal.primary.csv'
-    seg_df = load_df(seg_filename)
-    assert seg_df is not None
+def main_error_and_multiplier():
+    model = DataModel('tests/data/cnviewer_data_example_00.zip')
+    model.make()
 
-    tree_filename = \
-        'tests/data/YL2671P5smear1bpFisherTreePyP4Cols.csv'
-    tree_df = load_df(tree_filename)
-    assert tree_df is not None
-
-    ratio_filename = \
-        'tests/data/uber.YL2671P5_CORE_F.5k.lowratio.quantal.primary.csv'
-    ratio_df = load_df(ratio_filename)
-    assert ratio_df is not None
-
-    dendrogram = DendrogramViewer(seg_df, tree_df)
-    dendrogram.make_dendrogram()
-
-    multiplier = MultiplierViewer(dendrogram, seg_df)
-    multiplier.make_multiplier()
-
+    multiplier = MultiplierViewer(model)
     fig = plt.figure(0, figsize=(12, 8))
-    fig.suptitle(seg_filename, fontsize=10)
 
     ax_multiplier = fig.add_axes(
         [0.1, 0.125, 0.8, 0.025], frame_on=True)
     multiplier.draw_multiplier(ax_multiplier)
 
-    error = ErrorViewer(dendrogram, seg_df, ratio_df)
-    error.make_error()
+    error = ErrorViewer(model)
     ax_error = fig.add_axes(
         [0.1, 0.10, 0.8, 0.025], frame_on=True)
     error.draw_error(ax_error)
@@ -217,10 +148,10 @@ def main_multiplier():
 
 
 if __name__ == '__main__':
-    # main_heatmap()
+    main_heatmap()
     # main_sample()
     # main_dendrogram()
-    main_controller()
+    # main_controller()
     # main_clone()
     # main_ploidy()
-    # main_multiplier()
+    # main_error_and_multiplier()
