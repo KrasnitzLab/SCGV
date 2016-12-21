@@ -9,6 +9,7 @@ import matplotlib.patches as patches
 import numpy as np
 from utils.color_map import ColorMap
 from views.dendrogram import DendrogramViewer
+# from matplotlib import cm
 
 
 class HeatmapViewer(DendrogramViewer):

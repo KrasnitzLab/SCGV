@@ -77,7 +77,7 @@ def main_dendrogram():
     viewer = DendrogramViewer(seg_df, tree_df)
     ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
     viewer.draw_dendrogram(ax_dendro)
-    viewer.draw_labels(ax_dendro)
+    # viewer.draw_labels(ax_dendro)
 
     plt.show()
 
@@ -130,7 +130,7 @@ def main_clone():
     assert clone_df is not None
 
     dendrogram = DendrogramViewer(seg_df, tree_df)
-    dendrogram.make_dendrogram(ax=None, no_plot=True)
+    dendrogram.make_dendrogram()
 
     clone = CloneViewer(dendrogram, clone_df)
     clone.make_clone()
@@ -164,7 +164,7 @@ def main_ploidy():
     assert guide_df is not None
 
     dendrogram = DendrogramViewer(seg_df, tree_df)
-    dendrogram.make_dendrogram(ax=None, no_plot=True)
+    dendrogram.make_dendrogram()
 
     ploidy = PloidyViewer(dendrogram, guide_df)
     ploidy.make_ploidy()
@@ -195,7 +195,7 @@ def main_multiplier():
     assert ratio_df is not None
 
     dendrogram = DendrogramViewer(seg_df, tree_df)
-    dendrogram.make_dendrogram(ax=None, no_plot=True)
+    dendrogram.make_dendrogram()
 
     multiplier = MultiplierViewer(dendrogram, seg_df)
     multiplier.make_multiplier()
@@ -220,7 +220,7 @@ if __name__ == '__main__':
     # main_heatmap()
     # main_sample()
     # main_dendrogram()
-    # main_controller()
+    main_controller()
     # main_clone()
     # main_ploidy()
-    main_multiplier()
+    # main_multiplier()
