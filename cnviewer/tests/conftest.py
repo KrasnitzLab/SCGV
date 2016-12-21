@@ -6,7 +6,8 @@ Created on Dec 2, 2016
 import pytest
 import os
 from utils.loader import load_df
-from viewer import HeatmapViewer, SampleViewer
+from views.heatmap import HeatmapViewer
+from views.samples import SampleViewer
 
 
 @pytest.fixture(scope='session')
@@ -39,14 +40,14 @@ def ratio_df(request, ratio_filename):
 def heatmap(request, seg_filename):
     df = load_df(seg_filename)
     viewer = HeatmapViewer(df)
-    viewer.make_linkage()
-    viewer.make_dendrogram(ax=None, no_plot=True)
+    viewer.make_linkage(None)
+    viewer.make_dendrogram()
 
     return viewer
 
 
 @pytest.fixture(scope='session')
 def sample_viewer(request, seg_df, ratio_df):
-    viewer = SampleViewer(seg_df, ratio_df, ['CTB4543'])
+    viewer = SampleViewer(seg_df, ratio_df)
 
     return viewer

@@ -3,7 +3,7 @@ Created on Dec 12, 2016
 
 @author: lubo
 '''
-import mock
+# import mock
 import pytest
 
 
@@ -15,12 +15,12 @@ def test_column_labels(heatmap):
     assert 'CTB4543' == heatmap.column_labels[54]
 
 
-def test_locate_sample_click(heatmap):
-    event = mock.MagicMock()
-    event.xdata = 1
-
-    sample = heatmap.locate_sample_click(event)
-    assert 'CTB4517' == sample
+# def test_locate_sample_click(heatmap):
+#     event = mock.MagicMock()
+#     event.xdata = 1
+#
+#     sample = heatmap.locate_sample_click(event)
+#     assert 'CTB4517' == sample
 
 
 def test_upto_chrom_x(sample_viewer, seg_df):
