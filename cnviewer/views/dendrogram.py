@@ -86,14 +86,23 @@ class DendrogramViewer(ViewerBase):
     def draw_dendrogram(self, ax):
         self.make_dendrogram()
         self._draw_dendrogram(ax)
-        self.clear_labels(ax)
+        self.clear_xlabels(ax)
+        self.draw_ylabels(ax)
 
-    def clear_labels(self, ax):
+    def clear_xlabels(self, ax):
         ax.set_xticks(self.label_midpoints)
         ax.set_xticklabels([''] * len(self.column_labels))
 
-    def draw_labels(self, ax):
+    def draw_xlabels(self, ax):
         ax.set_xticks(self.label_midpoints)
         ax.set_xticklabels(self.column_labels,
                            rotation='vertical',
                            fontsize=10)
+
+    def draw_ylabels(self, ax):
+        max_y = np.max(self.Z['dcoord'])
+        yticks = np.array([0, 0.25, 0.5, 0.75, 1.0]) * max_y
+        ylabels = ["{:.0f}".format(np.round(y)) for y in yticks]
+
+        ax.set_yticks(max_y - yticks)
+        ax.set_yticklabels(ylabels)

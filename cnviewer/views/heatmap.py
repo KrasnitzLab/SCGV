@@ -55,7 +55,7 @@ class HeatmapViewer(DendrogramViewer):
 
         ax_dendro = fig.add_axes([0.1, 0.75, 0.8, 0.2], frame_on=True)
         self.draw_dendrogram(ax_dendro)
-        self.clear_labels(ax_dendro)
+        self.clear_xlabels(ax_dendro)
 
         ax_heat = fig.add_axes(
             [0.1, 0.10, 0.8, 0.65], frame_on=True, sharex=ax_dendro)
