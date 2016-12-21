@@ -3,10 +3,10 @@ Created on Dec 14, 2016
 
 @author: lubo
 '''
-from views.base import ViewerBase
 from scipy.cluster.hierarchy import linkage, dendrogram
 
 import numpy as np
+from views.base import ViewerBase
 
 
 class DendrogramViewer(ViewerBase):
