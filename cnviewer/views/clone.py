@@ -4,21 +4,18 @@ Created on Dec 15, 2016
 @author: lubo
 '''
 import numpy as np
-import pandas as pd
-
-from utils.color_map import ColorMap
+from views.base import BarViewerBase
 
 
-class CloneViewer(object):
+class CloneViewer(BarViewerBase):
+    CLONE_COLUMN = 'clone'
+    SUBCLONE_COLUMN = 'subclone'
 
     def __init__(self, dendrogram, clone_df):
-        self.dendrogram = dendrogram
+        super(CloneViewer, self).__init__(dendrogram)
         self.clone_df = clone_df
         self.clone = None
         self.subclone = None
-        self._extent = None
-        self._cmap = None
-        self._color_counter = 1
 
     def make_clone(self):
         assert self.dendrogram.direct_lookup is not None
@@ -26,34 +23,10 @@ class CloneViewer(object):
         assert np.all(labels == self.dendrogram.column_labels)
 
         clone_column_df = self.clone_df.iloc[self.dendrogram.direct_lookup, :]
-        self.clone = self._build_heatmap_array(clone_column_df['clone'])
-        self.subclone = self._build_heatmap_array(clone_column_df['subclone'])
-
-    def _build_heatmap_array(self, df):
-        unique = df.unique()
-        result = pd.Series(index=df.index)
-        for val in unique:
-            if val == 0:
-                result[df == val] = 0
-            else:
-                result[df == val] = self._color_counter
-                self._color_counter += 1
-
-        return np.array([result.values])
-
-    @property
-    def extent(self):
-        if self._extent is None:
-            self._extent = (
-                0, self.dendrogram.samples * self.dendrogram.interval_length,
-                0, 1)
-        return self._extent
-
-    @property
-    def cmap(self):
-        if self._cmap is None:
-            self._cmap = ColorMap.make_cmap07()
-        return self._cmap
+        self.clone = self._build_heatmap_array(
+            clone_column_df[self.CLONE_COLUMN])
+        self.subclone = self._build_heatmap_array(
+            clone_column_df[self.SUBCLONE_COLUMN])
 
     def draw_clone(self, ax):
         assert self.clone is not None
