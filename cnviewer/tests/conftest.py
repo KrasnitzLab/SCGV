@@ -7,7 +7,7 @@ import pytest
 import os
 from utils.loader import load_df
 from views.heatmap import HeatmapViewer
-from views.samples import SampleViewer
+from views.sample import SampleViewer
 
 
 @pytest.fixture(scope='session')

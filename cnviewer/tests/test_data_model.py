@@ -15,3 +15,9 @@ def test_data_model_create():
 def test_data_model_make():
     model = DataModel('tests/data/cnviewer_data_example_00.zip')
     model.make()
+
+
+# def test_data_model_make_01():
+#     model = DataModel('tests/data/cnviewer_data_example_01.zip')
+#     assert model is not None
+#     # model.make()

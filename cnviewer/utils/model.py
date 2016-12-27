@@ -14,15 +14,13 @@ from utils.loader import DataLoader
 class DataModel(DataLoader):
     CLONE_COLUMN = 'clone'
     SUBCLONE_COLUMN = 'subclone'
-    PLOIDY_COLUMN = 'ploidy'
-    GUIDE_SAMPLES_COLUMN = 'seq.unit.id'
+    PLOIDY_COLUMN = 'gate'
     CHROM_COLUMN = 'chrom'
 
     def __init__(self, zip_filename):
         super(DataModel, self).__init__(zip_filename)
         self.seg_data = self.seg_df.ix[:, 3:].values
         self.bins, self.samples = self.seg_data.shape
-
         self.lmat = None
         self.Z = None
 
