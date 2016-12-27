@@ -42,6 +42,7 @@ class DataModel(DataLoader):
     def make(self):
         self.make_linkage()
         self.make_dendrogram()
+        self.make_pinmat()
         self.make_heatmap()
         self.make_clone()
         self.make_ploidy()
@@ -92,6 +93,23 @@ class DataModel(DataLoader):
         data = np.round(self.seg_data)
         self.heatmap = data[:, self.direct_lookup]
 
+    def make_pinmat(self):
+        assert self.bins is not None
+        assert self.samples is not None
+        assert self.pins_df is not None
+        assert self.pinmat_df is not None
+
+        pins = np.zeros((self.bins, self.samples))
+        negative = self.pins_df[self.pins_df.sign == -1].bin
+        positive = self.pins_df[self.pins_df.sign == 1].bin
+
+        # assert len(negative) + len(positive) == self.bins
+        pins[negative, :] = -1 * self.pinmat_df.ix[negative.index, :].values
+        pins[positive, :] = 1 * self.pinmat_df.ix[positive.index, :].values
+        print(pins)
+        print(self.pinmat_df.ix[negative.index, :].values)
+        self.pins = pins
+
     def make_clone(self):
         assert self.direct_lookup is not None
         labels = self.clone_df.ix[self.direct_lookup, 0].values
@@ -109,8 +127,11 @@ class DataModel(DataLoader):
             return
 
         assert self.direct_lookup is not None
+        print(self.guide_df.head())
         labels = self.guide_df[self.GUIDE_SAMPLES_COLUMN].ix[
             self.direct_lookup].values
+        print(labels)
+        print(self.column_labels)
         assert np.all(labels == self.column_labels)
 
         ploidy_column_df = self.guide_df.iloc[self.direct_lookup, :]

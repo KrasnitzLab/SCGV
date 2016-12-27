@@ -4,7 +4,6 @@ Created on Dec 2, 2016
 @author: lubo
 '''
 import pandas as pd
-import pytest
 
 
 def test_seg_filename_fixture(seg_filename):
@@ -33,9 +32,3 @@ def test_ratio_df(ratio_filename):
     assert 'chrom' in df.columns
     assert 'chrompos' in df.columns
     assert 'abspos' in df.columns
-
-
-@pytest.mark.xfail
-def test_seg_df_data(seg_filename):
-    df = None
-    assert df is not None

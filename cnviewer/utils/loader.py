@@ -58,11 +58,15 @@ class DataLoader(dict):
         self.sample_names = set(self.pinmat_df.columns)
         self.guide_df = self.guide_df[self.guide_df[
             self.GUIDE_SAMPLES_COLUMN].isin(self.sample_names)].copy()
+        self.guide_df.reset_index(inplace=True)
+
         self['guide'] = self.guide_df
 
         assert len(self.sample_names) == len(self.guide_df)
         assert len(self.sample_names) == len(self.clone_df)
         assert len(self.sample_names) == len(self.tree_df) + 1
+        self.tree_df = self.tree_df.ix[:, 0:4].copy()
+        self['tree'] = self.tree_df
 
         seg_columns = list(self.seg_df.columns[:3])
         for c in self.seg_df.columns[3:]:

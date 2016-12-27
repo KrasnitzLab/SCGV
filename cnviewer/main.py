@@ -107,7 +107,7 @@ def main_error_and_multiplier():
 
 
 def main_controller():
-    model = DataModel('tests/data/cnviewer_data_example_00.zip')
+    model = DataModel('tests/data/cnviewer_data_example_01.zip')
     model.make()
 
     fig = plt.figure(0, figsize=(12, 8))
