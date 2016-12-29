@@ -99,6 +99,9 @@ class DataModel(DataLoader):
         assert self.pins_df is not None
         assert self.pinmat_df is not None
 
+        self.pinmat_df = self.pinmat_df.ix[:, self.direct_lookup].copy()
+        assert np.all(list(self.pinmat_df.columns) == self.column_labels)
+
         pins = np.zeros((self.bins, self.samples))
         negative = self.pins_df[self.pins_df.sign == -1].bin
         positive = self.pins_df[self.pins_df.sign == 1].bin
@@ -106,9 +109,18 @@ class DataModel(DataLoader):
         # assert len(negative) + len(positive) == self.bins
         pins[negative, :] = -1 * self.pinmat_df.ix[negative.index, :].values
         pins[positive, :] = 1 * self.pinmat_df.ix[positive.index, :].values
-        print(pins)
-        print(self.pinmat_df.ix[negative.index, :].values)
-        self.pins = pins
+
+        psi = int(self.bins / 600)
+        kernel = np.ones(2 * psi)
+        self.pins = np.apply_along_axis(
+            np.convolve,
+            0,
+            pins,
+            kernel,
+            'same')
+        # self.pins = pins
+        # self.pins = self.pins - self.expected
+        # self.pins = pins
 
     def make_clone(self):
         assert self.direct_lookup is not None
@@ -127,11 +139,8 @@ class DataModel(DataLoader):
             return
 
         assert self.direct_lookup is not None
-        print(self.guide_df.head())
         labels = self.guide_df[self.GUIDE_SAMPLES_COLUMN].ix[
             self.direct_lookup].values
-        print(labels)
-        print(self.column_labels)
         assert np.all(labels == self.column_labels)
 
         ploidy_column_df = self.guide_df.iloc[self.direct_lookup, :]

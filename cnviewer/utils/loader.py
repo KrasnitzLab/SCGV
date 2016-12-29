@@ -34,7 +34,6 @@ class DataLoader(dict):
 
         self.zip_filename = zip_filename
         with zipfile.ZipFile(self.zip_filename, 'r') as zipdata:
-            print(zipdata.namelist())
             filenames = self._organize_filenames(zipdata.namelist())
             assert set(filenames.keys()) == self.TYPES
 
@@ -51,7 +50,6 @@ class DataLoader(dict):
         self.guide_df = self['guide']
         self.pinmat_df = self['pinmat']
         self.pins_df = self['pins']
-
         self._filter_samples()
 
     def _filter_samples(self):
