@@ -64,7 +64,7 @@ class DataModel(DataLoader):
         if self.Z is not None:
             return
         self.Z = dendrogram(
-            self.lmat, ax=None, no_plot=True, color_threshold=0)
+            self.lmat, ax=None, no_plot=True, color_threshold=99999999)
         self.icoord = np.array(self.Z['icoord'])
         self.dcoord = np.array(self.Z['dcoord'])
         self.min_x = np.min(self.icoord)
