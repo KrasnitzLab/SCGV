@@ -16,6 +16,7 @@ class DataModel(DataLoader):
     SUBCLONE_COLUMN = 'subclone'
     GATE_COLUMN = 'gate'
     CHROM_COLUMN = 'chrom'
+    SECTOR_COLUMN = 'sector'
 
     def __init__(self, zip_filename):
         super(DataModel, self).__init__(zip_filename)
@@ -46,6 +47,7 @@ class DataModel(DataLoader):
         self.make_heatmap()
         self.make_clone()
         self.make_gate()
+        self.make_sector()
         self.make_multiplier()
         self.make_error()
 
@@ -192,6 +194,14 @@ class DataModel(DataLoader):
             gate_column_df[self.GATE_COLUMN].values
         ))
 
+    def make_sector(self):
+        if(self.SECTOR_COLUMN not in self.guide_df.columns):
+            self.sector = None
+        sector_df = self.guide_df[self.SECTOR_COLUMN]
+        self._reset_heatmap_color()
+        sector = self._make_heatmap_array(sector_df)
+        self.sector = sector[self.direct_lookup]
+
     def make_multiplier(self):
         data = self.seg_df.iloc[:self.chrom_x_index, 3:]
         multiplier = data.mean(axis=1).ix[self.direct_lookup]
@@ -202,8 +212,6 @@ class DataModel(DataLoader):
         df_r = self.ratio_df.iloc[:self.chrom_x_index, 3:].values
         self.error = np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=1))[
             self.direct_lookup]
-        print(self.error)
-        print(np.min(self.error), np.max(self.error))
 
     @property
     def bar_extent(self):

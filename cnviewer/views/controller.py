@@ -12,6 +12,7 @@ from views.clone import CloneViewer
 from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
+from views.sector import SectorViewer
 
 
 class ControllerBase(object):
@@ -109,10 +110,8 @@ class MainController(ControllerBase):
         ax_sector = fig.add_axes(
             [0.1, 0.175, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
         # draw sector bar
-        ax_sector.set_xticks([])
-        ax_sector.set_xticklabels([])
-        ax_sector.set_yticks([0.5])
-        ax_sector.set_yticklabels(["Sector"])
+        sector_viewer = SectorViewer(self.model)
+        sector_viewer.draw_sector(ax_sector)
 
         ax_gate = fig.add_axes(
             [0.1, 0.150, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
