@@ -18,7 +18,10 @@ class SampleViewer(ViewerBase):
         return self.model.seg_df['abspos'][chrom_lines]
 
     def calc_ploidy(self, sample_name):
-        return self.model.seg_df[sample_name].mean()
+        return self.model\
+            .seg_df[sample_name]\
+            .iloc[:self.model.chrom_x_index]\
+            .mean()
 
     def upto_chrom_x(self, data):
         assert len(data) == len(self.model.seg_df)

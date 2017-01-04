@@ -204,13 +204,13 @@ class DataModel(DataLoader):
 
     def make_multiplier(self):
         data = self.seg_df.iloc[:self.chrom_x_index, 3:]
-        multiplier = data.mean(axis=1).ix[self.direct_lookup]
+        multiplier = data.mean().ix[self.direct_lookup]
         self.multiplier = multiplier.values
 
     def make_error(self):
         df_s = self.seg_df.iloc[:self.chrom_x_index, 3:].values
         df_r = self.ratio_df.iloc[:self.chrom_x_index, 3:].values
-        self.error = np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=1))[
+        self.error = np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=0))[
             self.direct_lookup]
 
     @property

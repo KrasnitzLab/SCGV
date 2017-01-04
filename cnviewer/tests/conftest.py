@@ -8,6 +8,7 @@ import os
 from utils.loader import load_df
 from views.heatmap import HeatmapViewer
 from views.sample import SampleViewer
+from utils.model import DataModel
 
 
 @pytest.fixture(scope='session')
@@ -51,3 +52,10 @@ def sample_viewer(request, seg_df, ratio_df):
     viewer = SampleViewer(seg_df, ratio_df)
 
     return viewer
+
+
+@pytest.fixture(scope='session')
+def model_fixture(request):
+    model = DataModel('tests/data/cnviewer_data_example_01.zip')
+    model.make()
+    return model
