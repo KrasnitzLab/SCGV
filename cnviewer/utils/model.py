@@ -198,7 +198,8 @@ class DataModel(DataLoader):
         df_r = self.ratio_df.iloc[:self.chrom_x_index, 3:].values
         self.error = np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=1))[
             self.direct_lookup]
-        print(np.unique(self.error))
+        print(self.error)
+        print(np.min(self.error), np.max(self.error))
 
     @property
     def bar_extent(self):

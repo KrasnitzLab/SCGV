@@ -104,7 +104,7 @@ class MainController(ControllerBase):
             [0.1, 0.20, 0.8, 0.55], frame_on=True, sharex=ax_dendro)
         heatmap_viewer = HeatmapViewer(self.model)
         heatmap_viewer.draw_heatmap(ax_heat)
-        heatmap_viewer.draw_legend()
+        # heatmap_viewer.draw_legend()
 
         ax_sector = fig.add_axes(
             [0.1, 0.175, 0.8, 0.025], frame_on=True, sharex=ax_dendro)

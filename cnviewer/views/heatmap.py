@@ -4,7 +4,7 @@ Created on Dec 14, 2016
 @author: lubo
 '''
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+# import matplotlib.patches as patches
 
 from utils.color_map import ColorMap
 from views.base import ViewerBase
@@ -17,13 +17,14 @@ class HeatmapViewer(ViewerBase):
         self.cmap = ColorMap.make_cmap02()
         # self.cmap = ColorMap.make_cmap08()
 
-    def draw_legend(self):
-        copynum_patches = []
-        for color in self.cmap.colors.colors:
-            copynum_patches.append(
-                patches.Rectangle((0, 0), 0, 0, facecolor=color))
-        plt.figlegend(copynum_patches, self.COPYNUM_LABELS, "upper right",
-                      title="Copy #", prop={'size': 10})
+    #     def draw_legend(self):
+    #         copynum_patches = []
+    #         for color in self.cmap.colors.colors:
+    #             copynum_patches.append(
+    #                 patches.Rectangle((0, 0), 0, 0, facecolor=color))
+    #         plt.figlegend(
+    #             copynum_patches, self.COPYNUM_LABELS, "upper right",
+    #             title="Copy #", prop={'size': 10})
 
     def draw_heatmap(self, ax):
         assert self.model.heatmap is not None
@@ -32,8 +33,10 @@ class HeatmapViewer(ViewerBase):
         ax.imshow(self.model.seg_data,
                   aspect='auto',
                   interpolation='nearest',
-                  cmap=self.cmap.colors,
-                  norm=self.cmap.norm,
+                  cmap=plt.get_cmap('seismic'),  # self.cmap.colors,
+                  vmin=self.NORMALIZE_MIN,
+                  vmax=self.NORMALIZE_MAX,
+                  # norm=self.cmap.norm,
                   extent=self.model.heat_extent)
         ax.set_xticks(self.model.label_midpoints)
         ax.set_xticklabels(self.model.column_labels,
