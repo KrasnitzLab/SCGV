@@ -76,17 +76,20 @@ class DataModel(DataLoader):
         self.label_midpoints = (
             np.arange(self.samples) + 0.5) * self.interval_length
 
-    @staticmethod
-    def _make_heatmap_array(df):
-        color_counter = 1
+    @classmethod
+    def _reset_heatmap_color(cls):
+        cls.heatmap_color_counter = 1
+
+    @classmethod
+    def _make_heatmap_array(cls, df):
         unique = df.unique()
         result = pd.Series(index=df.index)
         for val in unique:
             if val == 0:
                 result[df == val] = 0
             else:
-                result[df == val] = color_counter
-                color_counter += 1
+                result[df == val] = cls.heatmap_color_counter
+                cls.heatmap_color_counter += 1
 
         return result.values
 
@@ -129,6 +132,7 @@ class DataModel(DataLoader):
         assert np.all(labels == self.column_labels)
 
         clone_column_df = self.clone_df.iloc[self.direct_lookup, :]
+        self._reset_heatmap_color()
         self.clone = self._make_heatmap_array(
             clone_column_df[self.CLONE_COLUMN])
         self.subclone = self._make_heatmap_array(
