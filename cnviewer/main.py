@@ -11,7 +11,7 @@ from views.sample import SampleViewer
 from views.dendrogram import DendrogramViewer
 from views.controller import MainController
 from views.clone import CloneViewer
-from views.ploidy import PloidyViewer
+from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 from utils.model import DataModel
@@ -77,12 +77,12 @@ def main_ploidy():
     model = DataModel('tests/data/cnviewer_data_example_00.zip')
     model.make()
 
-    ploidy = PloidyViewer(model)
+    gate = GateViewer(model)
 
     fig = plt.figure(0, figsize=(12, 8))
     ax_ploidy = fig.add_axes(
         [0.1, 0.7625, 0.8, 0.0125], frame_on=True)
-    ploidy.draw_ploidy(ax_ploidy)
+    gate.draw_ploidy(ax_ploidy)
 
     plt.show()
 

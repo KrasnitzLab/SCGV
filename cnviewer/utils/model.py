@@ -11,10 +11,59 @@ import pandas as pd
 from utils.loader import DataLoader
 
 
+def gate_compare(g1, g2):
+    assert len(g1) >= 2
+    assert len(g2) >= 2
+
+    if g1[0] == '>' or g1[0] == '<':
+        sg1 = g1[1:].strip()
+        sign1 = sg1[0]
+    else:
+        sg1 = g1
+        sign1 = None
+
+    if g2[0] == '>' or g2[0] == '<':
+        sg2 = g2[1:].strip()
+        sign2 = g2[0]
+    else:
+        sg2 = g2
+        sign2 = None
+    assert len(sg1) >= 2
+    assert len(sg2) >= 2
+
+    if sg1[:2] == sg2[:2] and (sign1 or sign2):
+        if sign1 and sign2:
+            if sign1 > sign2:
+                return 1
+            elif sign1 < sign2:
+                return -1
+            else:
+                return 0
+        else:
+            if sign1:
+                if sign1 == '<':
+                    return -1
+                elif sign1 == '>':
+                    return 1
+                assert False
+            elif sign2:
+                if sign2 == '<':
+                    return 1
+                elif sign2 == '>':
+                    return -1
+                assert False
+    if sg1 > sg2:
+        return 1
+    elif sg1 < sg2:
+        return -1
+    else:
+        return 0
+
+
 class DataModel(DataLoader):
     CLONE_COLUMN = 'clone'
     SUBCLONE_COLUMN = 'subclone'
-    PLOIDY_COLUMN = 'gate'
+    GATE_COLUMN = 'gate'
     CHROM_COLUMN = 'chrom'
 
     def __init__(self, zip_filename):
@@ -45,7 +94,7 @@ class DataModel(DataLoader):
         self.make_pinmat()
         self.make_heatmap()
         self.make_clone()
-        self.make_ploidy()
+        self.make_gate()
         self.make_multiplier()
         self.make_error()
 
@@ -134,9 +183,9 @@ class DataModel(DataLoader):
         self.subclone = self._make_heatmap_array(
             clone_column_df[self.SUBCLONE_COLUMN])
 
-    def make_ploidy(self):
-        if self.PLOIDY_COLUMN not in self.guide_df.columns:
-            self.ploidy = None
+    def make_gate(self):
+        if self.GATE_COLUMN not in self.guide_df.columns:
+            self.gate = None
             return
 
         assert self.direct_lookup is not None
@@ -144,9 +193,14 @@ class DataModel(DataLoader):
             self.direct_lookup].values
         assert np.all(labels == self.column_labels)
 
-        ploidy_column_df = self.guide_df.iloc[self.direct_lookup, :]
-        self.ploidy = self._make_heatmap_array(
-            ploidy_column_df[self.PLOIDY_COLUMN])
+        gate_column_df = self.guide_df.iloc[self.direct_lookup, :]
+        gate = sorted(
+            gate_column_df[self.GATE_COLUMN].unique(), cmp=gate_compare)
+        self.gate = np.array(map(
+            lambda g: gate.index(g),
+            gate_column_df[self.GATE_COLUMN].values
+        )) - len(gate) / 2
+        print(type(self.gate))
 
     def make_multiplier(self):
         data = self.seg_df.iloc[:self.chrom_x_index, 3:]

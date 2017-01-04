@@ -7,7 +7,7 @@ from views.sample import SampleViewer
 from views.heatmap import HeatmapViewer
 from views.dendrogram import DendrogramViewer
 from views.clone import CloneViewer
-from views.ploidy import PloidyViewer
+from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 
@@ -112,10 +112,10 @@ class MainController(ControllerBase):
         ax_sector.set_yticks([0.5])
         ax_sector.set_yticklabels(["Sector"])
 
-        ax_ploidy = fig.add_axes(
+        ax_gate = fig.add_axes(
             [0.1, 0.150, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
-        ploidy_viewer = PloidyViewer(self.model)
-        ploidy_viewer.draw_ploidy(ax_ploidy)
+        gate_viewer = GateViewer(self.model)
+        gate_viewer.draw_ploidy(ax_gate)
 
         ax_multiplier = fig.add_axes(
             [0.1, 0.125, 0.8, 0.025], frame_on=True, sharex=ax_dendro)

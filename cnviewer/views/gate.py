@@ -4,25 +4,24 @@ Created on Dec 21, 2016
 @author: lubo
 '''
 from views.base import ViewerBase
-from utils.color_map import ColorMap
+import matplotlib.pyplot as plt
 
 
-class PloidyViewer(ViewerBase):
+class GateViewer(ViewerBase):
 
     def __init__(self, model):
-        super(PloidyViewer, self).__init__(model)
-        self.cmap = ColorMap.make_cmap07()
+        super(GateViewer, self).__init__(model)
+        self.cmap = plt.get_cmap('coolwarm')
 
     def draw_ploidy(self, ax):
-        assert self.model.ploidy is not None
+        assert self.model.gate is not None
         ax.imshow(
-            [self.model.ploidy],
+            [self.model.gate],
             aspect='auto',
             interpolation='nearest',
-            cmap=self.cmap.colors,
-            norm=self.cmap.norm,
+            cmap=self.cmap,
             extent=self.model.bar_extent)
         ax.set_xticks([])
         ax.set_xticklabels([])
         ax.set_yticks([0.5])
-        ax.set_yticklabels(["Ploidy"])
+        ax.set_yticklabels(["Gate"])
