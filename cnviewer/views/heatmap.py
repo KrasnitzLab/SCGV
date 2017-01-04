@@ -15,7 +15,7 @@ class HeatmapViewer(ViewerBase):
     def __init__(self, model):
         super(HeatmapViewer, self).__init__(model)
         self.cmap = ColorMap.make_cmap02()
-        self.cmap = ColorMap.make_cmap08()
+        # self.cmap = ColorMap.make_cmap08()
 
     def draw_legend(self):
         copynum_patches = []
@@ -29,7 +29,7 @@ class HeatmapViewer(ViewerBase):
         assert self.model.heatmap is not None
 
         # ax.imshow(self.model.heatmap,
-        ax.imshow(self.model.pins,
+        ax.imshow(self.model.seg_data,
                   aspect='auto',
                   interpolation='nearest',
                   cmap=self.cmap.colors,
