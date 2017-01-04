@@ -3,6 +3,8 @@ Created on Dec 14, 2016
 
 @author: lubo
 '''
+import matplotlib.pyplot as plt
+
 from views.sample import SampleViewer
 from views.heatmap import HeatmapViewer
 from views.dendrogram import DendrogramViewer
@@ -90,17 +92,17 @@ class MainController(ControllerBase):
         dendro_viewer = DendrogramViewer(self.model)
         dendro_viewer.draw_dendrogram(ax_dendro)
 
-        clone_viewer = CloneViewer(self.model)
         ax_clone = fig.add_axes(
             [0.1, 0.7625, 0.8, 0.0125], frame_on=True, sharex=ax_dendro)
+        clone_viewer = CloneViewer(self.model)
         clone_viewer.draw_clone(ax_clone)
         ax_subclone = fig.add_axes(
             [0.1, 0.75, 0.8, 0.0125], frame_on=True, sharex=ax_dendro)
         clone_viewer.draw_subclone(ax_subclone)
 
-        heatmap_viewer = HeatmapViewer(self.model)
         ax_heat = fig.add_axes(
             [0.1, 0.20, 0.8, 0.55], frame_on=True, sharex=ax_dendro)
+        heatmap_viewer = HeatmapViewer(self.model)
         heatmap_viewer.draw_heatmap(ax_heat)
         heatmap_viewer.draw_legend()
 
@@ -123,11 +125,20 @@ class MainController(ControllerBase):
         multiplier_viewer.draw_multiplier(ax_multiplier)
 
         ax_error = fig.add_axes(
-            [0.1, 0.10, 0.8, 0.025], frame_on=True)  # , sharex=ax_dendro)
+            [0.1, 0.10, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
-
         error_viewer.draw_xlabels(ax_error)
+
+        plt.setp(ax_dendro.get_xticklabels(), visible=False)
+        plt.setp(ax_clone.get_xticklabels(), visible=False)
+        plt.setp(ax_clone.get_xticklines(), visible=False)
+        plt.setp(ax_subclone.get_xticklabels(), visible=False)
+        plt.setp(ax_subclone.get_xticklines(), visible=False)
+        plt.setp(ax_heat.get_xticklabels(), visible=False)
+        plt.setp(ax_sector.get_xticklabels(), visible=False)
+        plt.setp(ax_gate.get_xticklabels(), visible=False)
+        plt.setp(ax_multiplier.get_xticklabels(), visible=False)
 
         self.sample_viewer = SampleViewer(self.model)
         self.event_loop_connect()
