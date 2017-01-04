@@ -9,6 +9,8 @@ from views.base import ViewerBase
 
 
 class ErrorViewer(ViewerBase):
+    NORMALIZE_ERROR_MIN = 0
+    NORMALIZE_ERROR_MAX = 10
 
     def __init__(self, model):
         super(ErrorViewer, self).__init__(model)
@@ -22,6 +24,8 @@ class ErrorViewer(ViewerBase):
             interpolation='nearest',
             # cmap=cm.coolwarm,  # @UndefinedVariable
             cmap=plt.get_cmap('gray'),
+            vmin=self.NORMALIZE_ERROR_MIN,
+            vmax=self.NORMALIZE_ERROR_MAX,
             extent=self.model.bar_extent)
         ax.set_xticks([])
         ax.set_xticklabels([])

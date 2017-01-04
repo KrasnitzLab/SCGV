@@ -11,55 +11,6 @@ import pandas as pd
 from utils.loader import DataLoader
 
 
-def gate_compare(g1, g2):
-    assert len(g1) >= 2
-    assert len(g2) >= 2
-
-    if g1[0] == '>' or g1[0] == '<':
-        sg1 = g1[1:].strip()
-        sign1 = sg1[0]
-    else:
-        sg1 = g1
-        sign1 = None
-
-    if g2[0] == '>' or g2[0] == '<':
-        sg2 = g2[1:].strip()
-        sign2 = g2[0]
-    else:
-        sg2 = g2
-        sign2 = None
-    assert len(sg1) >= 2
-    assert len(sg2) >= 2
-
-    if sg1[:2] == sg2[:2] and (sign1 or sign2):
-        if sign1 and sign2:
-            if sign1 > sign2:
-                return 1
-            elif sign1 < sign2:
-                return -1
-            else:
-                return 0
-        else:
-            if sign1:
-                if sign1 == '<':
-                    return -1
-                elif sign1 == '>':
-                    return 1
-                assert False
-            elif sign2:
-                if sign2 == '<':
-                    return 1
-                elif sign2 == '>':
-                    return -1
-                assert False
-    if sg1 > sg2:
-        return 1
-    elif sg1 < sg2:
-        return -1
-    else:
-        return 0
-
-
 class DataModel(DataLoader):
     CLONE_COLUMN = 'clone'
     SUBCLONE_COLUMN = 'subclone'
@@ -247,6 +198,7 @@ class DataModel(DataLoader):
         df_r = self.ratio_df.iloc[:self.chrom_x_index, 3:].values
         self.error = np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=1))[
             self.direct_lookup]
+        print(np.unique(self.error))
 
     @property
     def bar_extent(self):
@@ -255,3 +207,52 @@ class DataModel(DataLoader):
                 0, self.samples * self.interval_length,
                 0, 1)
         return self._bar_extent
+
+
+def gate_compare(g1, g2):
+    assert len(g1) >= 2
+    assert len(g2) >= 2
+
+    if g1[0] == '>' or g1[0] == '<':
+        sg1 = g1[1:].strip()
+        sign1 = sg1[0]
+    else:
+        sg1 = g1
+        sign1 = None
+
+    if g2[0] == '>' or g2[0] == '<':
+        sg2 = g2[1:].strip()
+        sign2 = g2[0]
+    else:
+        sg2 = g2
+        sign2 = None
+    assert len(sg1) >= 2
+    assert len(sg2) >= 2
+
+    if sg1[:2] == sg2[:2] and (sign1 or sign2):
+        if sign1 and sign2:
+            if sign1 > sign2:
+                return 1
+            elif sign1 < sign2:
+                return -1
+            else:
+                return 0
+        else:
+            if sign1:
+                if sign1 == '<':
+                    return -1
+                elif sign1 == '>':
+                    return 1
+                assert False
+            elif sign2:
+                if sign2 == '<':
+                    return 1
+                elif sign2 == '>':
+                    return -1
+                assert False
+    if sg1 > sg2:
+        return 1
+    elif sg1 < sg2:
+        return -1
+    else:
+        return 0
