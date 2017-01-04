@@ -21,8 +21,9 @@ class MultiplierViewer(ViewerBase):
             aspect='auto',
             interpolation='nearest',
             # cmap=cm.coolwarm,  # @UndefinedVariable
-            cmap=plt.get_cmap('gray'),
-
+            cmap=plt.get_cmap('seismic'),
+            vmin=self.NORMALIZE_MIN,
+            vmax=self.NORMALIZE_MAX,
             extent=self.model.bar_extent)
         ax.set_xticks([])
         ax.set_xticklabels([])

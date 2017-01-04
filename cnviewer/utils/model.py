@@ -183,6 +183,42 @@ class DataModel(DataLoader):
         self.subclone = self._make_heatmap_array(
             clone_column_df[self.SUBCLONE_COLUMN])
 
+    GATE_MAPPING = {
+        'Diploid': 2,
+        'Hypodiploid': 1.8,
+        'Haploid': 1,
+        '4C': 4,
+        '2C': 2,
+        '2C Rt': 2.01,
+        'Aneuploid': 1.99,
+        '2C EpCAM Neg': 1.95,
+        '>2C': 2.25,
+        '<2C EpCAM Pos': 1.5,
+        '>2C-4C EpCAM Pos': 2.5,
+        '4C EpCAM Pos': 4,
+        '2C Rt EpCAM Pos': 2,
+        '2C Lt EpCAM Pos': 2,
+        '>4C EpCAM Pos': 4,
+        '2C EpCAM Pos': 2,
+        '>2C EpCAM Pos': 2.5,
+        '2C Lt': 2,
+        '<2C': 1.5,
+        '>2C-4C': 3, '>2C-4C Lt': 3,
+        '>2C-4C Rt': 3,
+        '>4C': 4,
+        'Near 2C': 2,
+        'Bulk Nuclei': np.nan,
+        'Single Nuclei': np.nan,
+        '10000 nuclei': np.nan,
+        '100 nuclei': np.nan,
+        'A1': np.nan,
+        'A2': np.nan,
+        'Aneuploid': np.nan,
+        'Bulk Tissue': np.nan,
+        'Blood': np.nan,
+        'Micronuc': np.nan
+    }
+
     def make_gate(self):
         if self.GATE_COLUMN not in self.guide_df.columns:
             self.gate = None
@@ -194,18 +230,17 @@ class DataModel(DataLoader):
         assert np.all(labels == self.column_labels)
 
         gate_column_df = self.guide_df.iloc[self.direct_lookup, :]
-        gate = sorted(
-            gate_column_df[self.GATE_COLUMN].unique(), cmp=gate_compare)
+#         gate = sorted(
+#             gate_column_df[self.GATE_COLUMN].unique(), cmp=gate_compare)
         self.gate = np.array(map(
-            lambda g: gate.index(g),
+            lambda g: self.GATE_MAPPING.get(g, 2),
             gate_column_df[self.GATE_COLUMN].values
-        )) - len(gate) / 2
-        print(type(self.gate))
+        ))
 
     def make_multiplier(self):
         data = self.seg_df.iloc[:self.chrom_x_index, 3:]
-        self.multiplier = data.mean(axis=1).ix[
-            self.direct_lookup].values
+        multiplier = data.mean(axis=1).ix[self.direct_lookup]
+        self.multiplier = multiplier.values
 
     def make_error(self):
         df_s = self.seg_df.iloc[:self.chrom_x_index, 3:].values

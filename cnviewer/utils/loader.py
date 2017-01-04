@@ -48,6 +48,7 @@ class DataLoader(dict):
         self.clone_df = self['clone']
         self.tree_df = self['tree']
         self.guide_df = self['guide']
+        # print(self.guide_df['gate'].unique())
         self.pinmat_df = self['pinmat']
         self.pins_df = self['pins']
         self._filter_samples()

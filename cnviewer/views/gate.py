@@ -11,7 +11,7 @@ class GateViewer(ViewerBase):
 
     def __init__(self, model):
         super(GateViewer, self).__init__(model)
-        self.cmap = plt.get_cmap('coolwarm')
+        self.cmap = plt.get_cmap('seismic')
 
     def draw_ploidy(self, ax):
         assert self.model.gate is not None
@@ -20,6 +20,8 @@ class GateViewer(ViewerBase):
             aspect='auto',
             interpolation='nearest',
             cmap=self.cmap,
+            vmin=self.NORMALIZE_MIN,
+            vmax=self.NORMALIZE_MAX,
             extent=self.model.bar_extent)
         ax.set_xticks([])
         ax.set_xticklabels([])
