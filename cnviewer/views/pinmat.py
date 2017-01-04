@@ -1,5 +1,5 @@
 '''
-Created on Dec 14, 2016
+Created on Jan 4, 2017
 
 @author: lubo
 '''
@@ -10,21 +10,23 @@ import matplotlib.pyplot as plt
 from views.base import ViewerBase
 
 
-class HeatmapViewer(ViewerBase):
+class PinmatViewer(ViewerBase):
+
+    NORMALIZE_PINS_MIN = -2
+    NORMALIZE_PINS_MAX = 2
 
     def __init__(self, model):
-        super(HeatmapViewer, self).__init__(model)
+        super(PinmatViewer, self).__init__(model)
 
     def draw_heatmap(self, ax):
         assert self.model.heatmap is not None
 
-        ax.imshow(self.model.heatmap,
+        ax.imshow(self.model.pins,
                   aspect='auto',
                   interpolation='nearest',
                   cmap=plt.get_cmap('seismic'),  # self.cmap.colors,
-                  vmin=self.NORMALIZE_MIN,
-                  vmax=self.NORMALIZE_MAX,
-                  # norm=self.cmap.norm,
+                  vmin=self.NORMALIZE_PINS_MIN,
+                  vmax=self.NORMALIZE_PINS_MAX,
                   extent=self.model.heat_extent)
         ax.set_xticks(self.model.label_midpoints)
         ax.set_xticklabels(self.model.column_labels,

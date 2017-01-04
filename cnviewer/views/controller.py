@@ -13,6 +13,7 @@ from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 from views.sector import SectorViewer
+from views.pinmat import PinmatViewer
 
 
 class ControllerBase(object):
@@ -85,7 +86,7 @@ class MainController(ControllerBase):
         print("xloc: {}; sample name: {}".format(xloc, sample_name))
         return sample_name
 
-    def build_main(self, fig):
+    def build_main(self, fig, pinmat=False):
         assert self.fig is None
         self.fig = fig
 
@@ -103,9 +104,13 @@ class MainController(ControllerBase):
 
         ax_heat = fig.add_axes(
             [0.1, 0.20, 0.8, 0.55], frame_on=True, sharex=ax_dendro)
-        heatmap_viewer = HeatmapViewer(self.model)
-        heatmap_viewer.draw_heatmap(ax_heat)
+        if not pinmat:
+            heatmap_viewer = HeatmapViewer(self.model)
+            heatmap_viewer.draw_heatmap(ax_heat)
         # heatmap_viewer.draw_legend()
+        else:
+            pinmat_viewer = PinmatViewer(self.model)
+            pinmat_viewer.draw_heatmap(ax_heat)
 
         ax_sector = fig.add_axes(
             [0.1, 0.175, 0.8, 0.025], frame_on=True, sharex=ax_dendro)

@@ -110,10 +110,15 @@ def main_controller():
     model = DataModel('tests/data/cnviewer_data_example_01.zip')
     model.make()
 
-    fig = plt.figure(0, figsize=(12, 8))
+    mfig = plt.figure(0, figsize=(12, 8))
+    mfig.suptitle("seg", fontsize=14)
+    main = MainController(model)
+    main.build_main(mfig)
 
-    controller = MainController(model)
-    controller.build_main(fig)
+    pfig = plt.figure(1, figsize=(12, 8))
+    pfig.suptitle("pinmat", fontsize=14)
+    pinmat = MainController(model)
+    pinmat.build_main(pfig, pinmat=True)
 
     plt.show()
 
