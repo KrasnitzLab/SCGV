@@ -29,10 +29,7 @@ class HeatmapViewer(ViewerBase):
                   vmax=self.NORMALIZE_MAX,
                   # norm=self.cmap.norm,
                   extent=self.model.heat_extent)
-        ax.set_xticks(self.model.label_midpoints)
-        ax.set_xticklabels(self.model.column_labels,
-                           rotation='vertical',
-                           fontsize=10)
+
         chrom_lines = self.calc_chrom_lines_pos(self.model.seg_df)
         for chrom_line in chrom_lines:
             plt.axhline(y=chrom_line, color="#000000", linewidth=1)

@@ -15,6 +15,7 @@ from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 from utils.model import DataModel
+from utils.sector_model import SectorDataModel
 
 
 def main_heatmap():
@@ -118,7 +119,14 @@ def main_controller():
     pfig = plt.figure(1, figsize=(12, 8))
     pfig.suptitle("pinmat", fontsize=14)
     pinmat = MainController(model)
-    pinmat.build_main(pfig, pinmat=True)
+    pinmat.build_pinmat(pfig)
+
+    sfig = plt.figure(2, figsize=(12, 8))
+    sfig.suptitle("sector", fontsize=14)
+    sector_model = SectorDataModel(model)
+    sector_model.make()
+    sector = MainController(sector_model)
+    sector.build_sector(sfig)
 
     plt.show()
 

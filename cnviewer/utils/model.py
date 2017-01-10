@@ -43,13 +43,14 @@ class DataModel(DataLoader):
     def make(self):
         self.make_linkage()
         self.make_dendrogram()
-        self.make_pinmat()
-        self.make_heatmap()
         self.make_clone()
-        self.make_gate()
-        self.make_sector()
-        self.make_multiplier()
-        self.make_error()
+
+        self.pins = self.make_pinmat(ordering=self.direct_lookup)
+        self.heatmap = self.make_heatmap(ordering=self.direct_lookup)
+        self.gate = self.make_gate(ordering=self.direct_lookup)
+        self.sector = self.make_sector(ordering=self.direct_lookup)
+        self.multiplier = self.make_multiplier(ordering=self.direct_lookup)
+        self.error = self.make_error(ordering=self.direct_lookup)
 
     def make_linkage(self):
         if self.lmat is not None:
@@ -71,8 +72,11 @@ class DataModel(DataLoader):
         self.dcoord = np.array(self.Z['dcoord'])
         self.min_x = np.min(self.icoord)
         self.max_x = np.max(self.icoord)
+        print(self.min_x, self.max_x)
         self.interval_length = (self.max_x - self.min_x) / (self.samples - 1)
         self.direct_lookup = self.Z['leaves']
+        print(self.direct_lookup)
+
         self.column_labels = \
             np.array(self.seg_df.columns[3:])[self.direct_lookup]
         self.label_midpoints = (
@@ -95,17 +99,17 @@ class DataModel(DataLoader):
 
         return result.values
 
-    def make_heatmap(self):
+    def make_heatmap(self, ordering):
         data = np.round(self.seg_data)
-        self.heatmap = data[:, self.direct_lookup]
+        return data[:, ordering]
 
-    def make_pinmat(self):
+    def make_pinmat(self, ordering):
         assert self.bins is not None
         assert self.samples is not None
         assert self.pins_df is not None
         assert self.pinmat_df is not None
 
-        self.pinmat_df = self.pinmat_df.ix[:, self.direct_lookup].copy()
+        self.pinmat_df = self.pinmat_df.ix[:, ordering].copy()
         assert np.all(list(self.pinmat_df.columns) == self.column_labels)
 
         pins = np.zeros((self.bins, self.samples))
@@ -118,7 +122,7 @@ class DataModel(DataLoader):
 
         psi = int(self.bins / 600)
         kernel = np.ones(2 * psi)
-        self.pins = np.apply_along_axis(
+        return np.apply_along_axis(
             np.convolve,
             0,
             pins,
@@ -183,42 +187,39 @@ class DataModel(DataLoader):
         '>2C EpCAM Pos': 2.5,
     }
 
-    def make_gate(self):
+    def make_gate(self, ordering):
         if self.GATE_COLUMN not in self.guide_df.columns:
             self.gate = None
             return
 
-        assert self.direct_lookup is not None
-        labels = self.guide_df[self.GUIDE_SAMPLES_COLUMN].ix[
-            self.direct_lookup].values
-        assert np.all(labels == self.column_labels)
+        # assert self.direct_lookup is not None
+        # labels = self.guide_df[self.GUIDE_SAMPLES_COLUMN].ix[
+        #     ordering].values
+        # assert np.all(labels == self.column_labels)
 
-        gate_column_df = self.guide_df.iloc[self.direct_lookup, :]
-#         gate = sorted(
-#             gate_column_df[self.GATE_COLUMN].unique(), cmp=gate_compare)
-        self.gate = np.array(map(
+        gate_column_df = self.guide_df.iloc[ordering, :]
+        return np.array(map(
             lambda g: self.GATE_MAPPING.get(g, 2),
             gate_column_df[self.GATE_COLUMN].values
         ))
 
-    def make_sector(self):
+    def make_sector(self, ordering):
         if(self.SECTOR_COLUMN not in self.guide_df.columns):
             self.sector = None
         sector_df = self.guide_df[self.SECTOR_COLUMN]
         self._reset_heatmap_color()
         sector = self._make_heatmap_array(sector_df)
-        self.sector = sector[self.direct_lookup]
+        return sector[ordering]
 
-    def make_multiplier(self):
+    def make_multiplier(self, ordering):
         data = self.seg_df.iloc[:self.chrom_x_index, 3:]
-        multiplier = data.mean().ix[self.direct_lookup]
-        self.multiplier = multiplier.values
+        multiplier = data.mean().ix[ordering]
+        return multiplier.values
 
-    def make_error(self):
+    def make_error(self, ordering):
         df_s = self.seg_df.iloc[:self.chrom_x_index, 3:].values
         df_r = self.ratio_df.iloc[:self.chrom_x_index, 3:].values
-        self.error = np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=0))[
-            self.direct_lookup]
+        return np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=0))[ordering]
 
     @property
     def bar_extent(self):
