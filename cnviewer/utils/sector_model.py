@@ -14,6 +14,11 @@ class SectorDataModel(object):
 
     def make(self):
         ordering = np.array(range(self.model.samples))
+
+        self.column_labels = np.array(self.seg_df.columns[3:])
+        self.label_midpoints = (
+            np.arange(self.samples) + 0.5) * self.interval_length
+
         self.heatmap = self.model.make_heatmap(ordering=ordering)
         self.gate = self.model.make_gate(ordering=ordering)
         self.sector = self.model.make_sector(ordering=ordering)

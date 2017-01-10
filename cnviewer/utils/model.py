@@ -42,15 +42,16 @@ class DataModel(DataLoader):
 
     def make(self):
         self.make_linkage()
-        self.make_dendrogram()
-        self.make_clone()
+        ordering = self.make_dendrogram()
 
-        self.pins = self.make_pinmat(ordering=self.direct_lookup)
-        self.heatmap = self.make_heatmap(ordering=self.direct_lookup)
-        self.gate = self.make_gate(ordering=self.direct_lookup)
-        self.sector = self.make_sector(ordering=self.direct_lookup)
-        self.multiplier = self.make_multiplier(ordering=self.direct_lookup)
-        self.error = self.make_error(ordering=self.direct_lookup)
+        self.clone, self.subclone = self.make_clone(ordering=ordering)
+
+        self.pins = self.make_pinmat(ordering=ordering)
+        self.heatmap = self.make_heatmap(ordering=ordering)
+        self.gate = self.make_gate(ordering=ordering)
+        self.sector = self.make_sector(ordering=ordering)
+        self.multiplier = self.make_multiplier(ordering=ordering)
+        self.error = self.make_error(ordering=ordering)
 
     def make_linkage(self):
         if self.lmat is not None:
@@ -72,15 +73,14 @@ class DataModel(DataLoader):
         self.dcoord = np.array(self.Z['dcoord'])
         self.min_x = np.min(self.icoord)
         self.max_x = np.max(self.icoord)
-        print(self.min_x, self.max_x)
         self.interval_length = (self.max_x - self.min_x) / (self.samples - 1)
-        self.direct_lookup = self.Z['leaves']
-        print(self.direct_lookup)
+        ordering = self.Z['leaves']
 
         self.column_labels = \
-            np.array(self.seg_df.columns[3:])[self.direct_lookup]
+            np.array(self.seg_df.columns[3:])[ordering]
         self.label_midpoints = (
             np.arange(self.samples) + 0.5) * self.interval_length
+        return ordering
 
     @classmethod
     def _reset_heatmap_color(cls):
@@ -132,17 +132,16 @@ class DataModel(DataLoader):
         # self.pins = self.pins - self.expected
         # self.pins = pins
 
-    def make_clone(self):
-        assert self.direct_lookup is not None
-        labels = self.clone_df.ix[self.direct_lookup, 0].values
-        assert np.all(labels == self.column_labels)
+    def make_clone(self, ordering):
+        assert ordering is not None
 
-        clone_column_df = self.clone_df.iloc[self.direct_lookup, :]
+        clone_column_df = self.clone_df.iloc[ordering, :]
         self._reset_heatmap_color()
-        self.clone = self._make_heatmap_array(
+        clone = self._make_heatmap_array(
             clone_column_df[self.CLONE_COLUMN])
-        self.subclone = self._make_heatmap_array(
+        subclone = self._make_heatmap_array(
             clone_column_df[self.SUBCLONE_COLUMN])
+        return clone, subclone
 
     EPCAM = {
         '2C EpCAM Neg': 2,
