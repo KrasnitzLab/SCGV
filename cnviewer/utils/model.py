@@ -140,16 +140,23 @@ class DataModel(DataLoader):
         self.subclone = self._make_heatmap_array(
             clone_column_df[self.SUBCLONE_COLUMN])
 
+    EPCAM = {
+        '2C EpCAM Neg': 2,
+        '<2C EpCAM Pos': 1.5,
+        '>2C-4C EpCAM Pos': 3,
+        '4C EpCAM Pos': 4,
+        '2C Rt EpCAM Pos': 2.25,
+        '2C Lt EpCAM Pos': 1.75,
+        '>4C EpCAM Pos': 5,
+        '2C EpCAM Pos': 2,
+        '>2C EpCAM Pos': 2.5,
+    }
     GATE_MAPPING = {
-        'Diploid': 2,
-        'Hypodiploid': 1.8,
-        'Haploid': 1,
         '4C': 4,
         '2C': 2,
-        '2C Rt': 2.01,
-        'Aneuploid': 1.99,
+        '2C Rt': 2.25,
         '2C EpCAM Neg': 1.95,
-        '>2C': 2.25,
+        '>2C': 2.5,
         '<2C EpCAM Pos': 1.5,
         '>2C-4C EpCAM Pos': 2.5,
         '4C EpCAM Pos': 4,
@@ -158,22 +165,22 @@ class DataModel(DataLoader):
         '>4C EpCAM Pos': 4,
         '2C EpCAM Pos': 2,
         '>2C EpCAM Pos': 2.5,
-        '2C Lt': 2,
+        '2C Lt': 1.75,
         '<2C': 1.5,
-        '>2C-4C': 3, '>2C-4C Lt': 3,
-        '>2C-4C Rt': 3,
-        '>4C': 4,
-        'Near 2C': 2,
-        'Bulk Nuclei': np.nan,
-        'Single Nuclei': np.nan,
-        '10000 nuclei': np.nan,
-        '100 nuclei': np.nan,
-        'A1': np.nan,
-        'A2': np.nan,
-        'Aneuploid': np.nan,
-        'Bulk Tissue': np.nan,
-        'Blood': np.nan,
-        'Micronuc': np.nan
+        '>2C-4C': 3,
+        '>2C-4C Lt': 2.75,
+        '>2C-4C Rt': 3.25,
+        '>4C': 5,
+
+        '2C EpCAM Neg': 2,
+        '<2C EpCAM Pos': 1.5,
+        '>2C-4C EpCAM Pos': 3,
+        '4C EpCAM Pos': 4,
+        '2C Rt EpCAM Pos': 2.25,
+        '2C Lt EpCAM Pos': 1.75,
+        '>4C EpCAM Pos': 5,
+        '2C EpCAM Pos': 2,
+        '>2C EpCAM Pos': 2.5,
     }
 
     def make_gate(self):

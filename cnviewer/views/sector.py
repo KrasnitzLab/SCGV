@@ -11,7 +11,7 @@ class SectorViewer(ViewerBase):
 
     def __init__(self, model):
         super(SectorViewer, self).__init__(model)
-        self.cmap = ColorMap.make_cmap07()
+        self.cmap = ColorMap.make_qualitative12()
 
     def draw_sector(self, ax):
         assert self.model.sector is not None
@@ -21,7 +21,7 @@ class SectorViewer(ViewerBase):
             aspect='auto',
             interpolation='nearest',
             cmap=self.cmap.colors,
-            norm=self.cmap.norm,
+            # norm=self.cmap.norm,
             extent=self.model.bar_extent)
 
         ax.set_xticks([])

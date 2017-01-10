@@ -8,12 +8,14 @@ import matplotlib.pyplot as plt
 
 # from utils.color_map import ColorMap
 from views.base import ViewerBase
+from utils.color_map import ColorMap
 
 
 class HeatmapViewer(ViewerBase):
 
     def __init__(self, model):
         super(HeatmapViewer, self).__init__(model)
+        self.cmap = ColorMap.make_deverging09()
 
     def draw_heatmap(self, ax):
         assert self.model.heatmap is not None
@@ -22,6 +24,7 @@ class HeatmapViewer(ViewerBase):
                   aspect='auto',
                   interpolation='nearest',
                   cmap=plt.get_cmap('seismic'),  # self.cmap.colors,
+                  # cmap=self.cmap.colors,
                   vmin=self.NORMALIZE_MIN,
                   vmax=self.NORMALIZE_MAX,
                   # norm=self.cmap.norm,

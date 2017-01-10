@@ -109,3 +109,55 @@ class ColorMap(object):
         cmap07.bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 999999999]
         cmap07.norm = col.BoundaryNorm(cmap07.bounds, cmap07.colors.N)
         return cmap07
+
+    @staticmethod
+    def make_diverging11():
+        cmap = ColorMap()
+        cmap.colors = col.ListedColormap(
+            ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#f7f7f7',
+             '#d1e5f0', '#92c5de', '#4393c3', '#2166ac', '#053061'])
+
+        return cmap
+
+    @staticmethod
+    def make_deverging09():
+        """
+        0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4; centered at 2;
+        """
+        cmap = ColorMap()
+        colors = ['#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#f7f7f7',
+                  '#d1e5f0', '#92c5de', '#4393c3', '#2166ac']
+        cmap.colors = col.ListedColormap(colors[::-1])
+        return cmap
+
+    @staticmethod
+    def make_qualitative12():
+        cmap = ColorMap()
+        colors = [
+            '#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99',
+            '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a',
+            '#ffff99', '#b15928']
+        cmap.colors = col.ListedColormap(colors)
+        return cmap
+
+    @staticmethod
+    def make_qualitative(N=6):
+        cmap = ColorMap()
+        colors = [
+            '#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33'
+        ]
+        cmap.colors = col.ListedColormap(colors, N=N)
+        return cmap
+
+    @staticmethod
+    def make_qualitative06_with_white():
+        cmap = ColorMap()
+        colors = [
+            'white',
+            '#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33'
+        ]
+        cmap.colors = col.ListedColormap(colors)
+        cmap.bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 999999999]
+        cmap.norm = col.BoundaryNorm(cmap.bounds, cmap.colors.N)
+
+        return cmap
