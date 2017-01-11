@@ -2,7 +2,9 @@
 
 * Go to anaconda web site 
 [https://www.continuum.io/downloads](https://www.continuum.io/downloads)
-and download the latest anaconda installer for your operating system
+and download the latest anaconda installer for your operating system. Please
+note that at the moment `cnviewer` uses *Python 2.7*, so you need to install
+the appropriate version of Anconda for *Python 2.7*. 
 
 * Install anaconda into suitable place on your local machine following
 instruction from 
