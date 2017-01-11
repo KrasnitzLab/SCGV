@@ -30,8 +30,8 @@ def test_make_pinmat():
     assert model is not None
 
     model.make_linkage()
-    model.make_dendrogram()
-    model.make_pinmat()
+    ordering = model.make_dendrogram()
+    model.make_pinmat(ordering=ordering)
 
 #     expected = np.loadtxt('tests/data/pin_data_single.csv.gz',
 #                           delimiter='\t')
