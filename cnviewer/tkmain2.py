@@ -28,11 +28,14 @@ import matplotlib.pyplot as plt
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport
     import ttk  # @UnusedImport
-    from tkFileDialog import askopenfilename
+    from tkFileDialog import askopenfilename  # @UnusedImport
+    import tkMessageBox as messagebox
 else:
     import tkinter as tk  # @Reimport @UnresolvedImport
     from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
+    # @UnresolvedImport @Reimport @IgnorePep8
     from tkinter.filedialog import askopenfilename  # @UnresolvedImport
+    from tkinter import messagebox  # @UnresolvedImport
 
 
 class MainWindow(object):
@@ -103,15 +106,23 @@ class MainWindow(object):
         if not filename:
             print("openfilename canceled...")
             return
-        print("loading '{}'".format(filename))
-        model = DataModel(filename)
-        print("preparing '{}'".format(filename))
-        model.make()
-        print("showing '{}'".format(filename))
-        self.main = MainController(model)
-        self.main.build_main(self.fig)
-        print("done '{}'".format(filename))
-        self.canvas.draw()
+
+        try:
+            print("loading '{}'".format(filename))
+            model = DataModel(filename)
+            print("preparing '{}'".format(filename))
+            model.make()
+            print("showing '{}'".format(filename))
+            self.main = MainController(model)
+            self.main.build_main(self.fig)
+            print("done '{}'".format(filename))
+            self.canvas.draw()
+        except AssertionError:
+            print("wrong file type: ZIP archive expected")
+            messagebox.showerror(
+                "Wrong file type", 
+                "Single Cell Genomics ZIP archive expected")
+            return
 
     def _open_dir(self):
         print("opening directory...")
