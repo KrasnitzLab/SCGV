@@ -50,9 +50,9 @@ class MainWindow(object):
         self.toolbar.update()
 
         self.toolbar_ext = ttk.Frame(
-            self.content, borderwidth=5, relief="sunken", width=200)
+            self.content, relief='sunken', borderwidth=5, width=150)
         self.button_ext = ttk.Frame(
-            self.content, borderwidth=5, relief="sunken", width=200)
+            self.content, borderwidth=5, width=150)
 
         self.toolbar.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.canvas.get_tk_widget().grid(
@@ -64,6 +64,42 @@ class MainWindow(object):
         self.content.rowconfigure(0, weight=1)
         self.content.columnconfigure(1, weight=1)
         self.content.rowconfigure(1, weight=99)
+
+        self._build_quit_button()
+
+        self._build_open_button()
+
+    def _quit(self):
+        self.root.quit()     # stops mainloop
+        self.root.destroy()  # this is necessary on Windows to prevent
+        # Fatal Python Error: PyEval_RestoreThread: NULL tstate
+
+    def _build_quit_button(self):
+        self.quit_button = ttk.Button(
+            master=self.button_ext,
+            text='Quit',
+            command=self._quit)
+        self.quit_button.pack()
+
+    def _build_open_button(self):
+        self.open_archive_button = ttk.Button(
+            master=self.toolbar_ext,
+            width=2,
+            text="OA",
+            command=self._open_archive)
+        self.open_archive_button.grid(column=0, row=0)
+        self.open_dir_button = ttk.Button(
+            master=self.toolbar_ext,
+            width=2,
+            text="OD",
+            command=self._open_archive)
+        self.open_dir_button.grid(column=1, row=0)
+
+    def _open_archive(self):
+        print("opening archive...")
+
+    def _open_dir(self):
+        print("opening directory...")
 
 
 def build_figure():
@@ -78,55 +114,16 @@ def build_figure():
     a.set_ylabel('Y label')
     return f
 
-root = tk.Tk()
-root.wm_title("cnviewer")
 
-fig = build_figure()
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.wm_title("cnviewer")
 
-main = MainWindow(root, fig)
+    fig = build_figure()
 
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
+    main = MainWindow(root, fig)
 
-root.mainloop()
+    root.columnconfigure(0, weight=1)
+    root.rowconfigure(0, weight=1)
 
-# content = ttk.Frame(root, padding=(3, 3, 12, 12))
-# frame = ttk.Frame(
-#     content, borderwidth=5, relief="sunken", width=200, height=100)
-# namelbl = ttk.Label(content, text="Name")
-# name = ttk.Entry(content)
-#
-# onevar = tk.BooleanVar()
-# twovar = tk.BooleanVar()
-# threevar = tk.BooleanVar()
-#
-# onevar.set(True)
-# twovar.set(False)
-# threevar.set(True)
-#
-# one = ttk.Checkbutton(content, text="One", variable=onevar, onvalue=True)
-# two = ttk.Checkbutton(content, text="Two", variable=twovar, onvalue=True)
-# three = ttk.Checkbutton(content, text="Three", variable=threevar, onvalue=True)
-# ok = ttk.Button(content, text="Okay")
-# cancel = ttk.Button(content, text="Cancel")
-#
-# content.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
-# frame.grid(column=0, row=0, columnspan=3, rowspan=2,
-#            sticky=(tk.N, tk.S, tk.E, tk.W))
-# namelbl.grid(column=3, row=0, columnspan=2, sticky=(tk.N, tk.W), padx=5)
-# name.grid(column=3, row=1, columnspan=2,
-#           sticky=(tk.N, tk.E, tk.W), pady=5, padx=5)
-# one.grid(column=0, row=3)
-# two.grid(column=1, row=3)
-# three.grid(column=2, row=3)
-# ok.grid(column=3, row=3)
-# cancel.grid(column=4, row=3)
-#
-# root.columnconfigure(0, weight=1)
-# root.rowconfigure(0, weight=1)
-# content.columnconfigure(0, weight=3)
-# content.columnconfigure(1, weight=3)
-# content.columnconfigure(2, weight=3)
-# content.columnconfigure(3, weight=1)
-# content.columnconfigure(4, weight=1)
-# content.rowconfigure(1, weight=1)
+    root.mainloop()
