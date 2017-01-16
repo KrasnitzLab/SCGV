@@ -42,8 +42,6 @@ class MainWindow(object):
 
         self.content = tk.Frame(self.root)
         self.content.pack(side="top", fill="both", expand=True)
-        self.content.rowconfigure(0, weight=1)
-        self.content.columnconfigure(0, weight=1)
 
         self.canvas = FigureCanvasTkAgg(self.fig, self.content)
         self.canvas.show()
@@ -62,10 +60,10 @@ class MainWindow(object):
         self.toolbar_ext.grid(column=1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.button_ext.grid(column=1, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        self.content.columnconfigure(0, weight=1)
+        self.content.columnconfigure(0, weight=99)
         self.content.rowconfigure(0, weight=1)
         self.content.columnconfigure(1, weight=1)
-        self.content.rowconfigure(1, weight=1)
+        self.content.rowconfigure(1, weight=99)
 
 
 def build_figure():
