@@ -28,9 +28,11 @@ import matplotlib.pyplot as plt
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport
     import ttk  # @UnusedImport
+    from tkFileDialog import askopenfilename
 else:
     import tkinter as tk  # @Reimport @UnresolvedImport
     from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
+    from tkinter.filedialog import askopenfilename  # @UnresolvedImport
 
 
 class MainWindow(object):
@@ -97,6 +99,18 @@ class MainWindow(object):
 
     def _open_archive(self):
         print("opening archive...")
+        filename = askopenfilename()
+        if not filename:
+            print("openfilename canceled...")
+            return
+        print("loading '{}'".format(filename))
+        model = DataModel(filename)
+        print("preparing '{}'".format(filename))
+        model.make()
+        print("showing '{}'".format(filename))
+        self.main = MainController(model)
+        self.main.build_main(self.fig)
+        print("done '{}'".format(filename))
 
     def _open_dir(self):
         print("opening directory...")
@@ -104,14 +118,14 @@ class MainWindow(object):
 
 def build_figure():
     f = Figure(figsize=(12, 8))
-    a = f.add_subplot(111)
-    t = np.arange(0.0, 3.0, 0.01)
-    s = np.sin(2 * np.pi * t)
-
-    a.plot(t, s)
-    a.set_title('Tk embedding')
-    a.set_xlabel('X axis label')
-    a.set_ylabel('Y label')
+    #     a = f.add_subplot(111)
+    #     t = np.arange(0.0, 3.0, 0.01)
+    #     s = np.sin(2 * np.pi * t)
+    #
+    #     a.plot(t, s)
+    #     a.set_title('Tk embedding')
+    #     a.set_xlabel('X axis label')
+    #     a.set_ylabel('Y label')
     return f
 
 
