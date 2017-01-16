@@ -25,11 +25,13 @@ import matplotlib.pyplot as plt
 
 
 if sys.version_info[0] < 3:
-    import Tkinter as Tk  # @UnusedImport
+    import Tkinter as tk  # @UnusedImport
+    import ttk  # @UnusedImport
 else:
-    import tkinter as Tk  # @Reimport @UnresolvedImport
+    import tkinter as tk  # @Reimport @UnresolvedImport
+    from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
 
-root = Tk.Tk()
+root = tk.Tk()
 root.wm_title("cnviewer")
 
 
@@ -42,19 +44,19 @@ main = MainController(model)
 main.build_main(mfig)
 
 
-mainFrame = Tk.Frame(root)
-mainFrame.pack()
+main_frame = tk.Frame(root)
+main_frame.pack()
 
 # a tk.DrawingArea
-canvas = FigureCanvasTkAgg(mfig, mainFrame)
+canvas = FigureCanvasTkAgg(mfig, main_frame)
 canvas.show()
 
-toolbar = NavigationToolbar2TkAgg(canvas, mainFrame)
+toolbar = NavigationToolbar2TkAgg(canvas, main_frame)
 toolbar.update()
-toolbar.pack(side=Tk.TOP)
+toolbar.pack(side=tk.TOP)
 
-canvas._tkcanvas.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
-canvas.get_tk_widget().pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
+canvas._tkcanvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
 
 def _quit():
@@ -62,9 +64,9 @@ def _quit():
     root.destroy()  # this is necessary on Windows to prevent
     # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
-button = Tk.Button(master=mainFrame, text='Quit', command=_quit)
-button.pack(side=Tk.RIGHT)
+button = tk.Button(master=main_frame, text='Quit', command=_quit)
+button.pack(side=tk.RIGHT)
 
-Tk.mainloop()
+tk.mainloop()
 # If you put root.destroy() here, it will cause an error if
 # the window is closed with the window manager.
