@@ -111,6 +111,7 @@ class MainWindow(object):
         self.main = MainController(model)
         self.main.build_main(self.fig)
         print("done '{}'".format(filename))
+        self.canvas.draw()
 
     def _open_dir(self):
         print("opening directory...")
