@@ -14,7 +14,8 @@ from utils.model import DataModel  # @IgnorePep8
 from views.controller import MainController  # @IgnorePep8
 
 
-from matplotlib.backends.backend_tkagg import *  # @IgnorePep8 @UnusedWildImport
+# @IgnorePep8 @UnusedWildImport
+from matplotlib.backends.backend_tkagg import *
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 
@@ -28,6 +29,9 @@ else:
     from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
     from tkinter.filedialog \
         import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
+    from tkinter.filedialog \
+        import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
+
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
 
 
@@ -107,24 +111,39 @@ class MainWindow(object):
             master=self.toolbar_ext,
             width=2,
             text="OD",
-            command=self._open_archive)
+            command=self._open_dir)
         self.open_dir_button.grid(column=1, row=0)
 
-    def _open_archive(self):
-        print("opening archive...")
-        filename = askopenfilename()
+    def _open_dir(self):
+        print("opening directory...")
+        filename = askdirectory()
         if not filename:
-            print("openfilename canceled...")
+            print("open directory canceled...")
             return
+        print(filename)
         self.filename = filename
+        self._start_loading()
+
+    def _start_loading(self):
         self.open_archive_button.config(state=tk.DISABLED)
         self.open_dir_button.config(state=tk.DISABLED)
         self.loader_task = threading.Thread(target=self._loading, args=[self])
         self.loader_task.start()
-
         self.root.after(4 * self.DELAY, self._on_loading_progress, self)
         self.progress.grid(row=101, column=0, sticky=tk.W + tk.E + tk.N)
         self.progress.start()
+
+    def _open_archive(self):
+        print("opening archive...")
+        filename = askopenfilename(filetypes=(
+            ("Zip archive", "*.zip"),
+            ("Zip archive", "*.ZIP"),
+            ("Zip archive", "*.Zip")))
+        if not filename:
+            print("openfilename canceled...")
+            return
+        self.filename = filename
+        self._start_loading()
 
     def _on_loading_progress(self, *args):
         if self.loader_task.is_alive():
@@ -161,9 +180,6 @@ class MainWindow(object):
             except AssertionError:
                 print("wrong file type: ZIP archive expected")
                 return False
-
-    def _open_dir(self):
-        print("opening directory...")
 
 
 if __name__ == "__main__":

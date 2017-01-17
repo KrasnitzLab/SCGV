@@ -31,7 +31,7 @@ class DataLoader(dict):
         assert os.path.isfile(zip_filename)
         assert os.path.exists(zip_filename)
         assert zipfile.is_zipfile(zip_filename)
-        with zipfile.ZipFile(self.zip_filename, 'r') as zipdata:
+        with zipfile.ZipFile(zip_filename, 'r') as zipdata:
             filenames = self._organize_filenames(zipdata.namelist())
             print(filenames)
             print(set(filenames.keys()))
