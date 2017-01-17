@@ -66,11 +66,6 @@ class MainController(ControllerBase):
         if event.name == 'button_press_event' and event.button == 3:
             sample = self.locate_sample_click(event)
             self.add_sample(sample)
-        #         elif event.name == 'key_press_event' and event.key == 'd':
-        #             print(self.sample_list)
-        #
-        #             self.display_samples()
-        #             self.sample_list = []
 
     def add_sample(self, sample):
         if sample is None:

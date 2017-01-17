@@ -61,9 +61,13 @@ class MainWindow(object):
         self.toolbar_ext = ttk.Frame(
             self.content,
             # relief='sunken',
-            borderwidth=5, width=150)
+            borderwidth=5,
+            # width=150
+        )
         self.button_ext = ttk.Frame(
-            self.content, borderwidth=5, width=150)
+            self.content, borderwidth=5,
+            # width=150
+        )
 
         self.toolbar.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.canvas.get_tk_widget().grid(
