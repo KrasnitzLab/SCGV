@@ -27,28 +27,53 @@ class DataLoader(dict):
             result[filetype] = filename
         return result
 
-    def __init__(self, zip_filename):
+    def _load_zipfile(self, zip_filename):
         assert os.path.isfile(zip_filename)
         assert os.path.exists(zip_filename)
         assert zipfile.is_zipfile(zip_filename)
-
-        self.zip_filename = zip_filename
         with zipfile.ZipFile(self.zip_filename, 'r') as zipdata:
             filenames = self._organize_filenames(zipdata.namelist())
+            print(filenames)
+            print(set(filenames.keys()))
+            print(self.TYPES)
             assert set(filenames.keys()) == self.TYPES
-
             for filetype, filename in filenames.items():
                 infile = zipdata.open(filename)
                 df = pd.read_csv(infile, sep='\t')
                 assert df is not None
                 self[filetype] = df
 
+    def _load_dir(self, dir_filename):
+        assert os.path.exists(dir_filename)
+        assert os.path.isdir(dir_filename)
+        all_filenames = [
+            os.path.join(dir_filename, f) for f in os.listdir(dir_filename)
+            if os.path.isfile(os.path.join(dir_filename, f))]
+        print(all_filenames)
+        filenames = self._organize_filenames(all_filenames)
+        print(filenames)
+        print(set(filenames.keys()))
+        print(self.TYPES)
+
+        for filetype, filename in filenames.items():
+            infile = open(filename)
+            df = pd.read_csv(infile, sep='\t')
+            assert df is not None
+            self[filetype] = df
+
+    def __init__(self, filename):
+        if os.path.isdir(filename):
+            self._load_dir(filename)
+        else:
+            self._load_zipfile(filename)
+
+        self.filename = filename
+
         self.seg_df = self['seg']
         self.ratio_df = self['ratio']
         self.clone_df = self['clone']
         self.tree_df = self['tree']
         self.guide_df = self['guide']
-        # print(self.guide_df['gate'].unique())
         self.pinmat_df = self['pinmat']
         self.pins_df = self['pins']
         self._filter_samples()

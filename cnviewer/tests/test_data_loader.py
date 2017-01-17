@@ -23,8 +23,20 @@ def test_data_loader_create_00():
     print(loader.keys())
 
 
-# @pytest.mark.xfail
-def test_data_loader_create_01():
+def test_data_zip_loader_create_01():
     loader = DataLoader('tests/data/cnviewer_data_example_01.zip')
+    assert loader is not None
+    print(loader.keys())
+
+
+def test_data_dir_loader_create_01():
+    loader = DataLoader('tests/data/cnviewer_data_example_01')
+    assert loader is not None
+    print(loader.keys())
+
+
+@pytest.mark.xfail
+def test_data_loader_create_02():
+    loader = DataLoader('tests/data/example02.named.zip')
     assert loader is not None
     print(loader.keys())
