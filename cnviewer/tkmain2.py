@@ -14,8 +14,7 @@ from utils.model import DataModel  # @IgnorePep8
 from views.controller import MainController  # @IgnorePep8
 
 
-# @IgnorePep8 @UnusedWildImport
-from matplotlib.backends.backend_tkagg import *
+from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 

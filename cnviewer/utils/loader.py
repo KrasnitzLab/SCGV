@@ -17,13 +17,15 @@ class DataLoader(dict):
     TYPES = set(['ratio', 'pinmat', 'clone', 'tree', 'seg', 'pins', 'guide'])
     GUIDE_SAMPLES_COLUMN = 'seq.unit.id'
 
-    @staticmethod
-    def _organize_filenames(namelist):
+    @classmethod
+    def _organize_filenames(cls, namelist):
         result = {}
         for filename in namelist:
             parts = filename.split('.')
             assert len(parts) > 2
             filetype = parts[-2]
+            if filetype not in cls.TYPES:
+                continue
             result[filetype] = filename
         return result
 
@@ -56,6 +58,7 @@ class DataLoader(dict):
         print(self.TYPES)
 
         for filetype, filename in filenames.items():
+            print("loading: {}", filename)
             infile = open(filename)
             df = pd.read_csv(infile, sep='\t')
             assert df is not None
