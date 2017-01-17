@@ -3,47 +3,46 @@ Created on Jan 16, 2017
 
 @author: lubo
 '''
+import sys  # @UnusedImport
+import threading
 
 import matplotlib
 matplotlib.use('TkAgg')
 
 
-from utils.model import DataModel
-from views.controller import MainController
-
-import sys
-import numpy as np
+from utils.model import DataModel  # @IgnorePep8
+from views.controller import MainController  # @IgnorePep8
 
 
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
-    NavigationToolbar2TkAgg
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-
-
-# implement the default mpl key bindings
+from matplotlib.backends.backend_tkagg import *  # @IgnorePep8 @UnusedWildImport
+from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 
 if sys.version_info[0] < 3:
-    import Tkinter as tk  # @UnusedImport
-    import ttk  # @UnusedImport
-    from tkFileDialog import askopenfilename  # @UnusedImport
-    import tkMessageBox as messagebox
+    import Tkinter as tk  # @UnusedImport @UnresolvedImport
+    import ttk  # @UnusedImport @UnresolvedImport
+    from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
+    import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
 else:
     import tkinter as tk  # @Reimport @UnresolvedImport
     from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
-    # @UnresolvedImport @Reimport @IgnorePep8
-    from tkinter.filedialog import askopenfilename  # @UnresolvedImport
-    from tkinter import messagebox  # @UnresolvedImport
+    from tkinter.filedialog \
+        import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
+    from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
 
 
 class MainWindow(object):
+    DELAY = 500
 
-    def __init__(self, root, fig):
+    def __init__(self, root):
+        self.model_lock = threading.RLock()
+        self.model = None
+        self.loader_task = None
+        self.filename = None
+
         self.root = root
 
-        self.fig = fig
+        self.fig = Figure(figsize=(12, 8))
 
         self.content = tk.Frame(self.root)
         self.content.pack(side="top", fill="both", expand=True)
@@ -55,7 +54,9 @@ class MainWindow(object):
         self.toolbar.update()
 
         self.toolbar_ext = ttk.Frame(
-            self.content, relief='sunken', borderwidth=5, width=150)
+            self.content,
+            # relief='sunken',
+            borderwidth=5, width=150)
         self.button_ext = ttk.Frame(
             self.content, borderwidth=5, width=150)
 
@@ -66,12 +67,11 @@ class MainWindow(object):
         self.button_ext.grid(column=1, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.content.columnconfigure(0, weight=99)
-        self.content.rowconfigure(0, weight=1)
-        self.content.columnconfigure(1, weight=1)
+        self.content.rowconfigure(0, weight=0)
+        self.content.columnconfigure(1, weight=0)
         self.content.rowconfigure(1, weight=99)
 
-        self._build_quit_button()
-
+        self._build_button_ext()
         self._build_open_button()
 
     def _quit(self):
@@ -79,12 +79,22 @@ class MainWindow(object):
         self.root.destroy()  # this is necessary on Windows to prevent
         # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
-    def _build_quit_button(self):
+    def _build_button_ext(self):
+        extframe = ttk.Frame(
+            self.button_ext,
+            # relief='sunken',
+            borderwidth=5, width=150, height=100)
+        extframe.grid(row=100, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.progress = ttk.Progressbar(
+            self.button_ext, mode='indeterminate')
+
         self.quit_button = ttk.Button(
             master=self.button_ext,
             text='Quit',
             command=self._quit)
-        self.quit_button.pack()
+        self.quit_button.grid(row=1, column=0)
+
+        self.button_ext.rowconfigure(100, weight=100)
 
     def _build_open_button(self):
         self.open_archive_button = ttk.Button(
@@ -106,48 +116,61 @@ class MainWindow(object):
         if not filename:
             print("openfilename canceled...")
             return
+        self.filename = filename
+        self.open_archive_button.config(state=tk.DISABLED)
+        self.open_dir_button.config(state=tk.DISABLED)
+        self.loader_task = threading.Thread(target=self._loading, args=[self])
+        self.loader_task.start()
 
-        try:
-            print("loading '{}'".format(filename))
-            model = DataModel(filename)
-            print("preparing '{}'".format(filename))
-            model.make()
-            print("showing '{}'".format(filename))
-            self.main = MainController(model)
-            self.main.build_main(self.fig)
-            print("done '{}'".format(filename))
-            self.canvas.draw()
-        except AssertionError:
-            print("wrong file type: ZIP archive expected")
-            messagebox.showerror(
-                "Wrong file type", 
-                "Single Cell Genomics ZIP archive expected")
+        self.root.after(4 * self.DELAY, self._on_loading_progress, self)
+        self.progress.grid(row=101, column=0, sticky=tk.W + tk.E + tk.N)
+        self.progress.start()
+
+    def _on_loading_progress(self, *args):
+        if self.loader_task.is_alive():
+            self.root.after(self.DELAY, self._on_loading_progress, self)
             return
+
+        if not self.model_lock.acquire(False):
+            return
+
+        with self.model_lock:
+            if self.model:
+                self.main = MainController(self.model)
+                self.main.build_main(self.fig)
+                self.canvas.draw()
+                self.progress.stop()
+                self.progress.grid_remove()
+            else:
+                self.progress.stop()
+                self.progress.grid_remove()
+                messagebox.showerror(
+                    "Wrong file type",
+                    "Single Cell Genomics ZIP archive expected")
+
+    def _loading(self, *args):
+        with self.model_lock:
+            try:
+                print("loading '{}'".format(self.filename))
+                model = DataModel(self.filename)
+                print("preparing '{}'".format(self.filename))
+                model.make()
+                self.model = model
+
+                return True
+            except AssertionError:
+                print("wrong file type: ZIP archive expected")
+                return False
 
     def _open_dir(self):
         print("opening directory...")
-
-
-def build_figure():
-    f = Figure(figsize=(12, 8))
-    #     a = f.add_subplot(111)
-    #     t = np.arange(0.0, 3.0, 0.01)
-    #     s = np.sin(2 * np.pi * t)
-    #
-    #     a.plot(t, s)
-    #     a.set_title('Tk embedding')
-    #     a.set_xlabel('X axis label')
-    #     a.set_ylabel('Y label')
-    return f
 
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.wm_title("cnviewer")
 
-    fig = build_figure()
-
-    main = MainWindow(root, fig)
+    main = MainWindow(root)
 
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
