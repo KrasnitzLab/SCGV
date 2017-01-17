@@ -7,6 +7,7 @@ import sys  # @UnusedImport
 import threading
 
 import matplotlib
+from tkutils.profiles_ui import ProfilesUi
 matplotlib.use('TkAgg')
 
 
@@ -14,7 +15,8 @@ from utils.model import DataModel  # @IgnorePep8
 from views.controller import MainController  # @IgnorePep8
 
 
-from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
+# @UnusedWildImport @IgnorePep8
+from matplotlib.backends.backend_tkagg import *
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 
@@ -77,6 +79,11 @@ class MainWindow(object):
         self._build_button_ext()
         self._build_open_button()
 
+        self.on_controller_callbacks = []
+
+    def register_on_controller_callback(self, cb):
+        self.on_controller_callbacks.append(cb)
+
     def _quit(self):
         self.root.quit()     # stops mainloop
         self.root.destroy()  # this is necessary on Windows to prevent
@@ -95,7 +102,7 @@ class MainWindow(object):
             master=self.button_ext,
             text='Quit',
             command=self._quit)
-        self.quit_button.grid(row=1, column=0)
+        self.quit_button.grid(row=50, column=0)
 
         self.button_ext.rowconfigure(100, weight=100)
 
@@ -144,6 +151,10 @@ class MainWindow(object):
         self.filename = filename
         self._start_loading()
 
+    def _connect_controller_callbacks(self, controller):
+        for cb in self.on_controller_callbacks:
+            cb(controller)
+
     def _on_loading_progress(self, *args):
         if self.loader_task.is_alive():
             self.root.after(self.DELAY, self._on_loading_progress, self)
@@ -159,6 +170,7 @@ class MainWindow(object):
                 self.canvas.draw()
                 self.progress.stop()
                 self.progress.grid_remove()
+                self._connect_controller_callbacks(self.main)
             else:
                 self.progress.stop()
                 self.progress.grid_remove()
@@ -186,6 +198,10 @@ if __name__ == "__main__":
     root.wm_title("cnviewer")
 
     main = MainWindow(root)
+
+    profiles = ProfilesUi(main.button_ext)
+    profiles.add_profile_ui()
+    main.register_on_controller_callback(profiles.connect_controller)
 
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)

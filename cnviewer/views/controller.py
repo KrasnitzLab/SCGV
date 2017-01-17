@@ -49,8 +49,12 @@ class MainController(ControllerBase):
     def __init__(self, model):
         super(MainController, self).__init__(model)
         self.sample_viewer = None
-        self.sample_list = []
         self.fig = None
+
+        self.add_sample_cb = None
+
+    def register_sample_cb(self, func):
+        self.add_sample_cb = func
 
     def event_loop_connect(self):
         self.fig.canvas.mpl_connect('button_press_event', self.event_handler)
@@ -59,24 +63,23 @@ class MainController(ControllerBase):
     def event_handler(self, event):
         print("event tester called...")
         self.debug_event(event)
-        if event.name == 'button_press_event':
+        if event.name == 'button_press_event' and event.button == 3:
             sample = self.locate_sample_click(event)
             self.add_sample(sample)
-        elif event.name == 'key_press_event' and event.key == 'd':
-            print(self.sample_list)
-
-            self.display_samples()
-            self.sample_list = []
+        #         elif event.name == 'key_press_event' and event.key == 'd':
+        #             print(self.sample_list)
+        #
+        #             self.display_samples()
+        #             self.sample_list = []
 
     def add_sample(self, sample):
         if sample is None:
             return
-        if sample in self.sample_list:
-            return
-        self.sample_list.append(sample)
+        if self.add_sample_cb:
+            self.add_sample_cb(sample)
 
-    def display_samples(self):
-        self.sample_viewer.draw_samples(self.sample_list)
+    def display_samples(self, samples_list):
+        self.sample_viewer.draw_samples(samples_list)
 
     def locate_sample_click(self, event):
         if event.xdata is None:
