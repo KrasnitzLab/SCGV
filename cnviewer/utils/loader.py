@@ -58,7 +58,7 @@ class DataLoader(dict):
         print(self.TYPES)
 
         for filetype, filename in filenames.items():
-            print("loading: {}", filename)
+            print("loading: {}".format(filename))
             infile = open(filename)
             df = pd.read_csv(infile, sep='\t')
             assert df is not None
