@@ -2,9 +2,9 @@
 
 * Go to anaconda web site 
 [https://www.continuum.io/downloads](https://www.continuum.io/downloads)
-and download the latest anaconda installer for your operating system. Please
-note that these *Python 2.7*, so you need to install
-the appropriate version of Anconda for *Python 2.7*. 
+and download the latest anaconda installer for your operating system. The following
+instructions use *Python 2.7* so you need to install appropriate version 
+of Anaconda. 
 
 * Install anaconda into suitable place on your local machine following
 instruction from 
