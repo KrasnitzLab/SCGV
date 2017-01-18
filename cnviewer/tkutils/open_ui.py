@@ -7,7 +7,7 @@ import threading
 import sys  # @UnusedImport
 from views.controller import MainController
 from utils.model import DataModel
-from logging.config import thread
+
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
     import ttk  # @UnusedImport @UnresolvedImport
@@ -52,8 +52,13 @@ class OpenUi(object):
             command=self._open_dir)
         self.open_dir_button.grid(column=1, row=0)
 
+        progress_frame = ttk.Frame(
+            master=frame,
+            borderwidth=5
+        )
+        progress_frame.grid(row=0, column=101)
         self.progress = ttk.Progressbar(
-            frame, mode='indeterminate')
+            progress_frame, mode='indeterminate')
 
     def _open_dir(self):
         print("opening directory...")
@@ -100,13 +105,13 @@ class OpenUi(object):
                 self.controller.build_main(self.fig)
                 self.progress.stop()
                 self.progress.grid_remove()
-                self.main_window.connect_controller_callbacks(self.controller)
+                self.main_window.connect_controller(self.controller)
             else:
                 self.progress.stop()
                 self.progress.grid_remove()
                 messagebox.showerror(
-                    "Wrong file type",
-                    "Single Cell Genomics ZIP archive expected")
+                    "Wrong file/directory type",
+                    "Single Cell Genomics data set expected")
 
     def _loading(self, *args):
         with self.model_lock:
