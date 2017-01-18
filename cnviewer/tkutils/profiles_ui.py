@@ -28,10 +28,10 @@ class ProfilesUi(object):
     def build_ui(self):
         frame = ttk.Frame(
             self.master,
-            borderwidth=5, width=100)
+            borderwidth=5)
         frame.grid(row=10, column=0)
 
-        self.profile_ui = tk.Listbox(frame, height=7)
+        self.profile_ui = tk.Listbox(frame, width=7, height=7)
         self.profile_ui.grid(
             column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 

@@ -4,7 +4,6 @@ Created on Dec 14, 2016
 @author: lubo
 '''
 import numpy as np
-import matplotlib.pyplot as plt
 from views.base import ViewerBase
 
 
@@ -38,8 +37,7 @@ class SampleViewer(ViewerBase):
         shredded = np.sum(upto_x_data < 0.4) / float(self.model.chrom_x_index)
         return shredded
 
-    def draw_samples(self, sample_list):
-        fig = plt.figure(figsize=(12, 8))
+    def draw_samples(self, fig, sample_list):
 
         chrom_lines = self.calc_chrom_lines()
 
@@ -80,4 +78,3 @@ class SampleViewer(ViewerBase):
                 ax.text(
                     label_pos, 10, self.CHROM_LABELS[num],
                     fontsize=10, horizontalalignment='center')
-        plt.show()

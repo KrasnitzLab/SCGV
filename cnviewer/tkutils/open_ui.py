@@ -35,9 +35,10 @@ class OpenUi(object):
     def build_ui(self):
         frame = ttk.Frame(
             self.master,
-            borderwidth=5, width=100
+            # relief='sunken',
+            borderwidth=3
         )
-        frame.grid(row=0, column=0)
+        frame.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.open_archive_button = ttk.Button(
             master=frame,
@@ -54,11 +55,19 @@ class OpenUi(object):
 
         progress_frame = ttk.Frame(
             master=frame,
+            # relief='sunken',
             borderwidth=5
         )
-        progress_frame.grid(row=0, column=101)
+        progress_frame.grid(
+            row=0, column=101, sticky=(tk.N, tk.S, tk.E, tk.W))
+        progress_frame.columnconfigure(0, weight=99)
+
         self.progress = ttk.Progressbar(
             progress_frame, mode='indeterminate')
+        # self.progress.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frame.columnconfigure(0, weight=0)
+        frame.columnconfigure(1, weight=0)
+        frame.columnconfigure(101, weight=99)
 
     def _open_dir(self):
         print("opening directory...")
@@ -76,7 +85,7 @@ class OpenUi(object):
         self.loader_task = threading.Thread(target=self._loading, args=[self])
         self.loader_task.start()
         self.master.after(4 * self.DELAY, self._on_loading_progress, self)
-        self.progress.grid(row=0, column=101, sticky=tk.W + tk.E + tk.N)
+        self.progress.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.progress.start()
 
     def _open_archive(self):

@@ -14,6 +14,7 @@ from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 from views.sector import SectorViewer
 from views.pinmat import PinmatViewer
+from tkutils.sample_ui import SampleUi
 
 
 class ControllerBase(object):
@@ -74,7 +75,10 @@ class MainController(ControllerBase):
             self.add_sample_cb(sample)
 
     def display_samples(self, samples_list):
-        self.sample_viewer.draw_samples(samples_list)
+        sample_ui = SampleUi(samples_list)
+        fig = sample_ui.build_ui()
+        self.sample_viewer.draw_samples(fig, samples_list)
+        sample_ui.mainloop()
 
     def locate_sample_click(self, event):
         if event.xdata is None:
