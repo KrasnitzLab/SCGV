@@ -4,8 +4,6 @@ Created on Jan 17, 2017
 @author: lubo
 '''
 import sys  # @UnusedImport
-
-
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
     import ttk  # @UnusedImport @UnresolvedImport
@@ -18,7 +16,6 @@ else:
         import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
     from tkinter.filedialog \
         import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
-
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
 
 
@@ -28,11 +25,10 @@ class ProfilesUi(object):
         self.master = master
         self.controller = None
 
-    def add_profile_ui(self):
-        frame = ttk.Labelframe(
+    def build_ui(self):
+        frame = ttk.Frame(
             self.master,
-            text="Profiles",
-            borderwidth=5, width=150)
+            borderwidth=5, width=100)
         frame.grid(row=10, column=0)
 
         self.profile_ui = tk.Listbox(frame, height=7)

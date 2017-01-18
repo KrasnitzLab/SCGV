@@ -4,11 +4,12 @@ Created on Jan 16, 2017
 @author: lubo
 '''
 import sys  # @UnusedImport
-import threading
 
 import matplotlib
-from tkutils.profiles_ui import ProfilesUi
 matplotlib.use('TkAgg')
+
+from tkutils.profiles_ui import ProfilesUi
+from tkutils.open_ui import OpenUi
 
 
 from utils.model import DataModel  # @IgnorePep8
@@ -37,14 +38,9 @@ else:
 
 
 class MainWindow(object):
-    DELAY = 500
 
     def __init__(self, root):
-        self.model_lock = threading.RLock()
         self.model = None
-        self.loader_task = None
-        self.filename = None
-
         self.root = root
 
         self.fig = Figure(figsize=(12, 8))
@@ -81,12 +77,16 @@ class MainWindow(object):
         self.content.rowconfigure(1, weight=99)
 
         self._build_button_ext()
-        self._build_open_button()
 
         self.on_controller_callbacks = []
 
     def register_on_controller_callback(self, cb):
         self.on_controller_callbacks.append(cb)
+
+    def connect_controller_callbacks(self, controller):
+        for cb in self.on_controller_callbacks:
+            cb(controller)
+        self.canvas.draw()
 
     def _quit(self):
         self.root.quit()     # stops mainloop
@@ -99,8 +99,6 @@ class MainWindow(object):
             # relief='sunken',
             borderwidth=5, width=150, height=100)
         extframe.grid(row=100, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
-        self.progress = ttk.Progressbar(
-            self.button_ext, mode='indeterminate')
 
         self.quit_button = ttk.Button(
             master=self.button_ext,
@@ -110,92 +108,6 @@ class MainWindow(object):
 
         self.button_ext.rowconfigure(100, weight=100)
 
-    def _build_open_button(self):
-        self.open_archive_button = ttk.Button(
-            master=self.toolbar_ext,
-            width=2,
-            text="OA",
-            command=self._open_archive)
-        self.open_archive_button.grid(column=0, row=0)
-        self.open_dir_button = ttk.Button(
-            master=self.toolbar_ext,
-            width=2,
-            text="OD",
-            command=self._open_dir)
-        self.open_dir_button.grid(column=1, row=0)
-
-    def _open_dir(self):
-        print("opening directory...")
-        filename = askdirectory()
-        if not filename:
-            print("open directory canceled...")
-            return
-        print(filename)
-        self.filename = filename
-        self._start_loading()
-
-    def _start_loading(self):
-        self.open_archive_button.config(state=tk.DISABLED)
-        self.open_dir_button.config(state=tk.DISABLED)
-        self.loader_task = threading.Thread(target=self._loading, args=[self])
-        self.loader_task.start()
-        self.root.after(4 * self.DELAY, self._on_loading_progress, self)
-        self.progress.grid(row=101, column=0, sticky=tk.W + tk.E + tk.N)
-        self.progress.start()
-
-    def _open_archive(self):
-        print("opening archive...")
-        filename = askopenfilename(filetypes=(
-            ("Zip archive", "*.zip"),
-            ("Zip archive", "*.ZIP"),
-            ("Zip archive", "*.Zip")))
-        if not filename:
-            print("openfilename canceled...")
-            return
-        self.filename = filename
-        self._start_loading()
-
-    def _connect_controller_callbacks(self, controller):
-        for cb in self.on_controller_callbacks:
-            cb(controller)
-
-    def _on_loading_progress(self, *args):
-        if self.loader_task.is_alive():
-            self.root.after(self.DELAY, self._on_loading_progress, self)
-            return
-
-        if not self.model_lock.acquire(False):
-            return
-
-        with self.model_lock:
-            if self.model:
-                self.main = MainController(self.model)
-                self.main.build_main(self.fig)
-                self.canvas.draw()
-                self.progress.stop()
-                self.progress.grid_remove()
-                self._connect_controller_callbacks(self.main)
-            else:
-                self.progress.stop()
-                self.progress.grid_remove()
-                messagebox.showerror(
-                    "Wrong file type",
-                    "Single Cell Genomics ZIP archive expected")
-
-    def _loading(self, *args):
-        with self.model_lock:
-            try:
-                print("loading '{}'".format(self.filename))
-                model = DataModel(self.filename)
-                print("preparing '{}'".format(self.filename))
-                model.make()
-                self.model = model
-
-                return True
-            except AssertionError:
-                print("wrong file type: ZIP archive expected")
-                return False
-
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -204,8 +116,11 @@ if __name__ == "__main__":
     main = MainWindow(root)
 
     profiles = ProfilesUi(main.button_ext)
-    profiles.add_profile_ui()
+    profiles.build_ui()
     main.register_on_controller_callback(profiles.connect_controller)
+
+    open_buttons = OpenUi(main, main.toolbar_ext, main.fig)
+    open_buttons.build_ui()
 
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
