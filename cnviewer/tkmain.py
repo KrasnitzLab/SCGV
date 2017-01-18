@@ -10,6 +10,7 @@ from tkutils.canvas_ui import CanvasWindow
 from tkutils.profiles_ui import ProfilesUi
 from tkutils.open_ui import OpenUi
 from tkutils.pinmat_ui import PinmatUi
+from tkutils.sectors_ui import SectorsUi
 
 
 if sys.version_info[0] < 3:
@@ -41,6 +42,10 @@ if __name__ == "__main__":
     pinmat = PinmatUi(main.button_ext)
     pinmat.build_ui()
     main.register_on_controller_callback(pinmat.connect_controller)
+
+    sectors = SectorsUi(main.button_ext)
+    sectors.build_ui()
+    main.register_on_controller_callback(sectors.connect_controller)
 
     open_buttons = OpenUi(main, main.toolbar_ext, main.fig)
     open_buttons.build_ui()
