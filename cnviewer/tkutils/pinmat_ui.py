@@ -22,11 +22,21 @@ else:
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
 
 
+class PinmatWindow(CanvasWindow):
+
+    def __init__(self, root):
+        super(PinmatWindow, self).__init__(root)
+        profiles = ProfilesUi(self.button_ext)
+        profiles.build_ui()
+        self.register_on_controller_callback(profiles.connect_controller)
+
+
 class PinmatUi(object):
 
     def __init__(self, master):
         self.master = master
         self.controller = None
+        self.root = None
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -53,17 +63,18 @@ class PinmatUi(object):
         assert self.controller is not None
 
         controller = MainController(self.controller.model)
-        root = tk.Toplevel()
-        main = CanvasWindow(root)
-
-        profiles = ProfilesUi(main.button_ext)
-        profiles.build_ui()
-        main.register_on_controller_callback(profiles.connect_controller)
+        self.root = tk.Toplevel()
+        main = PinmatWindow(self.root)
 
         controller.build_pinmat(main.fig)
         main.connect_controller(controller)
+        main.register_on_closing_callback(self.on_closing)
 
-        root.mainloop()
+        self.root.mainloop()
+
+    def on_closing(self):
+        print("PinmatUi::on_closing called...")
+        self.show_pinmat.config(state=tk.ACTIVE)
 
     def connect_controller(self, controller):
         assert controller is not None

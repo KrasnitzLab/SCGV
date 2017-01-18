@@ -6,7 +6,8 @@ Created on Jan 18, 2017
 import matplotlib as mpl
 mpl.use('TkAgg')
 
-from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
+
+from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 if sys.version_info[0] < 3:
@@ -29,6 +30,7 @@ class CanvasWindow(object):
 
     def __init__(self, root):
         self.root = root
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         self.fig = Figure(figsize=(12, 8))
 
@@ -78,9 +80,13 @@ class CanvasWindow(object):
         self._build_button_ext()
 
         self.on_controller_callbacks = []
+        self.on_closing_callbacks = []
 
     def register_on_controller_callback(self, cb):
         self.on_controller_callbacks.append(cb)
+
+    def register_on_closing_callback(self, cb):
+        self.on_closing_callbacks.append(cb)
 
     def connect_controller(self, controller):
         for cb in self.on_controller_callbacks:
@@ -89,11 +95,6 @@ class CanvasWindow(object):
 
     def refresh(self):
         self.canvas.draw()
-
-    def _quit(self):
-        self.root.quit()     # stops mainloop
-        self.root.destroy()  # this is necessary on Windows to prevent
-        # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
     def _build_button_ext(self):
         frame = ttk.Frame(
@@ -106,8 +107,17 @@ class CanvasWindow(object):
         self.quit_button = ttk.Button(
             master=frame,
             text='Close',
-            command=self._quit)
+            command=self.on_closing)
         self.quit_button.grid(
             row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
+
+    def on_closing(self):
+        print("CanvasWindow::on_closing called...")
+        for cb in self.on_closing_callbacks:
+            cb()
+
+        self.root.quit()     # stops mainloop
+        self.root.destroy()  # this is necessary on Windows to prevent
+        # Fatal Python Error: PyEval_RestoreThread: NULL tstate
