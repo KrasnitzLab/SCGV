@@ -6,16 +6,19 @@ Created on Dec 14, 2016
 import numpy as np
 from views.base import ViewerBase
 from utils.controller_base import ControllerBase
+import webbrowser
 
 
 class SampleViewer(ViewerBase, ControllerBase):
 
     def __init__(self, model):
         super(SampleViewer, self).__init__(model)
+        self.start_pos = None
+        self.end_pos = None
 
     def calc_chrom_lines(self):
         chrom_lines = self.calc_chrom_lines_pos(self.model.seg_df)
-        return self.model.seg_df['abspos'][chrom_lines]
+        return np.array(self.model.seg_df['abspos'][chrom_lines][:])
 
     def calc_ploidy(self, sample_name):
         return self.model\
@@ -91,18 +94,37 @@ class SampleViewer(ViewerBase, ControllerBase):
         fig.canvas.mpl_connect('button_release_event', self.event_handler)
 
     def event_handler(self, event):
-        print("event tester called...")
         self.debug_event(event)
-        if event.name == 'button_press_event':
-            self.translate_xcoord(event.xdata)
+        if event.name == 'button_press_event' and event.button == 3:
+            pos = self.translate_xcoord(event.xdata)
+            if self.start_pos is None:
+                self.start_pos = pos
+            else:
+                self.end_pos = pos
+                self.open_genome_browser()
 
     def translate_xcoord(self, xdata):
-        print(type(xdata))
-        x = int(xdata)
-        print(self.chrom_lines)
-        chroms = np.array(self.chrom_lines[:])
-        print(chroms)
-        chrom_index = np.abs(self.chrom_lines - x).argmin()
-        print(chrom_index)
-        chrom_index = np.abs(chroms - x).argmin()
-        print(chrom_index)
+        index = np.abs(self.model.seg_df.abspos.values - xdata).argmin()
+        chrom, chrompos = self.model.seg_df.iloc[index, [0, 1]]
+        return (int(chrom), int(chrompos))
+
+    def open_genome_browser(self):
+        if self.start_pos is None or self.end_pos is None:
+            return
+        if self.start_pos[0] != self.end_pos[0]:
+            self.start_pos = None
+            self.end_pos = None
+            return
+        chrom = self.start_pos[0]
+        if chrom == 23:
+            chrom = 'X'
+        if chrom == 24:
+            chrom = 'Y'
+        position = 'chr{}:{}-{}'.format(
+            chrom, self.start_pos[1], self.end_pos[1])
+        url = "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position={}"\
+            .format(position)
+        print('opening url: ', url)
+        webbrowser.open(url, new=False, autoraise=True)
+        self.start_pos = None
+        self.end_pos = None
