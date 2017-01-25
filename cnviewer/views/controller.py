@@ -15,34 +15,7 @@ from views.error import ErrorViewer
 from views.sector import SectorViewer
 from views.pinmat import PinmatViewer
 from tkutils.sample_ui import SampleUi
-
-
-class ControllerBase(object):
-
-    def __init__(self, model):
-        self.model = model
-
-    @staticmethod
-    def debug_event(event):
-        # print(event)
-        if event.name == 'button_press_event':
-            print("MOUSE: name={}; xy=({},{}); xydata=({},{}); "
-                  "button={}; dblclick={}".format(
-                      event.name,
-                      event.x, event.y,
-                      event.xdata, event.ydata,
-                      event.button, event.dblclick
-                  ))
-        elif event.name == 'key_press_event':
-            print("KEY: name={}; xy=({},{}); xydata=({},{}); "
-                  "key={}".format(
-                      event.name,
-                      event.x, event.y,
-                      event.xdata, event.ydata,
-                      event.key
-                  ))
-        else:
-            print("???: {}".format(event.name))
+from utils.controller_base import ControllerBase
 
 
 class MainController(ControllerBase):
@@ -62,7 +35,6 @@ class MainController(ControllerBase):
         self.fig.canvas.mpl_connect('key_press_event', self.event_handler)
 
     def event_handler(self, event):
-        print("event tester called...")
         self.debug_event(event)
         if event.name == 'button_press_event' and event.button == 3:
             sample = self.locate_sample_click(event)

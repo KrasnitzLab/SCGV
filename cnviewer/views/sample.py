@@ -5,9 +5,10 @@ Created on Dec 14, 2016
 '''
 import numpy as np
 from views.base import ViewerBase
+from utils.controller_base import ControllerBase
 
 
-class SampleViewer(ViewerBase):
+class SampleViewer(ViewerBase, ControllerBase):
 
     def __init__(self, model):
         super(SampleViewer, self).__init__(model)
@@ -39,7 +40,7 @@ class SampleViewer(ViewerBase):
 
     def draw_samples(self, fig, sample_list):
 
-        chrom_lines = self.calc_chrom_lines()
+        self.chrom_lines = self.calc_chrom_lines()
 
         ax_common = None
         for num, sample_name in enumerate(sample_list):
@@ -48,9 +49,11 @@ class SampleViewer(ViewerBase):
                 ax_common = ax
             else:
                 ax = fig.add_subplot(
-                    len(sample_list), 1, num + 1, sharex=ax_common)
+                    len(sample_list), 1, num + 1,
+                    sharex=ax_common,
+                    sharey=ax_common)
 
-            for chrom_line in chrom_lines:
+            for chrom_line in self.chrom_lines:
                 ax.axvline(x=chrom_line, color="#000000", linewidth=1)
             for hl in [1, 2, 3, 4, 5, 6]:
                 ax.axhline(y=hl, color="#000000", linewidth=1, linestyle="--")
@@ -79,11 +82,27 @@ class SampleViewer(ViewerBase):
             ax.set_xticks([])
             ax.set_xticklabels([])
 
-            chrom_labels_pos = self.calc_chrom_labels_pos(chrom_lines)
+            chrom_labels_pos = self.calc_chrom_labels_pos(self.chrom_lines)
             ax.set_xticks(chrom_labels_pos)
             ax.set_xticklabels(self.CHROM_LABELS, rotation='vertical')
 
-#             for num, label_pos in enumerate(chrom_labels_pos):
-#                 ax.text(
-#                     label_pos, 10, self.CHROM_LABELS[num],
-#                     fontsize=10, horizontalalignment='center')
+        fig.canvas.mpl_connect('button_press_event', self.event_handler)
+        fig.canvas.mpl_connect('key_press_event', self.event_handler)
+        fig.canvas.mpl_connect('button_release_event', self.event_handler)
+
+    def event_handler(self, event):
+        print("event tester called...")
+        self.debug_event(event)
+        if event.name == 'button_press_event':
+            self.translate_xcoord(event.xdata)
+
+    def translate_xcoord(self, xdata):
+        print(type(xdata))
+        x = int(xdata)
+        print(self.chrom_lines)
+        chroms = np.array(self.chrom_lines[:])
+        print(chroms)
+        chrom_index = np.abs(self.chrom_lines - x).argmin()
+        print(chrom_index)
+        chrom_index = np.abs(chroms - x).argmin()
+        print(chrom_index)
