@@ -41,8 +41,14 @@ class SampleViewer(ViewerBase):
 
         chrom_lines = self.calc_chrom_lines()
 
+        ax_common = None
         for num, sample_name in enumerate(sample_list):
-            ax = fig.add_subplot(len(sample_list), 1, num + 1)
+            if num == 0:
+                ax = fig.add_subplot(len(sample_list), 1, num + 1)
+                ax_common = ax
+            else:
+                ax = fig.add_subplot(
+                    len(sample_list), 1, num + 1, sharex=ax_common)
 
             for chrom_line in chrom_lines:
                 ax.axvline(x=chrom_line, color="#000000", linewidth=1)
@@ -74,7 +80,10 @@ class SampleViewer(ViewerBase):
             ax.set_xticklabels([])
 
             chrom_labels_pos = self.calc_chrom_labels_pos(chrom_lines)
-            for num, label_pos in enumerate(chrom_labels_pos):
-                ax.text(
-                    label_pos, 10, self.CHROM_LABELS[num],
-                    fontsize=10, horizontalalignment='center')
+            ax.set_xticks(chrom_labels_pos)
+            ax.set_xticklabels(self.CHROM_LABELS, rotation='vertical')
+
+#             for num, label_pos in enumerate(chrom_labels_pos):
+#                 ax.text(
+#                     label_pos, 10, self.CHROM_LABELS[num],
+#                     fontsize=10, horizontalalignment='center')
