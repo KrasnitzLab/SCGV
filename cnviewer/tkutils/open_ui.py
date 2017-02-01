@@ -32,6 +32,7 @@ class OpenUi(object):
         self.master = master
         self.fig = fig
         self.model_lock = threading.RLock()
+        self.model = None
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -120,8 +121,8 @@ class OpenUi(object):
                 self.progress.stop()
                 self.progress.grid_remove()
                 messagebox.showerror(
-                    "Wrong file/directory type",
-                    "Single Cell Genomics data set expected")
+                    title="Wrong file/directory type",
+                    message="Single Cell Genomics data set expected")
 
     def _loading(self, *args):
         with self.model_lock:

@@ -58,8 +58,8 @@ class SectorsLegend(object):
         print(sector, pathology)
         if self.controller.model.pathology is None:
             return
-        filename = self.controller.model.pathology.get(pathology, None)
-        if filename is None or not os.path.exists(filename):
+        image = self.controller.model.pathology.get(pathology, None)
+        if image is None:
             return
 
         window = tk.Toplevel()
@@ -72,7 +72,7 @@ class SectorsLegend(object):
 
         window.protocol("WM_DELETE_WINDOW", on_close)
 
-        image = ImageTk.PhotoImage(Image.open(filename))
+        image = ImageTk.PhotoImage(image)
         panel = tk.Label(window, image=image)
         panel.pack(side="bottom", fill="both", expand="yes")
         window.mainloop()

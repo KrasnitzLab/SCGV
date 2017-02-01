@@ -8,6 +8,8 @@ import pandas as pd
 import os
 import zipfile
 
+from PIL import Image
+
 
 def load_df(filename):
     df = pd.read_csv(filename, sep='\t')
@@ -20,10 +22,12 @@ class DataLoader(dict):
 
     @classmethod
     def _organize_filenames(cls, namelist):
+        print(namelist)
         result = {}
         for filename in namelist:
             parts = filename.split('.')
-            assert len(parts) > 2
+            if len(parts) < 3:
+                continue
             filetype = parts[-2]
             if filetype not in cls.TYPES:
                 continue
@@ -45,6 +49,29 @@ class DataLoader(dict):
                 df = pd.read_csv(infile, sep='\t')
                 assert df is not None
                 self[filetype] = df
+            self.pathology = self._load_images_zipfile(zipdata)
+
+    def _load_images_zipfile(self, zipdata):
+        print(zipdata.namelist())
+        descriptor = 'images/images.csv'
+        if descriptor not in zipdata.namelist():
+            return
+        infile = zipdata.open(descriptor)
+        images_df = pd.read_csv(infile)
+        print(images_df)
+
+        result = {}
+        for _index, row in images_df.iterrows():
+            filename = os.path.join('images', row['image'])
+            image = None
+            if filename in zipdata.namelist():
+                print("loading: ", filename)
+                image = Image.open(zipdata.open(filename))
+                image.load()
+            else:
+                print("image not found: ", filename)
+            result[row['pathology']] = image
+        return result
 
     def _load_dir(self, dir_filename):
         assert os.path.exists(dir_filename)
@@ -75,8 +102,11 @@ class DataLoader(dict):
         images_df = pd.read_csv(filename)
         result = {}
         for _index, row in images_df.iterrows():
-            result[row['pathology']] = os.path.join(
-                images_dirname, row['image'])
+            filename = os.path.join(images_dirname, row['image'])
+            image = None
+            if os.path.exists(filename):
+                image = Image.open(filename)
+            result[row['pathology']] = image
         return result
 
     def __init__(self, filename):
