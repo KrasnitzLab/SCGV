@@ -8,7 +8,7 @@ from tkutils.sectors_legend import SectorsLegend
 mpl.use('TkAgg')
 
 
-from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
+from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 if sys.version_info[0] < 3:
@@ -29,7 +29,8 @@ else:
 
 class CanvasWindow(object):
 
-    def __init__(self, root):
+    def __init__(self, root, legend=True):
+        self.legend = legend
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
@@ -79,7 +80,8 @@ class CanvasWindow(object):
         self.content.rowconfigure(1, weight=99)
 
         self._build_button_ext()
-        self._build_legend_ext()
+        if self.legend:
+            self._build_legend_ext()
 
         self.on_controller_callbacks = []
         self.on_closing_callbacks = []

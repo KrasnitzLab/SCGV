@@ -28,7 +28,7 @@ class SampleUi(object):
         self.sample_list = sample_list[:]
 
     def build_ui(self):
-        self.main = CanvasWindow(self.root)
+        self.main = CanvasWindow(self.root, legend=False)
         return self.main.fig
 
     def mainloop(self):

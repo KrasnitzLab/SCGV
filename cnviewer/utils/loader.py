@@ -22,7 +22,6 @@ class DataLoader(dict):
 
     @classmethod
     def _organize_filenames(cls, namelist):
-        print(namelist)
         result = {}
         for filename in namelist:
             parts = filename.split('.')
@@ -40,9 +39,6 @@ class DataLoader(dict):
         assert zipfile.is_zipfile(zip_filename)
         with zipfile.ZipFile(zip_filename, 'r') as zipdata:
             filenames = self._organize_filenames(zipdata.namelist())
-            print(filenames)
-            print(set(filenames.keys()))
-            print(self.TYPES)
             assert set(filenames.keys()) == self.TYPES
             for filetype, filename in filenames.items():
                 infile = zipdata.open(filename)
@@ -52,13 +48,11 @@ class DataLoader(dict):
             self.pathology = self._load_images_zipfile(zipdata)
 
     def _load_images_zipfile(self, zipdata):
-        print(zipdata.namelist())
         descriptor = 'images/images.csv'
         if descriptor not in zipdata.namelist():
             return
         infile = zipdata.open(descriptor)
         images_df = pd.read_csv(infile)
-        print(images_df)
 
         result = {}
         for _index, row in images_df.iterrows():
@@ -67,7 +61,7 @@ class DataLoader(dict):
             if filename in zipdata.namelist():
                 print("loading: ", filename)
                 image = Image.open(zipdata.open(filename))
-                image.load()
+                # image.load()
             else:
                 print("image not found: ", filename)
             result[row['pathology']] = image
