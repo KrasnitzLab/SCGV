@@ -74,7 +74,7 @@ class DataModel(DataLoader):
         self.min_x = np.min(self.icoord)
         self.max_x = np.max(self.icoord)
         self.interval_length = (self.max_x - self.min_x) / (self.samples - 1)
-        ordering = self.Z['leaves']
+        ordering = np.array(self.Z['leaves'])
 
         self.column_labels = \
             np.array(self.seg_df.columns[3:])[ordering]
@@ -89,6 +89,8 @@ class DataModel(DataLoader):
     @classmethod
     def _make_heatmap_array(cls, df):
         unique = df.unique()
+        unique.sort()
+        print(unique)
         result = pd.Series(index=df.index)
         for val in unique:
             if val == 0:

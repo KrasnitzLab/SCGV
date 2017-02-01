@@ -13,26 +13,20 @@ class SectorDataModel(object):
         self.bins, self.samples = self.model.seg_data.shape
 
     def build_ordering(self):
-        ordering = np.vstack((
-            self.model.Z['leaves'],
-            self.model.guide_df[self.model.SECTOR_COLUMN].values,
-        ))
-        print(ordering)
-        print(ordering.shape)
-        res = np.lexsort(ordering, axis=0)
-        print(res)
-        print(res.shape)
+        index = np.array(self.model.Z['leaves'])
+        order = np.arange(len(index))
 
-        print(self.model.guide_df[self.model.SECTOR_COLUMN].unique())
-        print(len(self.model.guide_df[self.model.SECTOR_COLUMN].unique()))
-
-        print(ordering[:, res])
-        return res
+        res = np.lexsort(
+            (
+                index,
+                self.model.guide_df[self.model.SECTOR_COLUMN].values,
+            ))
+        return order[res]
 
     def make(self):
         ordering = self.build_ordering()
 
-        self.column_labels = np.array(self.seg_df.columns[3:])
+        self.column_labels = np.array(self.seg_df.columns[3:])[ordering]
         self.label_midpoints = (
             np.arange(self.samples) + 0.5) * self.interval_length
 

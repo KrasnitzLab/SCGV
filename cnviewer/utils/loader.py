@@ -3,6 +3,7 @@ Created on Dec 2, 2016
 
 @author: lubo
 '''
+import numpy as np
 import pandas as pd
 import os
 import zipfile
@@ -90,6 +91,10 @@ class DataLoader(dict):
         self['guide'] = self.guide_df
 
         assert len(self.sample_names) == len(self.guide_df)
+
+        assert np.all(
+            self.pinmat_df.columns ==
+            self.guide_df[self.GUIDE_SAMPLES_COLUMN])
         assert len(self.sample_names) == len(self.clone_df)
         assert len(self.sample_names) == len(self.tree_df) + 1
         self.tree_df = self.tree_df.ix[:, 0:4].copy()
@@ -102,8 +107,14 @@ class DataLoader(dict):
 
         self.seg_df = self.seg_df.ix[:, seg_columns].copy()
         self['seg'] = self.seg_df
+        assert np.all(
+            self.seg_df.columns[3:] ==
+            self.guide_df[self.GUIDE_SAMPLES_COLUMN])
         self.ratio_df = self.ratio_df.ix[:, seg_columns].copy()
         self['ratio'] = self.ratio_df
+        assert np.all(
+            self.ratio_df.columns[3:] ==
+            self.guide_df[self.GUIDE_SAMPLES_COLUMN])
 
         assert len(self.seg_df.columns) == len(self.sample_names) + 3
         assert len(self.ratio_df.columns) == len(self.sample_names) + 3
