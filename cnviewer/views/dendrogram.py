@@ -40,7 +40,7 @@ class DendrogramViewer(ViewerBase):
         max_y = np.max(dcoord)
 
         for xs, ys, color in zip(icoord, dcoord, color_list):
-            ax.plot(xs, ys, color)
+            ax.plot(xs, ys, color, linewidth=0.5)
         ax.set_xlim(min_x - 10, max_x + 10)
         ax.set_ylim(min_y, max_y + 0.05 * max_y)
 

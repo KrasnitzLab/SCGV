@@ -30,14 +30,16 @@ class SectorsLegend(object):
 
     def build_ui(self):
 
+        label = ttk.Label(self.master, text="Sectors")
+        label.grid(column=0, row=0, columnspan=2)
+
         self.sectors_ui = tk.Listbox(
             self.master, height=5)
         self.sectors_ui.grid(
-            column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+            column=0, row=10, sticky=(tk.N, tk.S, tk.E, tk.W))
         s = ttk.Scrollbar(
-
             self.master, orient=tk.VERTICAL, command=self.sectors_ui.yview)
-        s.grid(column=1, row=0, sticky=(tk.N, tk.S))
+        s.grid(column=1, row=10, sticky=(tk.N, tk.S))
         self.sectors_ui['yscrollcommand'] = s.set
 
     def register_controller(self, controller):
@@ -59,20 +61,18 @@ class SectorsLegend(object):
         filename = self.controller.model.pathology.get(pathology, None)
         if filename is None or not os.path.exists(filename):
             return
-        print("loading: ", filename)
 
-        self.window = tk.Toplevel(self.master)
-        self.window.title(pathology)
-        self.window.geometry("500x500")
-        self.window.configure(background='grey')
-        self.window.protocol("WM_DELETE_WINDOW", self.on_closing)
+        window = tk.Toplevel()
+        window.title(pathology)
+        window.configure(background='grey')
+
+        def on_close():
+            window.quit()     # stops mainloop
+            window.destroy()  # this is necessary on Windows to prevent
+
+        window.protocol("WM_DELETE_WINDOW", on_close)
 
         image = ImageTk.PhotoImage(Image.open(filename))
-        panel = tk.Label(self.window, image=image)
+        panel = tk.Label(window, image=image)
         panel.pack(side="bottom", fill="both", expand="yes")
-
-        self.window.mainloop()
-
-    def on_closing(self):
-        self.window.quit()     # stops mainloop
-        self.window.destroy()  # this is necessary on Windows to prevent
+        window.mainloop()

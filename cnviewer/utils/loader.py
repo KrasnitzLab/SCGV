@@ -80,6 +80,8 @@ class DataLoader(dict):
         return result
 
     def __init__(self, filename):
+        self.pathology = None
+
         if os.path.isdir(filename):
             self._load_dir(filename)
         else:
