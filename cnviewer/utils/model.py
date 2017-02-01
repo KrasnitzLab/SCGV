@@ -17,6 +17,7 @@ class DataModel(DataLoader):
     GATE_COLUMN = 'gate'
     CHROM_COLUMN = 'chrom'
     SECTOR_COLUMN = 'sector'
+    PATHOLOGY_COLUMN = 'Pathology'
 
     def __init__(self, zip_filename):
         super(DataModel, self).__init__(zip_filename)
@@ -226,6 +227,23 @@ class DataModel(DataLoader):
                 0, 1)
         return self._bar_extent
 
+    def make_sectors_legend(self):
+        sectors = self.guide_df[self.SECTOR_COLUMN].unique()
+        sectors.sort()
+
+        print(sectors)
+
+        result = []
+        for sector in sectors:
+            sector_df = self.guide_df[
+                self.guide_df[self.SECTOR_COLUMN] == sector]
+            pathology = sector_df[self.PATHOLOGY_COLUMN].values[0]
+            if not np.all(sector_df[self.PATHOLOGY_COLUMN] == pathology):
+                print("single sector '{}'; different pathologies: {}".format(
+                    sector,
+                    sector_df[self.PATHOLOGY_COLUMN].unique()))
+            result.append((sector, str(pathology).strip()))
+        return result
 
 # def gate_compare(g1, g2):
 #     assert len(g1) >= 2

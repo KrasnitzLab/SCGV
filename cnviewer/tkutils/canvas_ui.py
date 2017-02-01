@@ -4,6 +4,7 @@ Created on Jan 18, 2017
 @author: lubo
 '''
 import matplotlib as mpl
+from tkutils.sectors_legend import SectorsLegend
 mpl.use('TkAgg')
 
 
@@ -78,6 +79,7 @@ class CanvasWindow(object):
         self.content.rowconfigure(1, weight=99)
 
         self._build_button_ext()
+        self._build_legend_ext()
 
         self.on_controller_callbacks = []
         self.on_closing_callbacks = []
@@ -91,6 +93,8 @@ class CanvasWindow(object):
     def connect_controller(self, controller):
         for cb in self.on_controller_callbacks:
             cb(controller)
+
+        self.sectors_legend.register_controller(controller)
         self.canvas.draw()
 
     def refresh(self):
@@ -112,6 +116,18 @@ class CanvasWindow(object):
             row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
+
+    def _build_legend_ext(self):
+        frame = ttk.Frame(
+            self.button_ext,
+            relief='sunken',
+            borderwidth=5)
+        frame.grid(row=100, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(0, weight=1)
+
+        self.sectors_legend = SectorsLegend(frame)
+        self.sectors_legend.build_ui()
 
     def on_closing(self):
         print("CanvasWindow::on_closing called...")

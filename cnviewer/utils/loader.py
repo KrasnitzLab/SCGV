@@ -65,6 +65,20 @@ class DataLoader(dict):
             assert df is not None
             self[filetype] = df
 
+        self.pathology = None
+        images_dirname = os.path.join(dir_filename, 'images')
+        if os.path.exists(images_dirname) and os.path.isdir(images_dirname):
+            self.pathology = self._load_images_dir(images_dirname)
+
+    def _load_images_dir(self, images_dirname):
+        filename = os.path.join(images_dirname, 'images.csv')
+        images_df = pd.read_csv(filename)
+        result = {}
+        for _index, row in images_df.iterrows():
+            result[row['pathology']] = os.path.join(
+                images_dirname, row['image'])
+        return result
+
     def __init__(self, filename):
         if os.path.isdir(filename):
             self._load_dir(filename)

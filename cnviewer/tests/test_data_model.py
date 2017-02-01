@@ -11,7 +11,10 @@ from utils.model import DataModel  # , gate_compare
 def test_data_model_make_01():
     model = DataModel('tests/data/cnviewer_data_example_01.zip')
     assert model is not None
-    # model.make()
+    model.make()
+
+    sectors_legend = model.make_sectors_legend()
+    print(sectors_legend)
 
 
 def test_make_pinmat():
@@ -21,6 +24,7 @@ def test_make_pinmat():
     model.make_linkage()
     ordering = model.make_dendrogram()
     model.make_pinmat(ordering=ordering)
+
 
 #     expected = np.loadtxt('tests/data/pin_data_single.csv.gz',
 #                           delimiter='\t')
