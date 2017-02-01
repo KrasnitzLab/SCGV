@@ -4,9 +4,8 @@ Created on Feb 1, 2017
 @author: lubo
 '''
 import sys  # @UnusedImport
-import os
 
-from PIL import ImageTk, Image
+from PIL import ImageTk
 
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
