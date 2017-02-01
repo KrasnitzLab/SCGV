@@ -134,6 +134,7 @@ class OpenUi(object):
                 self.model = model
 
                 return True
-            except AssertionError:
-                print("wrong file type: ZIP archive expected")
+            except Exception:
+                print("wrong dataset format")
+                self.model = None
                 return False
