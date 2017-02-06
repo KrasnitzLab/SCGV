@@ -10,23 +10,17 @@ of Anaconda.
 instruction from 
 [https://docs.continuum.io/anaconda/install](https://docs.continuum.io/anaconda/install)
 
-* Recreate an anaconda environment suitable for work with 
-`cnviewer` codebase. To this end you need to create a `cnviewer` anaconda 
-environment using following command:
+## Create cnviewer anaconda environment from scratch
+
+* After installing Anacond you need to create an environment to use with the viewer:
 
     ```
-    cd cnviewer/deploy_tools
-    conda env create -f environment.yml
+    conda create -n aviewer
+    source activate aviewer
+    conda install numpy scipy matplotlib pillow pandas
     ```
-This command will create an anaconda environment named `cnviewer`.
 
-* If you already have an anaconda environment named `cnviewer` and need only to
-update this environment, the appropriate commands are:
-
-    ```
-    cd cnviewer/deploy_tools
-    conda env update -f environment.yml
-    ```
+## Activate the viewer environment
 
 * To activate the anaconda environment `cnviewer` you need to use the appropriate
 anconda instructions to 
@@ -35,21 +29,22 @@ For `Linux` and `OS X` you should
 use:
 
     ```bash
-    source activate cnviewer
+    source activate aviewer
     ```
 On `Windows` you need to use:
     ```bash
-    activate cnviewer
+    activate aviewer
     ```
-
-
-## Work with Anaconda Environments
 
 * Full instructions on how ot use and manage anaconda environments can be found
 here: [http://conda.pydata.org/docs/using/envs.html](http://conda.pydata.org/docs/using/envs.html)
 
 
 ## Start the Viewer
+* Before starting the viewer you need to activate viewer Anaconda environment
+    ```
+    source activate aviewer
+    ```
 
 * To start the viewer go to `cnviewer` directory and start `tkmain.py`
 
@@ -105,10 +100,3 @@ files:
     No errors detected in compressed data of GL9.2.zip.
     ```
     
-## Create cnviewer anaconda environment from scratch
-
-	```
-	conda create -n aviewer
-	source activate aviewer
-	conda install numpy scipy matplotlib pillow pandas
-	```
