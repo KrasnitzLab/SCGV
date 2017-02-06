@@ -105,3 +105,10 @@ files:
     No errors detected in compressed data of GL9.2.zip.
     ```
     
+## Create cnviewer anaconda environment from scratch
+
+	```
+	conda create -n aviewer
+	source activate aviewer
+	conda install numpy scipy matplotlib pillow pandas
+	```
