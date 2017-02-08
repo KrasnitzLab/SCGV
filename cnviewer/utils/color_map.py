@@ -137,7 +137,7 @@ class ColorMap(object):
             '#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99',
             '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a',
             '#ffff99', '#b15928']
-        cmap.colors = col.ListedColormap(colors)
+        cmap.colors = col.ListedColormap(colors[::-1])
         return cmap
 
     @staticmethod
@@ -160,4 +160,12 @@ class ColorMap(object):
         cmap.bounds = [-0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 999999999]
         cmap.norm = col.BoundaryNorm(cmap.bounds, cmap.colors.N)
 
+        return cmap
+
+    @staticmethod
+    def make_diverging05():
+        cmap = ColorMap()
+        N = 5
+        colors = ['#0571b0', '#92c5de', '#f7f7f7', '#f4a582', '#ca0020', ]
+        cmap.colors = col.ListedColormap(colors, N=N)
         return cmap

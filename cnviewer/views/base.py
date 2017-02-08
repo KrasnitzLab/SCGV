@@ -15,7 +15,7 @@ class ViewerBase(object):
     ]
 
     COPYNUM_LABELS = [
-        "0", "med - 2+", "med - 1", "median", "med + 1", "med + 2+"
+        "med - 2+", "med - 1", "median", "med + 1", "med + 2+"
     ]
 
     PLOIDY_LABELS = ["<2C", "2C", ">2C-4C", "4C", ">4C"]

@@ -4,15 +4,16 @@ Created on Jan 18, 2017
 @author: lubo
 '''
 import matplotlib as mpl
-from tkutils.sectors_legend import SectorsLegend
-from tkutils.heatmap_legend import HeatmapLegend
-from tkutils.sectors_legend2 import SectorsLegend2
+
 mpl.use('TkAgg')
 
 
-# @UnusedWildImport @IgnorePep8
-from matplotlib.backends.backend_tkagg import *
+from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
+
+from tkutils.heatmap_legend import HeatmapLegend  # @NoMove @IgnorePep8
+from tkutils.sectors_legend2 import SectorsLegend2  # @NoMove @IgnorePep8
+
 
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
@@ -138,6 +139,7 @@ class CanvasWindow(object):
 
         self.heatmap_legend = HeatmapLegend(frame)
         self.heatmap_legend.build_ui()
+        self.heatmap_legend.show_legend()
 
     def on_closing(self):
         print("CanvasWindow::on_closing called...")
