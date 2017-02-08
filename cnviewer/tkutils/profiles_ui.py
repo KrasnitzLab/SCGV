@@ -28,27 +28,30 @@ class ProfilesUi(object):
     def build_ui(self):
         frame = ttk.Frame(
             self.master,
-            borderwidth=5)
+            borderwidth=5,
+            relief='sunken')
         frame.grid(
-            row=10, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+            row=20, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        label = ttk.Label(frame, text="Profiles")
+        label.grid(column=0, row=1)
 
         self.profile_ui = tk.Listbox(frame, width=7, height=7)
         self.profile_ui.grid(
-            column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+            column=0, row=10, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         s = ttk.Scrollbar(
             frame, orient=tk.VERTICAL, command=self.profile_ui.yview)
-        s.grid(column=1, row=0, sticky=(tk.N, tk.S))
+        s.grid(column=1, row=10, sticky=(tk.N, tk.S))
         self.profile_ui['yscrollcommand'] = s.set
 
         self.show_profiles = ttk.Button(
             master=frame, text="Show Profiles", command=self._show_profiles)
         self.show_profiles.grid(
-            column=0, row=1, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+            column=0, row=11, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.clear_profiles = ttk.Button(
             master=frame, text="Clear Profiles", command=self._clear_profiles)
         self.clear_profiles.grid(
-            column=0, row=2, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+            column=0, row=12, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.show_profiles.config(state=tk.DISABLED)
         self.clear_profiles.config(state=tk.DISABLED)

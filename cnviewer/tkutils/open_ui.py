@@ -37,39 +37,39 @@ class OpenUi(object):
     def build_ui(self):
         frame = ttk.Frame(
             self.master,
-            # relief='sunken',
-            borderwidth=3
+            relief='flat',
+            borderwidth=5
         )
         frame.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.open_archive_button = ttk.Button(
             master=frame,
-            width=2,
-            text="OA",
+            text="Open Archive",
             command=self._open_archive)
-        self.open_archive_button.grid(column=0, row=0)
+        self.open_archive_button.grid(
+            column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.open_dir_button = ttk.Button(
             master=frame,
-            width=2,
-            text="OD",
+            text="Open Directory",
             command=self._open_dir)
-        self.open_dir_button.grid(column=1, row=0)
+        self.open_dir_button.grid(
+            column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         progress_frame = ttk.Frame(
             master=frame,
-            # relief='sunken',
-            borderwidth=5
+            relief='flat',
+            borderwidth=5,
+            height=20,
         )
         progress_frame.grid(
-            row=0, column=101, sticky=(tk.N, tk.S, tk.E, tk.W))
+            row=3, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         progress_frame.columnconfigure(0, weight=99)
 
         self.progress = ttk.Progressbar(
             progress_frame, mode='indeterminate')
         # self.progress.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
-        frame.columnconfigure(0, weight=0)
-        frame.columnconfigure(1, weight=0)
-        frame.columnconfigure(101, weight=99)
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(0, weight=1)
 
     def _open_dir(self):
         print("opening directory...")

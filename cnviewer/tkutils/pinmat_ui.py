@@ -43,7 +43,7 @@ class PinmatUi(object):
             self.master,
             borderwidth=5)
         frame.grid(
-            row=20, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+            row=30, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.show_pinmat = ttk.Button(
             master=frame, text="Show Pins", command=self._show_pinmat)

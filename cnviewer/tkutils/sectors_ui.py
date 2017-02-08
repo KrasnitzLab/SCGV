@@ -44,7 +44,7 @@ class SectorsUi(object):
             self.master,
             borderwidth=5)
         frame.grid(
-            row=30, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+            row=40, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.show_sectors = ttk.Button(
             master=frame, text="Sectors Reorder", command=self._show_sectors)

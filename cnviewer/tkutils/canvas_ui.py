@@ -8,7 +8,8 @@ from tkutils.sectors_legend import SectorsLegend
 mpl.use('TkAgg')
 
 
-from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
+
+from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 if sys.version_info[0] < 3:
@@ -57,7 +58,8 @@ class CanvasWindow(object):
             # width=150
         )
         self.button_ext = ttk.Frame(
-            self.content, borderwidth=1,
+            self.content, borderwidth=2,
+            relief='groove',
             # width=150
         )
 
@@ -66,13 +68,15 @@ class CanvasWindow(object):
             column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         toolbar_frame.grid(
-            column=0, row=0, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+            column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         toolbar_frame.columnconfigure(0, weight=0)
         toolbar_frame.columnconfigure(1, weight=1)
 
-        self.toolbar_ext.grid(column=1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.toolbar_ext.grid(
+            column=1, row=0, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.toolbar_ext.columnconfigure(0, weight=99)
-        self.button_ext.grid(column=1, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.button_ext.grid(
+            column=1, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.content.columnconfigure(0, weight=99)
         self.content.rowconfigure(0, weight=0)
@@ -105,10 +109,9 @@ class CanvasWindow(object):
     def _build_button_ext(self):
         frame = ttk.Frame(
             self.button_ext,
-            # relief='sunken',
             borderwidth=5)
         frame.grid(
-            row=50, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+            row=10, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.quit_button = ttk.Button(
             master=frame,

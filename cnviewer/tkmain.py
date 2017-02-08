@@ -47,7 +47,7 @@ if __name__ == "__main__":
     sectors.build_ui()
     main.register_on_controller_callback(sectors.connect_controller)
 
-    open_buttons = OpenUi(main, main.toolbar_ext, main.fig)
+    open_buttons = OpenUi(main, main.button_ext, main.fig)
     open_buttons.build_ui()
 
     root.columnconfigure(0, weight=1)
