@@ -44,13 +44,14 @@ class DataModel(DataLoader):
     def make(self):
         self.make_linkage()
         ordering = self.make_dendrogram()
+        self.ordering = ordering
 
         self.clone, self.subclone = self.make_clone(ordering=ordering)
 
         self.pins = self.make_pinmat(ordering=ordering)
         self.heatmap = self.make_heatmap(ordering=ordering)
         self.gate = self.make_gate(ordering=ordering)
-        self.sector = self.make_sector(ordering=ordering)
+        self.sector, self.sector_mapping = self.make_sector(ordering=ordering)
         self.multiplier = self.make_multiplier(ordering=ordering)
         self.error = self.make_error(ordering=ordering)
 
@@ -91,16 +92,18 @@ class DataModel(DataLoader):
     def _make_heatmap_array(cls, df):
         unique = df.unique()
         unique.sort()
-        print(unique)
+        mapping = {}
+
         result = pd.Series(index=df.index)
         for val in unique:
             if val == 0:
                 result[df == val] = 0
             else:
+                mapping[val] = cls.heatmap_color_counter
                 result[df == val] = cls.heatmap_color_counter
                 cls.heatmap_color_counter += 1
 
-        return result.values
+        return result.values, mapping
 
     def make_heatmap(self, ordering):
         data = np.round(self.seg_data)
@@ -140,9 +143,9 @@ class DataModel(DataLoader):
 
         clone_column_df = self.clone_df.iloc[ordering, :]
         self._reset_heatmap_color()
-        clone = self._make_heatmap_array(
+        clone, _clone_mapping = self._make_heatmap_array(
             clone_column_df[self.CLONE_COLUMN])
-        subclone = self._make_heatmap_array(
+        subclone, _subclone_mapping = self._make_heatmap_array(
             clone_column_df[self.SUBCLONE_COLUMN])
         return clone, subclone
 
@@ -206,8 +209,8 @@ class DataModel(DataLoader):
             self.sector = None
         sector_df = self.guide_df[self.SECTOR_COLUMN]
         self._reset_heatmap_color()
-        sector = self._make_heatmap_array(sector_df)
-        return sector[ordering]
+        sector, sector_mapping = self._make_heatmap_array(sector_df)
+        return sector[ordering], sector_mapping
 
     def make_multiplier(self, ordering):
         data = self.seg_df.iloc[:self.chrom_x_index, 3:]

@@ -16,12 +16,16 @@ class SectorDataModel(object):
         index = np.array(self.model.Z['leaves'])
         order = np.arange(len(index))
 
+        sector = self.model.sector
+        self.sector_mapping = self.model.sector_mapping
+
         res = np.lexsort(
             (
-                index,
-                self.model.guide_df[self.model.SECTOR_COLUMN].values,
+                order,
+                sector,
             ))
-        return order[res]
+
+        return index[res]
 
     def make(self):
         ordering = self.build_ordering()
@@ -32,7 +36,8 @@ class SectorDataModel(object):
 
         self.heatmap = self.model.make_heatmap(ordering=ordering)
         self.gate = self.model.make_gate(ordering=ordering)
-        self.sector = self.model.make_sector(ordering=ordering)
+        self.sector, self.sector_mapping = \
+            self.model.make_sector(ordering=ordering)
         self.multiplier = self.model.make_multiplier(ordering=ordering)
         self.error = self.model.make_error(ordering=ordering)
 
