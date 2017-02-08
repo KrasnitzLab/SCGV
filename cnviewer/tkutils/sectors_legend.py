@@ -29,17 +29,27 @@ class SectorsLegend(object):
 
     def build_ui(self):
 
-        label = ttk.Label(self.master, text="Sectors")
+        frame = ttk.Frame(
+            self.master,
+            borderwidth=5,
+            relief='sunken',
+        )
+        frame.grid(row=10, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+        label = ttk.Label(frame, text="Sectors Legend")
         label.grid(column=0, row=0, columnspan=2)
 
         self.sectors_ui = tk.Listbox(
-            self.master, height=5)
+            frame, height=5)
         self.sectors_ui.grid(
             column=0, row=10, sticky=(tk.N, tk.S, tk.E, tk.W))
         s = ttk.Scrollbar(
-            self.master, orient=tk.VERTICAL, command=self.sectors_ui.yview)
+            frame, orient=tk.VERTICAL, command=self.sectors_ui.yview)
         s.grid(column=1, row=10, sticky=(tk.N, tk.S))
         self.sectors_ui['yscrollcommand'] = s.set
+
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(10, weight=1)
 
     def register_controller(self, controller):
         self.controller = controller

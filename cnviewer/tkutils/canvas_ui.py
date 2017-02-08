@@ -5,11 +5,12 @@ Created on Jan 18, 2017
 '''
 import matplotlib as mpl
 from tkutils.sectors_legend import SectorsLegend
+from tkutils.heatmap_legend import HeatmapLegend
 mpl.use('TkAgg')
 
 
-
-from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
+# @UnusedWildImport @IgnorePep8
+from matplotlib.backends.backend_tkagg import *
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 if sys.version_info[0] < 3:
@@ -125,14 +126,17 @@ class CanvasWindow(object):
     def _build_legend_ext(self):
         frame = ttk.Frame(
             self.button_ext,
-            relief='sunken',
-            borderwidth=5)
+            relief='flat',
+            borderwidth=0)
         frame.grid(row=100, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
 
         self.sectors_legend = SectorsLegend(frame)
         self.sectors_legend.build_ui()
+
+        self.heatmap_legend = HeatmapLegend(frame)
+        self.heatmap_legend.build_ui()
 
     def on_closing(self):
         print("CanvasWindow::on_closing called...")
