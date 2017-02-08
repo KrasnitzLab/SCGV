@@ -6,6 +6,7 @@ Created on Jan 18, 2017
 import matplotlib as mpl
 from tkutils.sectors_legend import SectorsLegend
 from tkutils.heatmap_legend import HeatmapLegend
+from tkutils.sectors_legend2 import SectorsLegend2
 mpl.use('TkAgg')
 
 
@@ -132,8 +133,8 @@ class CanvasWindow(object):
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
 
-        self.sectors_legend = SectorsLegend(frame)
-        self.sectors_legend.build_ui()
+        self.sectors_legend = SectorsLegend2(frame)
+        self.sectors_legend.build_ui(row=10)
 
         self.heatmap_legend = HeatmapLegend(frame)
         self.heatmap_legend.build_ui()

@@ -4,6 +4,7 @@ Created on Feb 8, 2017
 @author: lubo
 '''
 import sys  # @UnusedImport
+
 from PIL import Image, ImageTk
 
 if sys.version_info[0] < 3:
@@ -21,21 +22,65 @@ else:
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
 
 
-class HeatmapLegend(object):
+class LegendEntry(object):
+    IMAGE_SIZE = 15
 
-    def __init__(self, master):
+    def __init__(self, index, text, color):
+        self.index = index
+        self.text = text
+        self.color = color
+        self.image = None
+        if color:
+            tkcolor = self.tkcolor(color)
+            image = Image.new(
+                'RGB',
+                size=(self.IMAGE_SIZE, self.IMAGE_SIZE),
+                color=tkcolor)
+            self.image = ImageTk.PhotoImage(image=image)
+
+    @staticmethod
+    def tkcolor(color):
+        if len(color) == 3:
+            r, g, b = color
+            a = 1
+        elif len(color) == 4:
+            r, g, b, a = color
+        else:
+            raise ValueError("strange color: {}".format(str(color)))
+        return (int(255 * r), int(255 * g), int(255 * b), int(255 * a))
+
+    def build_label(self, master):
+        self.label = ttk.Label(
+            master,
+            text=self.text,
+            image=self.image,
+            compound=tk.LEFT,
+            background='white',
+        )
+        self.label.pack(anchor=tk.W)
+
+    def bind_dbl_click(self, callback):
+        def click_callback(index):
+            return lambda event: callback(index)
+
+        self.label.bind('<Double-Button-1>', click_callback(self.index))
+
+
+class LegendBase(object):
+
+    def __init__(self, master, title):
         self.master = master
+        self.title = title
 
-    def build_ui(self):
-
+    def build_ui(self, row=20):
         frame = ttk.Frame(
             self.master,
             borderwidth=5,
             relief='sunken',
         )
-        frame.grid(row=20, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frame.grid(row=row, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        label = ttk.Label(frame, text="Heatmap Legend")
+        label = ttk.Label(frame, text=self.title)
         label.grid(column=0, row=0, columnspan=2)
 
         scrollbar = ttk.Scrollbar(
@@ -63,29 +108,15 @@ class HeatmapLegend(object):
         self.container = tk.Frame(self.canvas, background='white')
         self.canvas.create_window((0, 0), window=self.container, anchor='nw')
 
-        image = Image.new('RGB', size=(20, 20), color=(255, 0, 0))
-        self.bitmap = ImageTk.PhotoImage(image=image)
-
-        def click_callback(val):
-            return lambda event: print("click_callback({}) called".format(val))
-
-        l = ttk.Label(
-            self.container,
-            text='text1',
-            image=self.bitmap,
-            compound=tk.LEFT)
-        l.pack(anchor=tk.W)
-        l.bind('<Double-Button-1>', click_callback(1))
-
-        image = Image.new('RGB', size=(20, 20), color=(0, 255, 0))
-        self.bitmap2 = ImageTk.PhotoImage(image=image)
-
-        l = ttk.Label(
-            self.container,
-            text='text2222222222222222222',
-            image=self.bitmap2,
-            compound=tk.LEFT)
-        l.pack(anchor=tk.E)
-        l.bind('<Double-Button-1>', click_callback(2))
-
+        self.entries = []
         configure_update(None)
+
+    def append_entry(self, text, color=None):
+        index = len(self.entries)
+        entry = LegendEntry(index, text, color)
+        entry.build_label(self.container)
+        self.entries.append(entry)
+
+    def bind_dbl_click(self, callback):
+        for entry in self.entries:
+            entry.bind_dbl_click(callback)
