@@ -4,6 +4,7 @@ Created on Feb 8, 2017
 @author: lubo
 '''
 import sys  # @UnusedImport
+from PIL import Image, ImageTk
 
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
@@ -44,7 +45,8 @@ class HeatmapLegend(object):
         self.canvas = tk.Canvas(
             frame,
             yscrollcommand=scrollbar.set,
-            height=80, width=50)
+            height=100, width=100,
+            background='white')
         self.canvas.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
         scrollbar.config(command=self.canvas.yview)
 
@@ -58,20 +60,11 @@ class HeatmapLegend(object):
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(20, weight=1)
 
-        self.container = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.container, anchor='nw')
+#         self.container = tk.Frame(self.canvas)
+#         self.canvas.create_window((0, 0), window=self.container, anchor='nw')
 
-        l = tk.Label(
-            self.container,
-            bitmap='',
-            text="Hello")
-        l.pack()
-
-        l = tk.Label(self.container, text="World", font="-size 50")
-        l.pack()
-
-        l = tk.Label(
-            self.container, text="Test text 1\nTest text 2\nTest text 3\nTest text 4\nTest text 5\nTest text 6\nTest text 7\nTest text 8\nTest text 9", font="-size 20")
-        l.pack()
+        image = Image.new('RGB', size=(20, 20), color=(255, 0, 0))
+        self.bitmap = ImageTk.PhotoImage(image=image)
+        self.canvas.create_image(0, 0, image=self.bitmap)
 
         configure_update(None)
