@@ -4,6 +4,7 @@ Created on Feb 8, 2017
 @author: lubo
 '''
 import sys  # @UnusedImport
+import matplotlib.colors as col
 
 from PIL import Image, ImageTk
 
@@ -33,17 +34,18 @@ class LegendEntry(object):
         if color:
             tkcolor = self.tkcolor(color)
             image = Image.new(
-                'RGB',
+                'RGBA',
                 size=(self.IMAGE_SIZE, self.IMAGE_SIZE),
                 color=tkcolor)
             self.image = ImageTk.PhotoImage(image=image)
 
     @staticmethod
     def tkcolor(color):
-        if len(color) == 3:
+        c = col.to_rgba(color)
+        if len(c) == 3:
             r, g, b = color
             a = 1
-        elif len(color) == 4:
+        elif len(c) == 4:
             r, g, b, a = color
         else:
             raise ValueError("strange color: {}".format(str(color)))

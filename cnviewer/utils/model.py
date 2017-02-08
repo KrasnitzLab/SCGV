@@ -210,6 +210,8 @@ class DataModel(DataLoader):
         sector_df = self.guide_df[self.SECTOR_COLUMN]
         self._reset_heatmap_color()
         sector, sector_mapping = self._make_heatmap_array(sector_df)
+        print(sector_mapping)
+
         return sector[ordering], sector_mapping
 
     def make_multiplier(self, ordering):

@@ -3,6 +3,8 @@ Created on Dec 15, 2016
 
 @author: lubo
 '''
+import numpy as np
+
 from views.base import ViewerBase
 from utils.color_map import ColorMap
 
@@ -16,11 +18,15 @@ class SectorViewer(ViewerBase):
     def draw_sector(self, ax):
         assert self.model.sector is not None
 
+        print(np.unique(self.model.sector))
+
         ax.imshow(
             [self.model.sector],
             aspect='auto',
             interpolation='nearest',
             cmap=self.cmap.colors,
+            vmin=1,
+            vmax=12,
             # norm=self.cmap.norm,
             extent=self.model.bar_extent)
 

@@ -9,6 +9,7 @@ import tkinter
 from PIL import Image, ImageTk
 from tkutils.heatmap_legend import HeatmapLegend
 from utils.color_map import ColorMap
+from tkutils.legend_base import LegendEntry
 
 root = tkinter.Tk()
 canvas = tkinter.Canvas(root)
@@ -22,10 +23,16 @@ print(color)
 r, g, b, a = color
 
 color = (int(255 * r), int(255 * g), int(255 * b), int(255 * a))
-image = Image.new('RGBA', size=(50, 50), color=color)
-tkimage = ImageTk.PhotoImage(image=image)
 
-canvas.create_image(0, 0, image=tkimage)
+images = []
+for i in range(12):
+    color = cmap.colors(i)
+    tkcolor = LegendEntry.tkcolor(color)
+    image = Image.new('RGBA', size=(20, 20), color=tkcolor)
+    tkimage = ImageTk.PhotoImage(image=image)
+    images.append(tkimage)
+
+    canvas.create_image(i*21+20, 20, image=tkimage)
 
 # heatmap = HeatmapLegend(root)
 # heatmap.build_ui()
