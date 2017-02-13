@@ -28,11 +28,23 @@ class DataModel(DataLoader):
 
         self._chrom_x_index = None
         self._bar_extent = None
+        self._heat_extent = None
+
+    @property
+    def bar_extent(self):
+        if self._bar_extent is None:
+            self._bar_extent = (
+                0, self.samples * self.interval_length,
+                0, 1)
+        return self._bar_extent
 
     @property
     def heat_extent(self):
-        return (0, self.samples * self.interval_length,
-                self.bins, 0)
+        if self._heat_extent is None:
+            self._heat_extent = (0, self.samples * self.interval_length,
+                                 self.bins, 0)
+        print(self._heat_extent)
+        return self._heat_extent
 
     @property
     def chrom_x_index(self):
@@ -224,14 +236,6 @@ class DataModel(DataLoader):
         df_r = self.ratio_df.iloc[:self.chrom_x_index, 3:].values
         return np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=0))[ordering]
 
-    @property
-    def bar_extent(self):
-        if self._bar_extent is None:
-            self._bar_extent = (
-                0, self.samples * self.interval_length,
-                0, 1)
-        return self._bar_extent
-
     def make_sectors_legend(self):
         sectors = self.guide_df[self.SECTOR_COLUMN].unique()
         sectors.sort()
@@ -249,51 +253,3 @@ class DataModel(DataLoader):
                     sector_df[self.PATHOLOGY_COLUMN].unique()))
             result.append((sector, str(pathology).strip()))
         return result
-
-# def gate_compare(g1, g2):
-#     assert len(g1) >= 2
-#     assert len(g2) >= 2
-#
-#     if g1[0] == '>' or g1[0] == '<':
-#         sg1 = g1[1:].strip()
-#         sign1 = sg1[0]
-#     else:
-#         sg1 = g1
-#         sign1 = None
-#
-#     if g2[0] == '>' or g2[0] == '<':
-#         sg2 = g2[1:].strip()
-#         sign2 = g2[0]
-#     else:
-#         sg2 = g2
-#         sign2 = None
-#     assert len(sg1) >= 2
-#     assert len(sg2) >= 2
-#
-#     if sg1[:2] == sg2[:2] and (sign1 or sign2):
-#         if sign1 and sign2:
-#             if sign1 > sign2:
-#                 return 1
-#             elif sign1 < sign2:
-#                 return -1
-#             else:
-#                 return 0
-#         else:
-#             if sign1:
-#                 if sign1 == '<':
-#                     return -1
-#                 elif sign1 == '>':
-#                     return 1
-#                 assert False
-#             elif sign2:
-#                 if sign2 == '<':
-#                     return 1
-#                 elif sign2 == '>':
-#                     return -1
-#                 assert False
-#     if sg1 > sg2:
-#         return 1
-#     elif sg1 < sg2:
-#         return -1
-#     else:
-#         return 0

@@ -10,7 +10,11 @@ from tkutils.canvas_ui import CanvasWindow
 from tkutils.profiles_ui import ProfilesUi
 from tkutils.open_ui import OpenUi
 from tkutils.pinmat_ui import PinmatUi
-from tkutils.sectors_ui import SectorsUi
+from tkutils.sectors_ui import SectorsUi, SectorsWindow
+from tkutils.sectors_legend2 import SectorsLegend2
+from tkutils.heatmap_legend import HeatmapLegend
+from utils.sector_model import SingleSectorDataModel
+from views.controller import MainController
 
 
 if sys.version_info[0] < 3:
@@ -27,6 +31,21 @@ else:
         import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
 
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
+
+
+def show_single_sector(model, sector_id):
+    sector_model = SingleSectorDataModel(model, sector_id)
+    sector_model.make()
+
+    controller = MainController(sector_model)
+
+    root = tk.Toplevel()
+    main = SectorsWindow(root)
+    controller.build_sector(main.fig)
+
+    main.connect_controller(controller)
+
+    root.mainloop()
 
 
 def main():
@@ -46,6 +65,15 @@ def main():
     sectors = SectorsUi(main.button_ext)
     sectors.build_ui()
     main.register_on_controller_callback(sectors.connect_controller)
+
+    sectors_legend = SectorsLegend2(main.legend_ext)
+    sectors_legend.build_ui(row=10)
+    sectors_legend.register_show_single_sector_callback(show_single_sector)
+    main.register_on_controller_callback(sectors_legend.register_controller)
+
+    heatmap_legend = HeatmapLegend(main.legend_ext)
+    heatmap_legend.build_ui()
+    heatmap_legend.show_legend()
 
     open_buttons = OpenUi(main, main.button_ext, main.fig)
     open_buttons.build_ui()

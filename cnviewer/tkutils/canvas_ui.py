@@ -11,9 +11,6 @@ mpl.use('TkAgg')
 from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
-from tkutils.heatmap_legend import HeatmapLegend  # @NoMove @IgnorePep8
-from tkutils.sectors_legend2 import SectorsLegend2  # @NoMove @IgnorePep8
-
 
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
@@ -103,7 +100,6 @@ class CanvasWindow(object):
         for cb in self.on_controller_callbacks:
             cb(controller)
 
-        self.sectors_legend.register_controller(controller)
         self.canvas.draw()
 
     def refresh(self):
@@ -133,13 +129,7 @@ class CanvasWindow(object):
         frame.grid(row=100, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
-
-        self.sectors_legend = SectorsLegend2(frame)
-        self.sectors_legend.build_ui(row=10)
-
-        self.heatmap_legend = HeatmapLegend(frame)
-        self.heatmap_legend.build_ui()
-        self.heatmap_legend.show_legend()
+        self.legend_ext = frame
 
     def on_closing(self):
         print("CanvasWindow::on_closing called...")

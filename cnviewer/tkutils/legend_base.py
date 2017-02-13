@@ -61,11 +61,15 @@ class LegendEntry(object):
         )
         self.label.pack(anchor=tk.W)
 
-    def bind_dbl_click(self, callback):
+    def bind_dbl_left_click(self, callback):
         def click_callback(index):
             return lambda event: callback(index)
-
         self.label.bind('<Double-Button-1>', click_callback(self.index))
+
+    def bind_dbl_right_click(self, callback):
+        def click_callback(index):
+            return lambda event: callback(index)
+        self.label.bind('<Double-Button-3>', click_callback(self.index))
 
 
 class LegendBase(object):
@@ -119,6 +123,10 @@ class LegendBase(object):
         entry.build_label(self.container)
         self.entries.append(entry)
 
-    def bind_dbl_click(self, callback):
+    def bind_dbl_left_click(self, callback):
         for entry in self.entries:
-            entry.bind_dbl_click(callback)
+            entry.bind_dbl_left_click(callback)
+
+    def bind_dbl_right_click(self, callback):
+        for entry in self.entries:
+            entry.bind_dbl_right_click(callback)

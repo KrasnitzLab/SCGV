@@ -8,6 +8,9 @@ import sys  # @UnusedImport
 from PIL import ImageTk
 from tkutils.legend_base import LegendBase
 from utils.color_map import ColorMap
+# from utils.sector_model import SingleSectorDataModel
+# from views.controller import MainController
+# from tkutils.sectors_ui import SectorsWindow
 
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
@@ -24,11 +27,17 @@ else:
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
 
 
+# from utils.sector_model import SingleSectorDataModel
+# from views.controller import MainController
+# from tkutils.sectors_ui import SectorsWindow
+
+
 class SectorsLegend2(LegendBase):
 
     def __init__(self, master):
         super(SectorsLegend2, self).__init__(
             master, title="Sectors Legend")
+        self.controller = None
 
     def register_controller(self, controller):
         self.controller = controller
@@ -42,10 +51,14 @@ class SectorsLegend2(LegendBase):
                 text='{}: {}'.format(sector, pathology),
                 color=color)
 
-        self.bind_dbl_click(self.show_sector)
+        self.bind_dbl_right_click(self.show_sector_pathology)
+        self.bind_dbl_left_click(self.show_single_sector)
 
-    def show_sector(self, index):
-        print("show sector with index: ", index)
+    def register_show_single_sector_callback(self, callback):
+        self.show_single_sector_callback = callback
+
+    def show_sector_pathology(self, index):
+        print("show sector pathology with index: ", index)
         (sector, pathology) = self.sectors[index]
         print(self.sectors)
         print(sector, pathology)
@@ -69,3 +82,26 @@ class SectorsLegend2(LegendBase):
         panel = tk.Label(window, image=image)
         panel.pack(side="bottom", fill="both", expand="yes")
         window.mainloop()
+
+    def connect_controller(self, controller):
+        assert controller is not None
+        self.controller = controller
+
+    def show_single_sector(self, index):
+        print("show single sector viewer with index: ", index)
+        (sector, _) = self.sectors[index]
+        print("working with sector: ", sector)
+
+        self.show_single_sector_callback(self.controller.model, sector)
+
+#
+#         root = tk.Toplevel()
+#         main = SectorsWindow(root)
+#         controller.build_sector(main.fig)
+#
+#         main.connect_controller(controller)
+#
+#         def on_closing():
+#             pass
+#         main.register_on_closing_callback(on_closing)
+#         root.mainloop()
