@@ -34,6 +34,8 @@ class SectorDataModel(object):
         self.label_midpoints = (
             np.arange(self.samples) + 0.5) * self.interval_length
 
+        self.clone, self.subclone = self.make_clone(ordering=ordering)
+
         self.heatmap = self.model.make_heatmap(ordering=ordering)
         self.gate = self.model.make_gate(ordering=ordering)
         self.sector, self.sector_mapping = \
