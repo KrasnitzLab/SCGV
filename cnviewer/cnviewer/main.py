@@ -54,7 +54,7 @@ def main():
 
     main = CanvasWindow(root)
 
-    profiles = ProfilesUi(main.button_ext)
+    profiles = ProfilesUi(main.button_ext, main)
     profiles.build_ui()
     main.register_on_controller_callback(profiles.connect_controller)
 

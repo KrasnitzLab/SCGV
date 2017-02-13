@@ -27,7 +27,7 @@ class SectorsWindow(CanvasWindow):
 
     def __init__(self, root):
         super(SectorsWindow, self).__init__(root)
-        profiles = ProfilesUi(self.button_ext)
+        profiles = ProfilesUi(self.button_ext, self)
         profiles.build_ui()
         self.register_on_controller_callback(profiles.connect_controller)
 

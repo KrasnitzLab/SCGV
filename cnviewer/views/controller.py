@@ -4,6 +4,7 @@ Created on Dec 14, 2016
 @author: lubo
 '''
 import matplotlib.pyplot as plt
+import numpy as np
 
 from views.sample import SampleViewer
 from views.heatmap import HeatmapViewer
@@ -26,6 +27,7 @@ class MainController(ControllerBase):
         self.fig = None
 
         self.add_sample_cb = None
+        self.ax_label = None
 
     def register_sample_cb(self, func):
         self.add_sample_cb = func
@@ -105,6 +107,8 @@ class MainController(ControllerBase):
         error_viewer.draw_error(ax_error)
         error_viewer.draw_xlabels(ax_error)
 
+        self.ax_label = ax_error
+
         plt.setp(ax_dendro.get_xticklabels(), visible=False)
         plt.setp(ax_clone.get_xticklabels(), visible=False)
         plt.setp(ax_clone.get_xticklines(), visible=False)
@@ -160,6 +164,7 @@ class MainController(ControllerBase):
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
         error_viewer.draw_xlabels(ax_error)
+        self.ax_label = ax_error
 
         plt.setp(ax_dendro.get_xticklabels(), visible=False)
         plt.setp(ax_clone.get_xticklabels(), visible=False)
@@ -212,6 +217,7 @@ class MainController(ControllerBase):
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
         error_viewer.draw_xlabels(ax_error)
+        self.ax_label = ax_error
 
         plt.setp(ax_clone.get_xticklabels(), visible=False)
         plt.setp(ax_subclone.get_xticklabels(), visible=False)
@@ -223,3 +229,24 @@ class MainController(ControllerBase):
 
         self.sample_viewer = SampleViewer(self.model)
         self.event_loop_connect()
+
+    def get_profile_indices(self, profiles):
+        profile_indices = []
+        for i, p in enumerate(self.model.column_labels):
+            if p in profiles:
+                profile_indices.append(i)
+
+        profile_indices = np.array(profile_indices)
+        return profile_indices
+
+    def highlight_profiles_labels(self, profiles):
+        profile_indices = self.get_profile_indices(profiles)
+        print("highlight profiles: {}".format(profile_indices))
+        for index in profile_indices:
+            self.ax_label.get_xticklabels()[index].set_color('red')
+
+    def unhighlight_profile_labels(self, profiles):
+        profile_indices = self.get_profile_indices(profiles)
+        print("unhighlight profiles: {}".format(profile_indices))
+        for index in profile_indices:
+            self.ax_label.get_xticklabels()[index].set_color('black')

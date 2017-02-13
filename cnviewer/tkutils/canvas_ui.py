@@ -103,7 +103,7 @@ class CanvasWindow(object):
         self.canvas.draw()
 
     def refresh(self):
-        self.canvas.draw()
+        self.canvas.draw_idle()
 
     def _build_button_ext(self):
         frame = ttk.Frame(

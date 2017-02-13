@@ -21,9 +21,10 @@ else:
 
 class ProfilesUi(object):
 
-    def __init__(self, master):
+    def __init__(self, master, canvas):
         self.master = master
         self.controller = None
+        self.canvas = canvas
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -64,6 +65,9 @@ class ProfilesUi(object):
         if sample in profiles:
             return
         self.profile_ui.insert("end", sample)
+        profiles = self.profile_ui.get(0, 'end')
+        self.controller.highlight_profiles_labels(profiles)
+        self.canvas.refresh()
 
     def connect_controller(self, controller):
         assert controller is not None
@@ -84,4 +88,7 @@ class ProfilesUi(object):
 
     def _clear_profiles(self):
         print("clear profiles called...")
+        profiles = self.profile_ui.get(0, 'end')
+        self.controller.unhighlight_profile_labels(profiles)
         self.profile_ui.delete(0, 'end')
+        self.canvas.refresh()
