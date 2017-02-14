@@ -7,6 +7,7 @@ import threading
 import sys  # @UnusedImport
 from views.controller import MainController
 from utils.model import DataModel
+import traceback
 
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
@@ -136,5 +137,6 @@ class OpenUi(object):
                 return True
             except Exception:
                 print("wrong dataset format")
+                traceback.print_exc()
                 self.model = None
                 return False
