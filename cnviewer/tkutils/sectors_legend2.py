@@ -37,14 +37,15 @@ else:
 
 class PathologyDialog(simpledialog.Dialog):
 
-    def __init__(self, image, **kwargs):
-        super(PathologyDialog, self).__init__(**kwargs)
+    def __init__(self, image, master, **kwargs):
         self.image = image
+        super(PathologyDialog, self).__init__(master, **kwargs)
 
     def body(self, master):
-        image = ImageTk.PhotoImage(self.image)
-        panel = tk.Label(master, image=image)
+        self.image = ImageTk.PhotoImage(self.image)
+        panel = tk.Label(master, image=self.image)
         panel.pack(side="bottom", fill="both", expand="yes")
+        return panel
 
     def apply(self):
         return None
@@ -86,20 +87,8 @@ class SectorsLegend2(LegendBase):
         if image is None:
             return
 
-        window = tk.Toplevel()
-        window.title(pathology)
-        window.configure(background='grey')
-
-        def on_close():
-            window.quit()     # stops mainloop
-            window.destroy()  # this is necessary on Windows to prevent
-
-        window.protocol("WM_DELETE_WINDOW", on_close)
-
-        image = ImageTk.PhotoImage(image)
-        panel = tk.Label(window, image=image)
-        panel.pack(side="bottom", fill="both", expand="yes")
-        window.mainloop()
+        pathology_dialog = PathologyDialog(image, self.master)
+        print("pathology dialog done...")
 
     def connect_controller(self, controller):
         assert controller is not None
