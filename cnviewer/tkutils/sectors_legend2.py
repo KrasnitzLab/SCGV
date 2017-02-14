@@ -17,6 +17,7 @@ if sys.version_info[0] < 3:
     import ttk  # @UnusedImport @UnresolvedImport
     from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
     import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
+    import tkSimpleDialog as simpledialog  # @UnusedImport @UnresolvedImport
 else:
     import tkinter as tk  # @Reimport @UnresolvedImport @UnusedImport
     from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
@@ -25,11 +26,28 @@ else:
     from tkinter.filedialog \
         import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
+    # @UnresolvedImport @Reimport @UnusedImport @IgnorePep8
+    from tkinter import simpledialog
 
 
 # from utils.sector_model import SingleSectorDataModel
 # from views.controller import MainController
 # from tkutils.sectors_ui import SectorsWindow
+
+
+class PathologyDialog(simpledialog.Dialog):
+
+    def __init__(self, image, **kwargs):
+        super(PathologyDialog, self).__init__(**kwargs)
+        self.image = image
+
+    def body(self, master):
+        image = ImageTk.PhotoImage(self.image)
+        panel = tk.Label(master, image=image)
+        panel.pack(side="bottom", fill="both", expand="yes")
+
+    def apply(self):
+        return None
 
 
 class SectorsLegend2(LegendBase):
