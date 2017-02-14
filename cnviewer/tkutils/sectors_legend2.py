@@ -51,7 +51,7 @@ class SectorsLegend2(LegendBase):
                 text='{}: {}'.format(sector, pathology),
                 color=color)
 
-        self.bind_dbl_right_click(self.show_sector_pathology)
+        self.bind_right_click(self.show_sector_pathology)
         self.bind_dbl_left_click(self.show_single_sector)
 
     def register_show_single_sector_callback(self, callback):

@@ -71,6 +71,11 @@ class LegendEntry(object):
             return lambda event: callback(index)
         self.label.bind('<Double-Button-3>', click_callback(self.index))
 
+    def bind_right_click(self, callback):
+        def click_callback(index):
+            return lambda event: callback(index)
+        self.label.bind('<Button-3>', click_callback(self.index))
+
 
 class LegendBase(object):
 
@@ -130,3 +135,7 @@ class LegendBase(object):
     def bind_dbl_right_click(self, callback):
         for entry in self.entries:
             entry.bind_dbl_right_click(callback)
+
+    def bind_right_click(self, callback):
+        for entry in self.entries:
+            entry.bind_right_click(callback)
