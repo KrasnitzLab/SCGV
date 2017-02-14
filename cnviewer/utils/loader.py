@@ -56,7 +56,7 @@ class DataLoader(dict):
 
         result = {}
         for _index, row in images_df.iterrows():
-            filename = os.path.join('images', row['image'])
+            filename = os.path.join('pathology', row['image'])
             image = None
             if filename in zipdata.namelist():
                 print("loading: ", filename)
@@ -64,7 +64,7 @@ class DataLoader(dict):
                 # image.load()
             else:
                 print("image not found: ", filename)
-            filename = os.path.join('images', row['notes'])
+            filename = os.path.join('pathology', row['notes'])
             notes = None
             if filename in zipdata.namelist():
                 print("loading: ", filename)
@@ -96,21 +96,26 @@ class DataLoader(dict):
             self[filetype] = df
 
         self.pathology = None
-        images_dirname = os.path.join(dir_filename, 'pathology')
-        if os.path.exists(images_dirname) and os.path.isdir(images_dirname):
-            self.pathology = self._load_images_dir(images_dirname)
+        pathology_dirname = os.path.join(dir_filename, 'pathology')
+        print('checking pahtology directory: {}'.format(pathology_dirname))
+        if os.path.exists(pathology_dirname) and \
+                os.path.isdir(pathology_dirname):
+            self.pathology = self._load_pathology_dir(pathology_dirname)
+        else:
+            print('pathology directory not found: {}'.format(
+                pathology_dirname))
 
-    def _load_images_dir(self, images_dirname):
-        filename = os.path.join(images_dirname, 'description.csv')
+    def _load_pathology_dir(self, pathology_dirname):
+        filename = os.path.join(pathology_dirname, 'description.csv')
         images_df = pd.read_csv(filename)
         result = {}
         for _index, row in images_df.iterrows():
-            filename = os.path.join(images_dirname, row['image'])
+            filename = os.path.join(pathology_dirname, row['image'])
             print("looking for image in: {}".format(filename))
             image = None
             if os.path.exists(filename):
                 image = Image.open(filename)
-            filename = os.path.join(images_dirname, row['notes'])
+            filename = os.path.join(pathology_dirname, row['notes'])
             print("looking for notes in: {}".format(filename))
             notes = None
             if os.path.exists(filename):
