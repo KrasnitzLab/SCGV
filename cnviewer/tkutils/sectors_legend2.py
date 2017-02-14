@@ -37,14 +37,28 @@ else:
 
 class PathologyDialog(simpledialog.Dialog):
 
-    def __init__(self, image, master, **kwargs):
+    def __init__(self, image, notes, master, **kwargs):
         self.image = image
+        self.notes = notes
         super(PathologyDialog, self).__init__(master, **kwargs)
 
     def body(self, master):
         self.image = ImageTk.PhotoImage(self.image)
         panel = tk.Label(master, image=self.image)
-        panel.pack(side="bottom", fill="both", expand="yes")
+        panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES)
+
+        text = tk.Text(master, width=80, height=20)
+        scrollbar = tk.Scrollbar(master)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        text.pack(side=tk.LEFT, padx=10, fill=tk.Y)
+        scrollbar.config(command=text.yview)
+        text.config(yscrollcommand=scrollbar.set)
+
+        text.tag_configure('big', font=('Verdana', 15, 'bold'))
+        text.insert(tk.END, self.notes[0], 'big')
+        for line in self.notes[1:]:
+            text.insert(tk.END, line)
+
         return panel
 
     def apply(self):
@@ -83,11 +97,11 @@ class SectorsLegend2(LegendBase):
         print(sector, pathology)
         if self.controller.model.pathology is None:
             return
-        image = self.controller.model.pathology.get(pathology, None)
-        if image is None:
+        image, notes = self.controller.model.pathology.get(pathology, None)
+        if image is None and notes is None:
             return
 
-        pathology_dialog = PathologyDialog(image, self.master)
+        PathologyDialog(image, notes, self.master)
         print("pathology dialog done...")
 
     def connect_controller(self, controller):

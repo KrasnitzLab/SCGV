@@ -48,7 +48,7 @@ class DataLoader(dict):
             self.pathology = self._load_images_zipfile(zipdata)
 
     def _load_images_zipfile(self, zipdata):
-        descriptor = 'images/images.csv'
+        descriptor = 'pathology/description.csv'
         if descriptor not in zipdata.namelist():
             return
         infile = zipdata.open(descriptor)
@@ -64,7 +64,16 @@ class DataLoader(dict):
                 # image.load()
             else:
                 print("image not found: ", filename)
-            result[row['pathology']] = image
+            filename = os.path.join('images', row['notes'])
+            notes = None
+            if filename in zipdata.namelist():
+                print("loading: ", filename)
+                notes = zipdata.open(filename).readlines()
+                # image.load()
+            else:
+                print("image not found: ", filename)
+            result[row['pathology']] = image, notes
+
         return result
 
     def _load_dir(self, dir_filename):
@@ -87,20 +96,27 @@ class DataLoader(dict):
             self[filetype] = df
 
         self.pathology = None
-        images_dirname = os.path.join(dir_filename, 'images')
+        images_dirname = os.path.join(dir_filename, 'pathology')
         if os.path.exists(images_dirname) and os.path.isdir(images_dirname):
             self.pathology = self._load_images_dir(images_dirname)
 
     def _load_images_dir(self, images_dirname):
-        filename = os.path.join(images_dirname, 'images.csv')
+        filename = os.path.join(images_dirname, 'description.csv')
         images_df = pd.read_csv(filename)
         result = {}
         for _index, row in images_df.iterrows():
             filename = os.path.join(images_dirname, row['image'])
+            print("looking for image in: {}".format(filename))
             image = None
             if os.path.exists(filename):
                 image = Image.open(filename)
-            result[row['pathology']] = image
+            filename = os.path.join(images_dirname, row['notes'])
+            print("looking for notes in: {}".format(filename))
+            notes = None
+            if os.path.exists(filename):
+                with open(filename, 'r') as notesfile:
+                    notes = notesfile.readlines()
+            result[row['pathology']] = image, notes
         return result
 
     def __init__(self, filename):
