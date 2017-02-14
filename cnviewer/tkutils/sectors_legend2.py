@@ -71,7 +71,7 @@ class ShowPathologyDialog(tk.Toplevel):
         self.notes = notes
         super(ShowPathologyDialog, self).__init__(master, **kwargs)
 
-        self.transient(master)
+        # self.transient(master)
         if title:
             self.title(title)
 
