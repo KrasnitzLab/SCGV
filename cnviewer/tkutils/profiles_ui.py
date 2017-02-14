@@ -9,6 +9,7 @@ if sys.version_info[0] < 3:
     import ttk  # @UnusedImport @UnresolvedImport
     from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
     import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
+    import tkSimpleDialog as simpledialog  # @UnusedImport @UnresolvedImport
 else:
     import tkinter as tk  # @Reimport @UnresolvedImport
     from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
@@ -17,6 +18,24 @@ else:
     from tkinter.filedialog \
         import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
+    from tkinter import simpledialog  # @UnresolvedImport @Reimport @UnusedImport @IgnorePep8
+
+
+class AddProfileDialog(simpledialog.Dialog):
+
+    def body(self, master):
+        self.result = None
+
+        ttk.Label(master, text="Profile:").grid(row=0)
+        self.entry = ttk.Entry(master)
+        self.entry.grid(row=0, column=1)
+        return self.entry  # initial focus
+
+    def apply(self):
+        result = self.entry.get()
+        print(result)  # or something
+        self.result = result
+        return self.result
 
 
 class ProfilesUi(object):
@@ -45,15 +64,20 @@ class ProfilesUi(object):
         s.grid(column=1, row=10, sticky=(tk.N, tk.S))
         self.profile_ui['yscrollcommand'] = s.set
 
+        self.add_profile = ttk.Button(
+            master=frame, text="Add Profile", command=self._add_profile_dialog)
+        self.add_profile.grid(
+            column=0, row=11, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.show_profiles = ttk.Button(
             master=frame, text="Show Profiles", command=self._show_profiles)
         self.show_profiles.grid(
-            column=0, row=11, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+            column=0, row=12, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.clear_profiles = ttk.Button(
             master=frame, text="Clear Profiles", command=self._clear_profiles)
         self.clear_profiles.grid(
-            column=0, row=12, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+            column=0, row=13, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
 
+        self.add_profile.config(state=tk.DISABLED)
         self.show_profiles.config(state=tk.DISABLED)
         self.clear_profiles.config(state=tk.DISABLED)
 
@@ -74,6 +98,7 @@ class ProfilesUi(object):
         self.controller = controller
         self.controller.register_sample_cb(self._add_profile_sample)
 
+        self.add_profile.config(state=tk.ACTIVE)
         self.show_profiles.config(state=tk.ACTIVE)
         self.clear_profiles.config(state=tk.ACTIVE)
 
@@ -92,3 +117,14 @@ class ProfilesUi(object):
         self.controller.unhighlight_profile_labels(profiles)
         self.profile_ui.delete(0, 'end')
         self.canvas.refresh()
+
+    def _add_profile_dialog(self):
+        print("add profile dialog added...")
+        add_dialog = AddProfileDialog(self.master.master)
+        # self.master.wait_window(add_dialog.top)
+        profile = add_dialog.result
+        print("add profile result is: ", profile)
+        if profile in self.controller.model.column_labels:
+            self._add_profile_sample(profile)
+        else:
+            print("wrong sample name: ", profile)
