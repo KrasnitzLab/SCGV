@@ -26,7 +26,8 @@ else:
     from tkinter.filedialog \
         import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
-    from tkinter import simpledialog  # @UnresolvedImport @Reimport @UnusedImport @IgnorePep8
+    # @UnresolvedImport @Reimport @UnusedImport @IgnorePep8
+    from tkinter import simpledialog
 
 
 # from utils.sector_model import SingleSectorDataModel
@@ -69,7 +70,8 @@ class ShowPathologyDialog(tk.Toplevel):
     def __init__(self, image, notes, master, title=None, **kwargs):
         self.image = image
         self.notes = notes
-        super(ShowPathologyDialog, self).__init__(master, **kwargs)
+        tk.Toplevel.__init__(self, master, **kwargs)
+        # super(ShowPathologyDialog, self).__init__(master, **kwargs)
 
         # self.transient(master)
         if title:
