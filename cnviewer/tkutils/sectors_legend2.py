@@ -26,8 +26,7 @@ else:
     from tkinter.filedialog \
         import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
-    # @UnresolvedImport @Reimport @UnusedImport @IgnorePep8
-    from tkinter import simpledialog
+    from tkinter import simpledialog  # @UnresolvedImport @Reimport @UnusedImport @IgnorePep8
 
 
 # from utils.sector_model import SingleSectorDataModel
@@ -63,6 +62,77 @@ class PathologyDialog(simpledialog.Dialog):
 
     def apply(self):
         return None
+
+
+class ShowPathologyDialog(tk.Toplevel):
+
+    def __init__(self, image, notes, master, title=None, **kwargs):
+        self.image = image
+        self.notes = notes
+        super(ShowPathologyDialog, self).__init__(master, **kwargs)
+
+        self.transient(master)
+        if title:
+            self.title(title)
+
+        self.master = master
+        self.parent = master
+
+        body = ttk.Frame(self)
+        self.initial_focus = self.body(body)
+        body.pack(padx=5, pady=5)
+        self.buttonbox()
+
+        # self.grab_set()
+
+        if not self.initial_focus:
+            self.initial_focus = self
+
+        self.protocol("WM_DELETE_WINDOW", self.cancel)
+
+        self.geometry("+%d+%d" % (master.winfo_rootx() + 50,
+                                  master.winfo_rooty() + 50))
+        self.initial_focus.focus_set()
+        self.wait_window(self)
+
+    def buttonbox(self):
+        # add standard button box. override if you don't want the
+        # standard buttons
+
+        box = ttk.Frame(self)
+
+        w = ttk.Button(
+            box, text="OK", width=10, command=self.cancel, default=tk.ACTIVE)
+        w.pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.bind("<Return>", self.cancel)
+        self.bind("<Escape>", self.cancel)
+
+        box.pack()
+
+    def cancel(self, event=None):
+        # put focus back to the parent window
+        self.parent.focus_set()
+        self.destroy()
+
+    def body(self, master):
+        self.image = ImageTk.PhotoImage(self.image)
+        panel = tk.Label(master, image=self.image)
+        panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES)
+
+        text = tk.Text(master, width=80, height=20)
+        scrollbar = tk.Scrollbar(master)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        text.pack(side=tk.LEFT, padx=10, fill=tk.Y)
+        scrollbar.config(command=text.yview)
+        text.config(yscrollcommand=scrollbar.set)
+
+        text.tag_configure('big', font=('Verdana', 15, 'bold'))
+        text.insert(tk.END, self.notes[0], 'big')
+        for line in self.notes[1:]:
+            text.insert(tk.END, line)
+
+        return panel
 
 
 class SectorsLegend2(LegendBase):
@@ -101,7 +171,7 @@ class SectorsLegend2(LegendBase):
         if image is None and notes is None:
             return
 
-        PathologyDialog(image, notes, self.master)
+        ShowPathologyDialog(image, notes, self.master)
         print("pathology dialog done...")
 
     def connect_controller(self, controller):
