@@ -17,7 +17,6 @@ if sys.version_info[0] < 3:
     import ttk  # @UnusedImport @UnresolvedImport
     from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
     import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
-    import tkSimpleDialog as simpledialog  # @UnusedImport @UnresolvedImport
 else:
     import tkinter as tk  # @Reimport @UnresolvedImport @UnusedImport
     from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
@@ -26,43 +25,6 @@ else:
     from tkinter.filedialog \
         import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
     from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
-    # @UnresolvedImport @Reimport @UnusedImport @IgnorePep8
-    from tkinter import simpledialog
-
-
-# from utils.sector_model import SingleSectorDataModel
-# from views.controller import MainController
-# from tkutils.sectors_ui import SectorsWindow
-
-
-class PathologyDialog(simpledialog.Dialog):
-
-    def __init__(self, image, notes, master, **kwargs):
-        self.image = image
-        self.notes = notes
-        super(PathologyDialog, self).__init__(master, **kwargs)
-
-    def body(self, master):
-        self.image = ImageTk.PhotoImage(self.image)
-        panel = tk.Label(master, image=self.image)
-        panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES)
-
-        text = tk.Text(master, width=80, height=20)
-        scrollbar = tk.Scrollbar(master)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        text.pack(side=tk.LEFT, padx=10, fill=tk.Y)
-        scrollbar.config(command=text.yview)
-        text.config(yscrollcommand=scrollbar.set)
-
-        text.tag_configure('big', font=('Verdana', 15, 'bold'))
-        text.insert(tk.END, self.notes[0], 'big')
-        for line in self.notes[1:]:
-            text.insert(tk.END, line)
-
-        return panel
-
-    def apply(self):
-        return None
 
 
 class ShowPathologyDialog(tk.Toplevel):
