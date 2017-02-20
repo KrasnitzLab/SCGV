@@ -46,7 +46,7 @@ class MainController(ControllerBase):
         if sample is None:
             return
         if self.add_sample_cb:
-            self.add_sample_cb(sample)
+            self.add_sample_cb([sample])
 
     def display_samples(self, samples_list):
         sample_ui = SampleUi(samples_list)

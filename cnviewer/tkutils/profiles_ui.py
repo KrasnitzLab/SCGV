@@ -26,13 +26,17 @@ class AddProfileDialog(simpledialog.Dialog):
     def body(self, master):
         self.result = None
 
-        ttk.Label(master, text="Profile:").grid(row=0)
-        self.entry = ttk.Entry(master)
+        ttk.Label(master, text="Profiles:").grid(row=0)
+        self.entry = tk.Text(
+            master,
+            height=2,
+            width=20,
+        )
         self.entry.grid(row=0, column=1)
         return self.entry  # initial focus
 
     def apply(self):
-        result = self.entry.get()
+        result = self.entry.get('1.0', tk.END)
         print(result)  # or something
         self.result = result
         return self.result
@@ -84,19 +88,20 @@ class ProfilesUi(object):
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
 
-    def _add_profile_sample(self, sample):
-        profiles = self.profile_ui.get(0, 'end')
-        if sample in profiles:
-            return
-        self.profile_ui.insert("end", sample)
-        profiles = self.profile_ui.get(0, 'end')
-        self.controller.highlight_profiles_labels(profiles)
+    def _add_profile_samples(self, samples):
+        for sample in samples:
+            profiles = self.profile_ui.get(0, 'end')
+            if sample in profiles:
+                return
+            self.profile_ui.insert("end", sample)
+            profiles = self.profile_ui.get(0, 'end')
+            self.controller.highlight_profiles_labels(profiles)
         self.canvas.refresh()
 
     def connect_controller(self, controller):
         assert controller is not None
         self.controller = controller
-        self.controller.register_sample_cb(self._add_profile_sample)
+        self.controller.register_sample_cb(self._add_profile_samples)
 
         self.add_profile.config(state=tk.ACTIVE)
         self.show_profiles.config(state=tk.ACTIVE)
@@ -124,7 +129,10 @@ class ProfilesUi(object):
         # self.master.wait_window(add_dialog.top)
         profile = add_dialog.result
         print("add profile result is: ", profile)
-        if profile in self.controller.model.column_labels:
-            self._add_profile_sample(profile)
-        else:
-            print("wrong sample name: ", profile)
+        profile = profile.replace(',', ' ')
+        profiles = [p.strip() for p in profile.split()]
+        profiles = [
+            p for p in profiles
+            if p in self.controller.model.column_labels
+        ]
+        self._add_profile_samples(profiles)
