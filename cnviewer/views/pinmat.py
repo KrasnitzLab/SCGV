@@ -34,7 +34,7 @@ class PinmatViewer(ViewerBase):
                            fontsize=10)
         chrom_lines = self.calc_chrom_lines_pos(self.model.seg_df)
         for chrom_line in chrom_lines:
-            plt.axhline(y=chrom_line, color="#000000", linewidth=1)
+            ax.axhline(y=chrom_line, color="#888888", linewidth=0.5)
         chrom_labelspos = self.calc_chrom_labels_pos(chrom_lines)
         ax.set_yticks(chrom_labelspos)
         ax.set_yticklabels(self.CHROM_LABELS, fontsize=9)
