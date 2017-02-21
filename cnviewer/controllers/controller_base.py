@@ -7,8 +7,8 @@ Created on Jan 25, 2017
 
 class ControllerBase(object):
 
-    def __init__(self, model):
-        self.model = model
+    def __init__(self):
+        pass
 
     @staticmethod
     def debug_event(event):

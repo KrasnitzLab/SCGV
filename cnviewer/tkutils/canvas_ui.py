@@ -8,8 +8,7 @@ import matplotlib as mpl
 mpl.use('TkAgg')
 
 
-
-from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
+from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 from tkutils.tkimport import *  # @UnusedWildImport @IgnorePep8
@@ -17,8 +16,11 @@ from tkutils.tkimport import *  # @UnusedWildImport @IgnorePep8
 
 class CanvasWindow(object):
 
-    def __init__(self, root, legend=True):
+    def __init__(self, root, controller, legend=True):
         self.legend = legend
+        self.controller = controller
+        controller.register_on_model_callback(self.on_model_callback)
+
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
@@ -74,20 +76,14 @@ class CanvasWindow(object):
         if self.legend:
             self._build_legend_ext()
 
-        self.on_controller_callbacks = []
         self.on_closing_callbacks = []
-
-    def register_on_controller_callback(self, cb):
-        self.on_controller_callbacks.append(cb)
 
     def register_on_closing_callback(self, cb):
         self.on_closing_callbacks.append(cb)
 
-    def connect_controller(self, controller):
-        for cb in self.on_controller_callbacks:
-            cb(controller)
-
-        self.canvas.draw()
+    def on_model_callback(self, model):
+        # self.canvas.draw_idle()
+        pass
 
     def refresh(self):
         self.canvas.draw_idle()
