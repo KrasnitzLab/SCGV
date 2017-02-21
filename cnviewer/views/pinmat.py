@@ -3,11 +3,12 @@ Created on Jan 4, 2017
 
 @author: lubo
 '''
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 # import matplotlib.patches as patches
 
 # from utils.color_map import ColorMap
 from views.base import ViewerBase
+from utils.color_map import ColorMap
 
 
 class PinmatViewer(ViewerBase):
@@ -17,6 +18,7 @@ class PinmatViewer(ViewerBase):
 
     def __init__(self, model):
         super(PinmatViewer, self).__init__(model)
+        self.cmap = ColorMap.make_diverging05()
 
     def draw_heatmap(self, ax):
         assert self.model.heatmap is not None
@@ -24,7 +26,8 @@ class PinmatViewer(ViewerBase):
         ax.imshow(self.model.pins,
                   aspect='auto',
                   interpolation='nearest',
-                  cmap=plt.get_cmap('seismic'),  # self.cmap.colors,
+                  # cmap=plt.get_cmap('seismic'),
+                  cmap=self.cmap.colors,
                   vmin=self.NORMALIZE_PINS_MIN,
                   vmax=self.NORMALIZE_PINS_MAX,
                   extent=self.model.heat_extent)

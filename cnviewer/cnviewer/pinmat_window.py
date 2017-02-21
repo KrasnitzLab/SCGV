@@ -9,30 +9,26 @@ import matplotlib.pyplot as plt
 
 
 from tkutils.profiles_ui import ProfilesUi
-from tkutils.open_ui import OpenUi
-from tkutils.pinmat_ui import PinmatUi
 from tkutils.sectors_legend2 import SectorsLegend2
 from tkutils.heatmap_legend import HeatmapLegend
 from tkutils.sectors_ui import SectorsUi
 
 from views.dendrogram import DendrogramViewer
 from views.clone import CloneViewer
-from views.heatmap import HeatmapViewer
 from views.sector import SectorViewer
 from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 from views.sample import SampleViewer
-from controllers.controller import PinmatController
-from cnviewer.pinmat_window import PinmatWindow
+from views.pinmat import PinmatViewer
 
 
-class MainWindow(object):
+class PinmatWindow(object):
 
     def __init__(self, master, controller):
+        assert controller.model is not None
         self.master = master
         self.controller = controller
-        self.controller.register_on_model_callback(self.on_model_callback)
 
     def build_ui(self):
         self.main = CanvasWindow(self.master, self.controller)
@@ -40,10 +36,6 @@ class MainWindow(object):
 
         profiles = ProfilesUi(self.main.button_ext, self.main)
         profiles.build_ui()
-
-        pinmat = PinmatUi(self.main.button_ext, self.controller)
-        pinmat.build_ui()
-        pinmat.register_on_pinmat(self.build_pinmat)
 
         sectors = SectorsUi(self.main.button_ext)
         sectors.build_ui()
@@ -56,14 +48,13 @@ class MainWindow(object):
         heatmap_legend.build_ui()
         heatmap_legend.show_legend()
 
-        open_buttons = OpenUi(self.main.button_ext, self.controller)
-        open_buttons.build_ui()
-
-    def on_model_callback(self, model):
-        self.model = model
-        self.draw_canvas()
+    def register_on_closing_callback(self, cb):
+        self.main.register_on_closing_callback(cb)
 
     def draw_canvas(self):
+        assert self.controller.model is not None
+        self.model = self.controller.model
+
         ax_dendro = self.fig.add_axes([0.1, 0.775, 0.8, 0.175], frame_on=True)
         dendro_viewer = DendrogramViewer(self.model)
         dendro_viewer.draw_dendrogram(ax_dendro)
@@ -78,10 +69,8 @@ class MainWindow(object):
 
         ax_heat = self.fig.add_axes(
             [0.1, 0.20, 0.8, 0.55], frame_on=True, sharex=ax_dendro)
-
-        heatmap_viewer = HeatmapViewer(self.model)
-        heatmap_viewer.draw_heatmap(ax_heat)
-        # heatmap_viewer.draw_legend()
+        pinmat_viewer = PinmatViewer(self.model)
+        pinmat_viewer.draw_heatmap(ax_heat)
 
         ax_sector = self.fig.add_axes(
             [0.1, 0.175, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
@@ -104,7 +93,6 @@ class MainWindow(object):
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
         error_viewer.draw_xlabels(ax_error)
-
         self.ax_label = ax_error
 
         plt.setp(ax_dendro.get_xticklabels(), visible=False)
@@ -119,20 +107,3 @@ class MainWindow(object):
 
         self.sample_viewer = SampleViewer(self.model)
         self.controller.event_loop_connect(self.fig)
-        self.main.refresh()
-
-    def build_pinmat(self, pinmat_button):
-        pinmat_button.on_open()
-
-        root = tk.Toplevel()
-        controller = PinmatController(self.model)
-        pinmat_window = PinmatWindow(root, controller)
-        pinmat_window.build_ui()
-
-        def on_close():
-            pinmat_button.on_close()
-        pinmat_window.register_on_closing_callback(on_close)
-
-        pinmat_window.draw_canvas()
-
-        root.mainloop()

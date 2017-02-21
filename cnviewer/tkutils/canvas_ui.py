@@ -19,7 +19,6 @@ class CanvasWindow(object):
     def __init__(self, root, controller, legend=True):
         self.legend = legend
         self.controller = controller
-        controller.register_on_model_callback(self.on_model_callback)
 
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -80,10 +79,6 @@ class CanvasWindow(object):
 
     def register_on_closing_callback(self, cb):
         self.on_closing_callbacks.append(cb)
-
-    def on_model_callback(self, model):
-        # self.canvas.draw_idle()
-        pass
 
     def refresh(self):
         self.canvas.draw_idle()
