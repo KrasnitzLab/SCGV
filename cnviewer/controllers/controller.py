@@ -4,7 +4,6 @@ Created on Dec 14, 2016
 @author: lubo
 '''
 import matplotlib.pyplot as plt
-import numpy as np
 
 from views.sample import SampleViewer
 from views.heatmap import HeatmapViewer
@@ -13,18 +12,18 @@ from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 from views.sector import SectorViewer
-from controllers.controller_base import ControllerBase
+from controllers.controller_base import HitmapControllerBase
 from models.model import DataModel
 
 
-class PinmatController(ControllerBase):
+class PinmatController(HitmapControllerBase):
 
     def __init__(self, model):
         super(PinmatController, self).__init__()
         self.model = model
 
 
-class MainController(ControllerBase):
+class MainController(HitmapControllerBase):
 
     def __init__(self):
         super(MainController, self).__init__()
@@ -217,23 +216,3 @@ class MainController(ControllerBase):
         self.sample_viewer = SampleViewer(self.model)
         self.event_loop_connect()
 
-    def get_profile_indices(self, profiles):
-        profile_indices = []
-        for i, p in enumerate(self.model.column_labels):
-            if p in profiles:
-                profile_indices.append(i)
-
-        profile_indices = np.array(profile_indices)
-        return profile_indices
-
-    def highlight_profiles_labels(self, profiles):
-        profile_indices = self.get_profile_indices(profiles)
-        print("highlight profiles: {}".format(profile_indices))
-        for index in profile_indices:
-            self.ax_label.get_xticklabels()[index].set_color('red')
-
-    def unhighlight_profile_labels(self, profiles):
-        profile_indices = self.get_profile_indices(profiles)
-        print("unhighlight profiles: {}".format(profile_indices))
-        for index in profile_indices:
-            self.ax_label.get_xticklabels()[index].set_color('black')

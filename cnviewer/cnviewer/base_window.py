@@ -14,12 +14,17 @@ class BaseHeatmapWindow(object):
     def __init__(self, master, controller):
         self.master = master
         self.controller = controller
+        self.controller.register_sample_cb(
+            None,
+            None,
+            self.build_sample_window
+        )
 
     def build_base_ui(self):
         self.main = CanvasWindow(self.master, self.controller)
         self.fig = self.main.fig
 
-        profiles = ProfilesUi(self.main.button_ext, self.main)
+        profiles = ProfilesUi(self.main.button_ext, self.controller)
         profiles.build_ui()
 
         sectors_legend = SectorsLegend2(self.main.legend_ext)
@@ -29,3 +34,6 @@ class BaseHeatmapWindow(object):
         heatmap_legend = HeatmapLegend(self.main.legend_ext)
         heatmap_legend.build_ui()
         heatmap_legend.show_legend()
+
+    def build_sample_window(self, samples):
+        print("build_sample_window called... showing: {}".format(samples))

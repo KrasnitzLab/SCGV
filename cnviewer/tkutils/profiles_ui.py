@@ -29,10 +29,15 @@ class AddProfileDialog(simpledialog.Dialog):
 
 class ProfilesUi(object):
 
-    def __init__(self, master, canvas):
+    def __init__(self, master, controller):
         self.master = master
-        self.controller = None
-        self.canvas = canvas
+        self.controller = controller
+        self.controller.register_on_model_callback(self.on_model_callback)
+        self.controller.register_sample_cb(
+            self.on_add_samples_callback,
+            None,
+            None
+        )
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -73,24 +78,27 @@ class ProfilesUi(object):
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
 
+    def on_model_callback(self, model):
+        self.add_profile.config(state=tk.ACTIVE)
+        self.show_profiles.config(state=tk.ACTIVE)
+        self.clear_profiles.config(state=tk.ACTIVE)
+
+    def on_add_samples_callback(self, samples):
+        for sample in samples:
+            profiles = self.profile_ui.get(0, 'end')
+            if sample in profiles:
+                continue
+            self.profile_ui.insert("end", sample)
+
     def _add_profile_samples(self, samples):
         for sample in samples:
             profiles = self.profile_ui.get(0, 'end')
             if sample in profiles:
-                return
+                continue
             self.profile_ui.insert("end", sample)
-            profiles = self.profile_ui.get(0, 'end')
-            self.controller.highlight_profiles_labels(profiles)
-        self.canvas.refresh()
-
-    def connect_controller(self, controller):
-        assert controller is not None
-        self.controller = controller
-        self.controller.register_sample_cb(self._add_profile_samples)
-
-        self.add_profile.config(state=tk.ACTIVE)
-        self.show_profiles.config(state=tk.ACTIVE)
-        self.clear_profiles.config(state=tk.ACTIVE)
+        profiles = self.profile_ui.get(0, 'end')
+        self.controller.add_samples(profiles)
+        # self.controller.highlight_profiles_labels(profiles)
 
     def _show_profiles(self):
         print("show profiles called...")
@@ -104,9 +112,9 @@ class ProfilesUi(object):
     def _clear_profiles(self):
         print("clear profiles called...")
         profiles = self.profile_ui.get(0, 'end')
-        self.controller.unhighlight_profile_labels(profiles)
         self.profile_ui.delete(0, 'end')
-        self.canvas.refresh()
+        self.controller.clear_samples(profiles)
+        # self.controller.unhighlight_profile_labels(profiles)
 
     def _add_profile_dialog(self):
         print("add profile dialog added...")
