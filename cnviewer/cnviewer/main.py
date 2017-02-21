@@ -13,8 +13,8 @@ from tkutils.pinmat_ui import PinmatUi
 from tkutils.sectors_ui import SectorsUi, SectorsWindow
 from tkutils.sectors_legend2 import SectorsLegend2
 from tkutils.heatmap_legend import HeatmapLegend
-from utils.sector_model import SingleSectorDataModel
-from views.controller import MainController
+from models.sector_model import SingleSectorDataModel
+from controllers.controller import MainController
 
 
 if sys.version_info[0] < 3:

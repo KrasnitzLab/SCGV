@@ -5,9 +5,9 @@ Created on Jan 18, 2017
 '''
 import sys  # @UnusedImport
 from tkutils.canvas_ui import CanvasWindow
-from views.controller import MainController
+from controllers.controller import MainController
 from tkutils.profiles_ui import ProfilesUi
-from utils.sector_model import SectorDataModel
+from models.sector_model import SectorDataModel
 if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
     import ttk  # @UnusedImport @UnresolvedImport

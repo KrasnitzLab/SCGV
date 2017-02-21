@@ -5,8 +5,8 @@ Created on Jan 17, 2017
 '''
 import threading
 import sys  # @UnusedImport
-from views.controller import MainController
-from utils.model import DataModel
+from controllers.controller import MainController
+from models.model import DataModel
 import traceback
 
 if sys.version_info[0] < 3:

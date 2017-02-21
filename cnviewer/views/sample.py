@@ -5,7 +5,7 @@ Created on Dec 14, 2016
 '''
 import numpy as np
 from views.base import ViewerBase
-from utils.controller_base import ControllerBase
+from controllers.controller_base import ControllerBase
 import webbrowser
 
 

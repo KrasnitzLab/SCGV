@@ -8,7 +8,7 @@ from scipy.cluster.hierarchy import dendrogram
 import numpy as np
 import pandas as pd
 
-from utils.loader import DataLoader
+from models.loader import DataLoader
 
 
 class DataModel(DataLoader):

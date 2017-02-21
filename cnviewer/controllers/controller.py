@@ -16,7 +16,7 @@ from views.error import ErrorViewer
 from views.sector import SectorViewer
 from views.pinmat import PinmatViewer
 from tkutils.sample_ui import SampleUi
-from utils.controller_base import ControllerBase
+from controllers.controller_base import ControllerBase
 
 
 class MainController(ControllerBase):
