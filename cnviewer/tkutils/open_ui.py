@@ -3,26 +3,12 @@ Created on Jan 17, 2017
 
 @author: lubo
 '''
+from tkutils.tkimport import *  # @UnusedWildImport
+
 import threading
-import sys  # @UnusedImport
 from controllers.controller import MainController
 from models.model import DataModel
 import traceback
-
-if sys.version_info[0] < 3:
-    import Tkinter as tk  # @UnusedImport @UnresolvedImport
-    import ttk  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askdirectory  # @UnusedImport @UnresolvedImport
-    import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
-else:
-    import tkinter as tk  # @Reimport @UnresolvedImport
-    from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
-    from tkinter.filedialog \
-        import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter.filedialog \
-        import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
 
 
 class OpenUi(object):

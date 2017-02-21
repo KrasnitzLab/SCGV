@@ -8,24 +8,11 @@ import matplotlib as mpl
 mpl.use('TkAgg')
 
 
+
 from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
-
-if sys.version_info[0] < 3:
-    import Tkinter as tk  # @UnusedImport @UnresolvedImport
-    import ttk  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
-    import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
-else:
-    import tkinter as tk  # @Reimport @UnresolvedImport
-    from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
-    from tkinter.filedialog \
-        import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter.filedialog \
-        import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
-
-    from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
+from tkutils.tkimport import *  # @UnusedWildImport @IgnorePep8
 
 
 class CanvasWindow(object):
