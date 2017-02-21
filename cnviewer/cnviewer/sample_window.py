@@ -7,15 +7,19 @@ Created on Jan 18, 2017
 from tkutils.tkimport import *  # @UnusedWildImport
 
 from tkutils.canvas_ui import CanvasWindow
+from views.sample import SamplesViewer
 
 
-class SampleWindow(object):
+class SamplesWindow(object):
 
-    def __init__(self, master, controller, sample_list):
+    def __init__(self, master, controller, samples):
         self.master = master
         self.controller = controller
-        self.sample_list = sample_list[:]
+        self.samples = samples[:]
 
     def build_ui(self):
-        self.main = CanvasWindow(self.root, legend=False)
-        return self.main.fig
+        self.main = CanvasWindow(self.master, self.controller, legend=False)
+
+    def draw_canvas(self):
+        samples_viewer = SamplesViewer(self.controller.model)
+        samples_viewer.draw_samples(self.main.fig, self.samples)

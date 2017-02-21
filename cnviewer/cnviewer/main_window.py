@@ -18,7 +18,6 @@ from views.sector import SectorViewer
 from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
-from views.sample import SampleViewer
 from controllers.controller import PinmatController
 from cnviewer.pinmat_window import PinmatWindow
 from cnviewer.base_window import BaseHeatmapWindow
@@ -101,7 +100,6 @@ class MainWindow(BaseHeatmapWindow):
         plt.setp(ax_gate.get_xticklabels(), visible=False)
         plt.setp(ax_multiplier.get_xticklabels(), visible=False)
 
-        self.sample_viewer = SampleViewer(self.model)
         self.controller.event_loop_connect(self.fig)
         self.main.refresh()
 

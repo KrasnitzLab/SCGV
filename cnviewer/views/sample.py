@@ -5,14 +5,13 @@ Created on Dec 14, 2016
 '''
 import numpy as np
 from views.base import ViewerBase
-from controllers.controller_base import ControllerBase
 import webbrowser
 
 
-class SampleViewer(ViewerBase, ControllerBase):
+class SamplesViewer(ViewerBase):
 
     def __init__(self, model):
-        super(SampleViewer, self).__init__(model)
+        super(SamplesViewer, self).__init__(model)
         self.start_pos = None
         self.end_pos = None
 
@@ -94,7 +93,7 @@ class SampleViewer(ViewerBase, ControllerBase):
         fig.canvas.mpl_connect('button_release_event', self.event_handler)
 
     def event_handler(self, event):
-        self.debug_event(event)
+        # self.debug_event(event)
         if event.name == 'button_press_event' and event.button == 3:
             pos = self.translate_xcoord(event.xdata)
             if self.start_pos is None:

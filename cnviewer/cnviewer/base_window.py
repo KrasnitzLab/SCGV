@@ -3,10 +3,14 @@ Created on Feb 21, 2017
 
 @author: lubo
 '''
+from tkutils.tkimport import *  # @UnusedWildImport
+
 from tkutils.canvas_ui import CanvasWindow
 from tkutils.profiles_ui import ProfilesUi
 from tkutils.sectors_legend2 import SectorsLegend2
 from tkutils.heatmap_legend import HeatmapLegend
+from cnviewer.sample_window import SamplesWindow
+from controllers.controller import SamplesController
 
 
 class BaseHeatmapWindow(object):
@@ -37,3 +41,9 @@ class BaseHeatmapWindow(object):
 
     def build_sample_window(self, samples):
         print("build_sample_window called... showing: {}".format(samples))
+        root = tk.Toplevel()
+        controller = SamplesController(self.controller.model)
+        samples_window = SamplesWindow(root, controller, samples)
+        samples_window.build_ui()
+        samples_window.draw_canvas()
+        root.mainloop()
