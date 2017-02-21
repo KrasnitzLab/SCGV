@@ -4,15 +4,11 @@ Created on Feb 21, 2017
 @author: lubo
 '''
 from tkutils.tkimport import *  # @UnusedWildImport
-from tkutils.canvas_ui import CanvasWindow
 import matplotlib.pyplot as plt
 
 
-from tkutils.profiles_ui import ProfilesUi
 from tkutils.open_ui import OpenUi
 from tkutils.pinmat_ui import PinmatUi
-from tkutils.sectors_legend2 import SectorsLegend2
-from tkutils.heatmap_legend import HeatmapLegend
 from tkutils.sectors_ui import SectorsUi
 
 from views.dendrogram import DendrogramViewer
@@ -25,21 +21,17 @@ from views.error import ErrorViewer
 from views.sample import SampleViewer
 from controllers.controller import PinmatController
 from cnviewer.pinmat_window import PinmatWindow
+from cnviewer.base_window import BaseHeatmapWindow
 
 
-class MainWindow(object):
+class MainWindow(BaseHeatmapWindow):
 
     def __init__(self, master, controller):
-        self.master = master
-        self.controller = controller
+        super(MainWindow, self).__init__(master, controller)
         self.controller.register_on_model_callback(self.on_model_callback)
 
     def build_ui(self):
-        self.main = CanvasWindow(self.master, self.controller)
-        self.fig = self.main.fig
-
-        profiles = ProfilesUi(self.main.button_ext, self.main)
-        profiles.build_ui()
+        self.build_base_ui()
 
         pinmat = PinmatUi(self.main.button_ext, self.controller)
         pinmat.build_ui()
@@ -47,14 +39,6 @@ class MainWindow(object):
 
         sectors = SectorsUi(self.main.button_ext)
         sectors.build_ui()
-
-        sectors_legend = SectorsLegend2(self.main.legend_ext)
-        sectors_legend.build_ui(row=10)
-        # sectors_legend.register_show_single_sector_callback(show_single_sector)
-
-        heatmap_legend = HeatmapLegend(self.main.legend_ext)
-        heatmap_legend.build_ui()
-        heatmap_legend.show_legend()
 
         open_buttons = OpenUi(self.main.button_ext, self.controller)
         open_buttons.build_ui()

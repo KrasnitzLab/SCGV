@@ -4,14 +4,8 @@ Created on Feb 21, 2017
 @author: lubo
 '''
 from tkutils.tkimport import *  # @UnusedWildImport
-from tkutils.canvas_ui import CanvasWindow
 import matplotlib.pyplot as plt
 
-
-from tkutils.profiles_ui import ProfilesUi
-from tkutils.sectors_legend2 import SectorsLegend2
-from tkutils.heatmap_legend import HeatmapLegend
-from tkutils.sectors_ui import SectorsUi
 
 from views.dendrogram import DendrogramViewer
 from views.clone import CloneViewer
@@ -21,32 +15,17 @@ from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 from views.sample import SampleViewer
 from views.pinmat import PinmatViewer
+from cnviewer.base_window import BaseHeatmapWindow
 
 
-class PinmatWindow(object):
+class PinmatWindow(BaseHeatmapWindow):
 
     def __init__(self, master, controller):
+        super(PinmatWindow, self).__init__(master, controller)
         assert controller.model is not None
-        self.master = master
-        self.controller = controller
 
     def build_ui(self):
-        self.main = CanvasWindow(self.master, self.controller)
-        self.fig = self.main.fig
-
-        profiles = ProfilesUi(self.main.button_ext, self.main)
-        profiles.build_ui()
-
-        sectors = SectorsUi(self.main.button_ext)
-        sectors.build_ui()
-
-        sectors_legend = SectorsLegend2(self.main.legend_ext)
-        sectors_legend.build_ui(row=10)
-        # sectors_legend.register_show_single_sector_callback(show_single_sector)
-
-        heatmap_legend = HeatmapLegend(self.main.legend_ext)
-        heatmap_legend.build_ui()
-        heatmap_legend.show_legend()
+        self.build_base_ui()
 
     def register_on_closing_callback(self, cb):
         self.main.register_on_closing_callback(cb)
