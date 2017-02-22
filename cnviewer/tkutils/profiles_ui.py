@@ -32,12 +32,6 @@ class ProfilesUi(object):
     def __init__(self, master, controller):
         self.master = master
         self.controller = controller
-        self.controller.register_on_model_callback(self.on_model_callback)
-        self.controller.register_sample_cb(
-            self.on_add_samples_callback,
-            None,
-            None
-        )
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -78,7 +72,22 @@ class ProfilesUi(object):
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
 
-    def on_model_callback(self, model):
+        self._connect_controller()
+
+    def _connect_controller(self):
+        if self.controller.model is None:
+            self.controller.register_on_model_callback(
+                self.enable_profile_buttons)
+        else:
+            self.enable_profile_buttons(self.controller.model)
+
+        self.controller.register_sample_cb(
+            self.on_add_samples_callback,
+            None,
+            None
+        )
+
+    def enable_profile_buttons(self, model):
         self.add_profile.config(state=tk.ACTIVE)
         self.show_profiles.config(state=tk.ACTIVE)
         self.clear_profiles.config(state=tk.ACTIVE)
