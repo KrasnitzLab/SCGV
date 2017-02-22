@@ -3,7 +3,6 @@ Created on Jan 25, 2017
 
 @author: lubo
 '''
-import numpy as np
 
 
 class ControllerBase(object):
@@ -79,10 +78,6 @@ class HitmapControllerBase(ControllerBase):
             return
         for cb in self.on_display_samples_callbacks:
             cb(samples)
-        #         sample_ui = SampleUi(samples_list)
-        #         fig = sample_ui.build_ui()
-        #         self.sample_viewer.draw_samples(fig, samples_list)
-        #         sample_ui.mainloop()
 
     def clear_samples(self, samples):
         for cb in self.on_clear_samples_callbacks:
@@ -95,24 +90,3 @@ class HitmapControllerBase(ControllerBase):
         sample_name = self.model.column_labels[xloc]
         print("xloc: {}; sample name: {}".format(xloc, sample_name))
         return sample_name
-
-    def get_profile_indices(self, profiles):
-        profile_indices = []
-        for i, p in enumerate(self.model.column_labels):
-            if p in profiles:
-                profile_indices.append(i)
-
-        profile_indices = np.array(profile_indices)
-        return profile_indices
-
-    def highlight_profiles_labels(self, profiles):
-        profile_indices = self.get_profile_indices(profiles)
-        print("highlight profiles: {}".format(profile_indices))
-        for index in profile_indices:
-            self.ax_label.get_xticklabels()[index].set_color('red')
-
-    def unhighlight_profile_labels(self, profiles):
-        profile_indices = self.get_profile_indices(profiles)
-        print("unhighlight profiles: {}".format(profile_indices))
-        for index in profile_indices:
-            self.ax_label.get_xticklabels()[index].set_color('black')

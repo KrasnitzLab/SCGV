@@ -120,10 +120,12 @@ class ProfilesUi(object):
         print("add profile dialog added...")
         add_dialog = AddProfileDialog(self.master.master)
         # self.master.wait_window(add_dialog.top)
-        profile = add_dialog.result
-        print("add profile result is: ", profile)
-        profile = profile.replace(',', ' ')
-        profiles = [p.strip() for p in profile.split()]
+        profiles = add_dialog.result
+        print("add profile result is: ", profiles)
+        if profiles is None:
+            return
+        profiles = profiles.replace(',', ' ')
+        profiles = [p.strip() for p in profiles.split()]
         profiles = [
             p for p in profiles
             if p in self.controller.model.column_labels
