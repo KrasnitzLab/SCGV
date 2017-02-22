@@ -15,6 +15,13 @@ class SamplesController(ControllerBase):
         self.model = model
 
 
+class SectorsController(HitmapControllerBase):
+
+    def __init__(self, model):
+        super(SectorsController, self).__init__()
+        self.model = model
+
+
 class PinmatController(HitmapControllerBase):
 
     def __init__(self, model):

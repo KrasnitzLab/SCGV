@@ -17,11 +17,13 @@ from views.sector import SectorViewer
 from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
-from controllers.controller import PinmatController
+from controllers.controller import PinmatController, SectorsController
 from cnviewer.pinmat_window import PinmatWindow
 from cnviewer.base_window import BaseHeatmapWindow
 
 import matplotlib.pyplot as plt
+from models.sector_model import SectorDataModel
+from cnviewer.sectors_window import SectorsWindow
 
 
 class MainWindow(BaseHeatmapWindow):
@@ -39,6 +41,7 @@ class MainWindow(BaseHeatmapWindow):
 
         sectors = SectorsUi(self.main.button_ext, self.controller)
         sectors.build_ui()
+        sectors.register_on_sectors_reorder(self.build_sectors_reorder)
 
         open_buttons = OpenUi(self.main.button_ext, self.controller)
         open_buttons.build_ui()
@@ -105,7 +108,7 @@ class MainWindow(BaseHeatmapWindow):
         self.main.refresh()
 
     def build_pinmat(self, pinmat_button):
-        pinmat_button.diable()
+        pinmat_button.diable_ui()
 
         root = tk.Toplevel()
         controller = PinmatController(self.model)
@@ -113,9 +116,27 @@ class MainWindow(BaseHeatmapWindow):
         pinmat_window.build_ui()
 
         def on_close():
-            pinmat_button.enable()
+            pinmat_button.enable_ui()
         pinmat_window.register_on_closing_callback(on_close)
 
         pinmat_window.draw_canvas()
+        root.mainloop()
 
+    def build_sectors_reorder(self, sectors_button):
+        sectors_button.disable_ui()
+
+        root = tk.Toplevel()
+        sectors_model = SectorDataModel(self.model)
+        sectors_model.make()
+
+        controller = SectorsController(sectors_model)
+
+        sectors_window = SectorsWindow(root, controller)
+        sectors_window.build_ui()
+
+        def on_close():
+            sectors_button.enable_ui()
+        sectors_window.register_on_closing_callback(on_close)
+
+        sectors_window.draw_canvas()
         root.mainloop()
