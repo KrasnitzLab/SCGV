@@ -3,27 +3,29 @@ Created on Feb 8, 2017
 
 @author: lubo
 '''
-from tkutils.tkimport import *  # @UnusedWildImport
+import matplotlib as mpl
+mpl.use('TkAgg')
 
-from tkutils.sectors_ui import SectorsWindow
-from models.sector_model import SingleSectorDataModel
-from controllers.controller import MainController
-from cnviewer.main_window import MainWindow
+from tkutils.tkimport import *  # @UnusedWildImport @NoMove @IgnorePep8
+
+# from models.sector_model import SingleSectorDataModel
+from controllers.controller import MainController  # @IgnorePep8
+from cnviewer.main_window import MainWindow  # @IgnorePep8
 
 
-def show_single_sector(model, sector_id):
-    sector_model = SingleSectorDataModel(model, sector_id)
-    sector_model.make()
-
-    controller = MainController(sector_model)
-
-    root = tk.Toplevel()
-    main = SectorsWindow(root)
-    controller.build_sector(main.fig)
-
-    main.connect_controller(controller)
-
-    root.mainloop()
+# def show_single_sector(model, sector_id):
+#     sector_model = SingleSectorDataModel(model, sector_id)
+#     sector_model.make()
+#
+#     controller = MainController(sector_model)
+#
+#     root = tk.Toplevel()
+#     main = SectorsWindow(root)
+#     controller.build_sector(main.fig)
+#
+#     main.connect_controller(controller)
+#
+#     root.mainloop()
 
 
 def main():

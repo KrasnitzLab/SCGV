@@ -30,6 +30,12 @@ class BaseHeatmapWindow(object):
     def refresh(self):
         self.main.refresh()
 
+    def register_on_closing_callback(self, cb):
+        self.main.register_on_closing_callback(cb)
+
+    def build_ui(self):
+        self.build_base_ui()
+
     def build_base_ui(self):
         self.main = CanvasWindow(self.master, self.controller)
         self.fig = self.main.fig

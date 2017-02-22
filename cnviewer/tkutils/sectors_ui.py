@@ -5,27 +5,24 @@ Created on Jan 18, 2017
 '''
 from tkutils.tkimport import *  # @UnusedWildImport
 
-from tkutils.canvas_ui import CanvasWindow
 from controllers.controller import MainController
-from tkutils.profiles_ui import ProfilesUi
 from models.sector_model import SectorDataModel
+from tkutils.base_ui import BaseUi
 
 
-class SectorsWindow(CanvasWindow):
+# class SectorsWindow(CanvasWindow):
+#
+#     def __init__(self, root):
+#         super(SectorsWindow, self).__init__(root)
+#         profiles = ProfilesUi(self.button_ext, self)
+#         profiles.build_ui()
+#         self.register_on_controller_callback(profiles.connect_controller)
 
-    def __init__(self, root):
-        super(SectorsWindow, self).__init__(root)
-        profiles = ProfilesUi(self.button_ext, self)
-        profiles.build_ui()
-        self.register_on_controller_callback(profiles.connect_controller)
 
+class SectorsUi(BaseUi):
 
-class SectorsUi(object):
-
-    def __init__(self, master):
-        self.master = master
-        self.controller = None
-        self.root = None
+    def __init__(self, master, controller):
+        super(SectorsUi, self).__init__(master, controller)
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -42,6 +39,13 @@ class SectorsUi(object):
             column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
+        super(SectorsUi, self).build_ui()
+
+    def enable_ui(self):
+        self.show_sectors.config(state=tk.ACTIVE)
+
+    def disable_ui(self):
+        self.show_sectors.config(state=tk.DISABLED)
 
     def _show_sectors(self):
         self.show_sectors.config(state=tk.DISABLED)
@@ -55,21 +59,21 @@ class SectorsUi(object):
         sector_model.make()
         controller = MainController(sector_model)
 
-        self.root = tk.Toplevel()
-        main = SectorsWindow(self.root)
+        #         self.root = tk.Toplevel()
+        #         main = SectorsWindow(self.root)
+        #
+        #         controller.build_sector(main.fig)
+        #         main.connect_controller(controller)
+        #         main.register_on_closing_callback(self.on_closing)
+        #
+        #         self.root.mainloop()
 
-        controller.build_sector(main.fig)
-        main.connect_controller(controller)
-        main.register_on_closing_callback(self.on_closing)
+#     def on_closing(self):
+#         print("SectorsUi::on_closing called...")
+#         self.show_sectors.config(state=tk.ACTIVE)
 
-        self.root.mainloop()
-
-    def on_closing(self):
-        print("SectorsUi::on_closing called...")
-        self.show_sectors.config(state=tk.ACTIVE)
-
-    def connect_controller(self, controller):
-        assert controller is not None
-        self.controller = controller
-
-        self.show_sectors.config(state=tk.ACTIVE)
+#     def connect_controller(self, controller):
+#         assert controller is not None
+#         self.controller = controller
+#
+#         self.show_sectors.config(state=tk.ACTIVE)

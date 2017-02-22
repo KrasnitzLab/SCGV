@@ -4,7 +4,6 @@ Created on Feb 21, 2017
 @author: lubo
 '''
 from tkutils.tkimport import *  # @UnusedWildImport
-import matplotlib.pyplot as plt
 
 
 from tkutils.open_ui import OpenUi
@@ -22,6 +21,8 @@ from controllers.controller import PinmatController
 from cnviewer.pinmat_window import PinmatWindow
 from cnviewer.base_window import BaseHeatmapWindow
 
+import matplotlib.pyplot as plt
+
 
 class MainWindow(BaseHeatmapWindow):
 
@@ -36,7 +37,7 @@ class MainWindow(BaseHeatmapWindow):
         pinmat.build_ui()
         pinmat.register_on_pinmat(self.build_pinmat)
 
-        sectors = SectorsUi(self.main.button_ext)
+        sectors = SectorsUi(self.main.button_ext, self.controller)
         sectors.build_ui()
 
         open_buttons = OpenUi(self.main.button_ext, self.controller)
@@ -104,7 +105,7 @@ class MainWindow(BaseHeatmapWindow):
         self.main.refresh()
 
     def build_pinmat(self, pinmat_button):
-        pinmat_button.on_open()
+        pinmat_button.diable()
 
         root = tk.Toplevel()
         controller = PinmatController(self.model)
@@ -112,7 +113,7 @@ class MainWindow(BaseHeatmapWindow):
         pinmat_window.build_ui()
 
         def on_close():
-            pinmat_button.on_close()
+            pinmat_button.enable()
         pinmat_window.register_on_closing_callback(on_close)
 
         pinmat_window.draw_canvas()

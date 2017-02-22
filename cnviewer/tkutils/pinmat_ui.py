@@ -4,16 +4,14 @@ Created on Jan 18, 2017
 @author: lubo
 '''
 from tkutils.tkimport import *  # @UnusedWildImport
+from tkutils.base_ui import BaseUi
 
 
-class PinmatUi(object):
+class PinmatUi(BaseUi):
 
     def __init__(self, master, controller):
-        self.master = master
-        self.controller = controller
+        super(PinmatUi, self).__init__(master, controller)
         self.pinmat_callbacks = []
-
-        self.controller.register_on_model_callback(self.on_model_callback)
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -30,6 +28,7 @@ class PinmatUi(object):
             column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
+        super(PinmatUi, self).build_ui()
 
     def register_on_pinmat(self, callback):
         self.pinmat_callbacks.append(callback)
@@ -41,12 +40,8 @@ class PinmatUi(object):
         for cb in self.pinmat_callbacks:
             cb(self)
 
-    def on_open(self):
+    def enable_ui(self):
+        self.show_pinmat.config(state=tk.ACTIVE)
+
+    def disable_ui(self):
         self.show_pinmat.config(state=tk.DISABLED)
-
-    def on_close(self):
-        print("PinmatUi::on_closing called...")
-        self.show_pinmat.config(state=tk.ACTIVE)
-
-    def on_model_callback(self, model):
-        self.show_pinmat.config(state=tk.ACTIVE)
