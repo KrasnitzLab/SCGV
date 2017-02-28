@@ -133,7 +133,7 @@ class DataLoader(object):
             image = None
             if os.path.exists(filename):
                 image = Image.open(filename)
-            filename = os.path.join(pathology_dirname, row['notes'])
+            filename = os.path.join(pathology_dirname, str(row['notes']))
             print("looking for notes in: {}".format(filename))
             notes = None
             if os.path.exists(filename):

@@ -37,6 +37,12 @@ class DataModel(object):
         self.interval_length = None
 
     @property
+    def pathology(self):
+        if self.data is not None:
+            return self.data.pathology
+        return None
+
+    @property
     def bar_extent(self):
         if self._bar_extent is None:
             self._bar_extent = (
