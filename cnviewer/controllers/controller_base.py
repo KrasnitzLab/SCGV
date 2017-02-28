@@ -41,10 +41,10 @@ class ControllerBase(object):
             print("???: {}".format(event.name))
 
 
-class HitmapControllerBase(ControllerBase):
+class HeatmapControllerBase(ControllerBase):
 
     def __init__(self):
-        super(HitmapControllerBase, self).__init__()
+        super(HeatmapControllerBase, self).__init__()
         self.on_add_samples_callbacks = []
         self.on_clear_samples_callbacks = []
         self.on_display_samples_callbacks = []

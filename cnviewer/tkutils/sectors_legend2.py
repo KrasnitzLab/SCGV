@@ -122,7 +122,7 @@ class SectorsLegend2(LegendBase):
         (sector, _) = self.sectors[index]
         print("working with sector: ", sector)
 
-        self.show_single_sector_callback(self.controller.model, sector)
+        self.show_single_sector_callback(self.model, sector)
 
 #
 #         root = tk.Toplevel()

@@ -75,6 +75,7 @@ class LegendBase(BaseUi):
         pass
 
     def build_ui(self, row=20):
+        self.entries = []
         frame = ttk.Frame(
             self.master,
             borderwidth=5,
@@ -96,7 +97,6 @@ class LegendBase(BaseUi):
             background='white')
         self.canvas.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
         scrollbar.config(command=self.canvas.yview)
-        super(LegendBase, self).build_ui()
 
         def configure_update(event):
             self.canvas.configure(scrollregion=self.canvas.bbox('all'))
@@ -111,8 +111,8 @@ class LegendBase(BaseUi):
         self.container = tk.Frame(self.canvas, background='white')
         self.canvas.create_window((0, 0), window=self.container, anchor='nw')
 
-        self.entries = []
         configure_update(None)
+        super(LegendBase, self).build_ui()
 
     def append_entry(self, text, color=None):
         index = len(self.entries)

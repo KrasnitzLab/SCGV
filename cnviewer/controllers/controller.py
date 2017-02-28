@@ -4,7 +4,7 @@ Created on Dec 14, 2016
 @author: lubo
 '''
 
-from controllers.controller_base import HitmapControllerBase, ControllerBase
+from controllers.controller_base import HeatmapControllerBase, ControllerBase
 from models.model import DataModel
 
 
@@ -15,21 +15,28 @@ class SamplesController(ControllerBase):
         self.model = model
 
 
-class SectorsController(HitmapControllerBase):
+class SectorsController(HeatmapControllerBase):
 
     def __init__(self, model):
         super(SectorsController, self).__init__()
         self.model = model
 
 
-class PinmatController(HitmapControllerBase):
+class PinmatController(HeatmapControllerBase):
 
     def __init__(self, model):
         super(PinmatController, self).__init__()
         self.model = model
 
 
-class MainController(HitmapControllerBase):
+class SingleSectorController(HeatmapControllerBase):
+
+    def __init__(self, model):
+        super(SingleSectorController, self).__init__()
+        self.model = model
+
+
+class MainController(HeatmapControllerBase):
 
     def __init__(self):
         super(MainController, self).__init__()
