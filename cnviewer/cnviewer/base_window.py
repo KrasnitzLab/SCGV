@@ -23,6 +23,7 @@ from views.sector import SectorViewer
 from views.gate import GateViewer
 from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
+import traceback
 
 
 class BaseHeatmapWindow(object):
@@ -72,17 +73,20 @@ class BaseHeatmapWindow(object):
         root.mainloop()
 
     def build_single_sector_window(self, model, sector_id):
-        sector_model = SingleSectorDataModel(model, sector_id)
-        sector_model.make()
+        try:
+            sector_model = SingleSectorDataModel(model, sector_id)
+            sector_model.make()
 
-        controller = SingleSectorController(sector_model)
+            controller = SingleSectorController(sector_model)
 
-        root = tk.Toplevel()
-        main = SingleSectorWindow(root, controller)
-        main.build_ui()
-        main.draw_canvas()
+            root = tk.Toplevel()
+            main = SingleSectorWindow(root, controller)
+            main.build_ui()
+            main.draw_canvas()
 
-        root.mainloop()
+            root.mainloop()
+        except Exception:
+            traceback.print_exc()
 
     def get_profile_indices(self, profiles):
         profile_indices = []
