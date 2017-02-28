@@ -77,22 +77,25 @@ class DataLoader(object):
 
         result = {}
         for _index, row in images_df.iterrows():
-            filename = os.path.join('pathology', row['image'])
             image = None
-            if filename in zipdata.namelist():
-                print("loading: ", filename)
-                image = Image.open(zipdata.open(filename))
-                # image.load()
+            if 'image' in row:
+                filename = os.path.join('pathology', str(row['image']))
+                if filename in zipdata.namelist():
+                    print("loading: ", filename)
+                    image = Image.open(zipdata.open(filename))
+                    # image.load()
             else:
                 print("image not found: ", filename)
-            filename = os.path.join('pathology', row['notes'])
+
             notes = None
-            if filename in zipdata.namelist():
-                print("loading: ", filename)
-                notes = zipdata.open(filename).readlines()
-                # image.load()
-            else:
-                print("image not found: ", filename)
+            if 'notes' in row:
+                filename = os.path.join('pathology', str(row['notes']))
+                if filename in zipdata.namelist():
+                    print("loading: ", filename)
+                    notes = zipdata.open(filename).readlines()
+                    # image.load()
+                else:
+                    print("image not found: ", filename)
             result[row['pathology']] = image, notes
 
         return result
@@ -128,17 +131,20 @@ class DataLoader(object):
         images_df = pd.read_csv(filename)
         result = {}
         for _index, row in images_df.iterrows():
-            filename = os.path.join(pathology_dirname, row['image'])
-            print("looking for image in: {}".format(filename))
             image = None
-            if os.path.exists(filename):
-                image = Image.open(filename)
-            filename = os.path.join(pathology_dirname, str(row['notes']))
-            print("looking for notes in: {}".format(filename))
+            if 'image' in row:
+                filename = os.path.join(pathology_dirname, str(row['image']))
+                print("looking for image in: {}".format(filename))
+                if os.path.exists(filename):
+                    image = Image.open(filename)
+
             notes = None
-            if os.path.exists(filename):
-                with open(filename, 'r') as notesfile:
-                    notes = notesfile.readlines()
+            if 'notes' in row:
+                filename = os.path.join(pathology_dirname, str(row['notes']))
+                print("looking for notes in: {}".format(filename))
+                if os.path.exists(filename):
+                    with open(filename, 'r') as notesfile:
+                        notes = notesfile.readlines()
             result[row['pathology']] = image, notes
         return result
 

@@ -59,9 +59,11 @@ class ShowPathologyDialog(tk.Toplevel):
         self.destroy()
 
     def body(self, master):
-        self.image = ImageTk.PhotoImage(self.image)
-        panel = tk.Label(master, image=self.image)
-        panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES)
+        panel = None
+        if self.image is not None:
+            self.image = ImageTk.PhotoImage(self.image)
+            panel = tk.Label(master, image=self.image)
+            panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES)
 
         text = tk.Text(master, width=80, height=20)
         scrollbar = tk.Scrollbar(master)
@@ -70,11 +72,14 @@ class ShowPathologyDialog(tk.Toplevel):
         scrollbar.config(command=text.yview)
         text.config(yscrollcommand=scrollbar.set)
 
-        text.tag_configure('big', font=('Verdana', 15, 'bold'))
-        text.insert(tk.END, self.notes[0], 'big')
-        for line in self.notes[1:]:
-            text.insert(tk.END, line)
+        if self.notes is not None:
+            text.tag_configure('big', font=('Verdana', 15, 'bold'))
+            text.insert(tk.END, self.notes[0], 'big')
+            for line in self.notes[1:]:
+                text.insert(tk.END, line)
 
+        if panel is None:
+            panel = text
         return panel
 
 
