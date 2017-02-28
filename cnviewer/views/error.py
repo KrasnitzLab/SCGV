@@ -16,18 +16,16 @@ class ErrorViewer(ViewerBase):
         super(ErrorViewer, self).__init__(model)
 
     def draw_error(self, ax):
-        if self.model.error is None:
-            return
-
-        ax.imshow(
-            [self.model.error],
-            aspect='auto',
-            interpolation='nearest',
-            # cmap=cm.coolwarm,  # @UndefinedVariable
-            cmap=plt.get_cmap('Greys'),
-            # vmin=self.NORMALIZE_ERROR_MIN,
-            # vmax=self.NORMALIZE_ERROR_MAX,
-            extent=self.model.bar_extent)
+        if self.model.error is not None:
+            ax.imshow(
+                [self.model.error],
+                aspect='auto',
+                interpolation='nearest',
+                # cmap=cm.coolwarm,  # @UndefinedVariable
+                cmap=plt.get_cmap('Greys'),
+                # vmin=self.NORMALIZE_ERROR_MIN,
+                # vmax=self.NORMALIZE_ERROR_MAX,
+                extent=self.model.bar_extent)
         ax.set_xticks([])
         ax.set_xticklabels([])
         ax.set_yticks([0.5])

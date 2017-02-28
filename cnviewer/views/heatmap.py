@@ -18,18 +18,16 @@ class HeatmapViewer(ViewerBase):
         self.cmap = ColorMap.make_diverging05()
 
     def draw_heatmap(self, ax):
-        if self.model.heatmap is None:
-            return
-
-        ax.imshow(self.model.heatmap,
-                  aspect='auto',
-                  interpolation='nearest',
-                  # cmap=plt.get_cmap('seismic'),  # self.cmap.colors,
-                  cmap=self.cmap.colors,
-                  vmin=self.NORMALIZE_MIN,
-                  vmax=self.NORMALIZE_MAX,
-                  # norm=self.cmap.norm,
-                  extent=self.model.heat_extent)
+        if self.model.heatmap is not None:
+            ax.imshow(self.model.heatmap,
+                      aspect='auto',
+                      interpolation='nearest',
+                      # cmap=plt.get_cmap('seismic'),  # self.cmap.colors,
+                      cmap=self.cmap.colors,
+                      vmin=self.NORMALIZE_MIN,
+                      vmax=self.NORMALIZE_MAX,
+                      # norm=self.cmap.norm,
+                      extent=self.model.heat_extent)
 
         chrom_lines = self.model.calc_chrom_lines_index()
         for chrom_line in chrom_lines:

@@ -14,18 +14,16 @@ class SectorViewer(ViewerBase):
         self.cmap = ColorMap.make_qualitative12()
 
     def draw_sector(self, ax):
-        if self.model.sector is None:
-            return
-
-        ax.imshow(
-            [self.model.sector],
-            aspect='auto',
-            interpolation='nearest',
-            cmap=self.cmap.colors,
-            vmin=1,
-            vmax=12,
-            # norm=self.cmap.norm,
-            extent=self.model.bar_extent)
+        if self.model.sector is not None:
+            ax.imshow(
+                [self.model.sector],
+                aspect='auto',
+                interpolation='nearest',
+                cmap=self.cmap.colors,
+                vmin=1,
+                vmax=12,
+                # norm=self.cmap.norm,
+                extent=self.model.bar_extent)
 
         ax.set_xticks([])
         ax.set_xticklabels([])

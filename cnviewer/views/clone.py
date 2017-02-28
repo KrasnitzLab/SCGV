@@ -14,16 +14,14 @@ class CloneViewer(ViewerBase):
         self.cmap = ColorMap.make_qualitative06_with_white()
 
     def draw_clone(self, ax):
-        if self.model.clone is None:
-            return
-
-        ax.imshow(
-            [self.model.clone],
-            aspect='auto',
-            interpolation='nearest',
-            cmap=self.cmap.colors,
-            norm=self.cmap.norm,
-            extent=self.model.bar_extent)
+        if self.model.clone is not None:
+            ax.imshow(
+                [self.model.clone],
+                aspect='auto',
+                interpolation='nearest',
+                cmap=self.cmap.colors,
+                norm=self.cmap.norm,
+                extent=self.model.bar_extent)
 
         ax.set_xticks([])
         ax.set_xticklabels([])
@@ -31,16 +29,14 @@ class CloneViewer(ViewerBase):
         ax.set_yticklabels(["Clone"])
 
     def draw_subclone(self, ax):
-        if self.model.subclone is None:
-            return
-
-        ax.imshow(
-            [self.model.subclone],
-            aspect='auto',
-            interpolation='nearest',
-            cmap=self.cmap.colors,
-            # norm=self.cmap.norm,
-            extent=self.model.bar_extent)
+        if self.model.subclone is not None:
+            ax.imshow(
+                [self.model.subclone],
+                aspect='auto',
+                interpolation='nearest',
+                cmap=self.cmap.colors,
+                # norm=self.cmap.norm,
+                extent=self.model.bar_extent)
 
         ax.set_xticks([])
         ax.set_xticklabels([])

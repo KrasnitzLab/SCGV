@@ -16,19 +16,17 @@ class MultiplierViewer(ViewerBase):
         self.cmap = ColorMap.make_diverging05()
 
     def draw_multiplier(self, ax):
-        if self.model.multiplier is None:
-            return
-
-        ax.imshow(
-            [self.model.multiplier],
-            aspect='auto',
-            interpolation='nearest',
-            # cmap=cm.coolwarm,  # @UndefinedVariable
-            # cmap=plt.get_cmap('seismic'),
-            cmap=self.cmap.colors,
-            vmin=self.NORMALIZE_MIN,
-            vmax=self.NORMALIZE_MAX,
-            extent=self.model.bar_extent)
+        if self.model.multiplier is not None:
+            ax.imshow(
+                [self.model.multiplier],
+                aspect='auto',
+                interpolation='nearest',
+                # cmap=cm.coolwarm,  # @UndefinedVariable
+                # cmap=plt.get_cmap('seismic'),
+                cmap=self.cmap.colors,
+                vmin=self.NORMALIZE_MIN,
+                vmax=self.NORMALIZE_MAX,
+                extent=self.model.bar_extent)
         ax.set_xticks([])
         ax.set_xticklabels([])
         ax.set_yticks([0.5])

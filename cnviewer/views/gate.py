@@ -16,17 +16,15 @@ class GateViewer(ViewerBase):
         self.cmap = ColorMap.make_diverging05()
 
     def draw_ploidy(self, ax):
-        if self.model.gate is None:
-            return
-
-        ax.imshow(
-            [self.model.gate],
-            aspect='auto',
-            interpolation='nearest',
-            cmap=self.cmap.colors,
-            vmin=self.NORMALIZE_MIN,
-            vmax=self.NORMALIZE_MAX,
-            extent=self.model.bar_extent)
+        if self.model.gate is not None:
+            ax.imshow(
+                [self.model.gate],
+                aspect='auto',
+                interpolation='nearest',
+                cmap=self.cmap.colors,
+                vmin=self.NORMALIZE_MIN,
+                vmax=self.NORMALIZE_MAX,
+                extent=self.model.bar_extent)
         ax.set_xticks([])
         ax.set_xticklabels([])
         ax.set_yticks([0.5])

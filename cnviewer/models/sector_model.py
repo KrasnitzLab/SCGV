@@ -92,19 +92,24 @@ class SingleSectorDataModel(ModelDelegate):
         self.bins = self.model.bins
 
         self.clone, self.subclone = self.make_clone(ordering=ordering)
-        self.clone = self.clone[sector_index]
-        self.subclone = self.subclone[sector_index]
+        if self.clone is not None:
+            self.clone = self.clone[sector_index]
+            self.subclone = self.subclone[sector_index]
 
         self.heatmap = self.model.make_heatmap(ordering=ordering)
         self.heatmap = self.heatmap[:, sector_index]
 
         self.gate = self.model.make_gate(ordering=ordering)
-        self.gate = self.gate[sector_index]
+        if self.gate is not None:
+            self.gate = self.gate[sector_index]
 
-        self.sector = self.sector[sector_index]
+        if self.sector is not None:
+            self.sector = self.sector[sector_index]
 
         self.multiplier = self.model.make_multiplier(ordering=ordering)
-        self.multiplier = self.multiplier[sector_index]
+        if self.multiplier is not None:
+            self.multiplier = self.multiplier[sector_index]
 
         self.error = self.model.make_error(ordering=ordering)
-        self.error = self.error[sector_index]
+        if self.error is not None:
+            self.error = self.error[sector_index]
