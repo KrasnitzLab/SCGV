@@ -43,11 +43,11 @@ class BaseHeatmapWindow(object):
         profiles = ProfilesUi(self.main.button_ext, self.controller)
         profiles.build_ui()
 
-        sectors_legend = SectorsLegend2(self.main.legend_ext)
+        sectors_legend = SectorsLegend2(self.main.legend_ext, self.controller)
         sectors_legend.build_ui(row=10)
         # sectors_legend.register_show_single_sector_callback(show_single_sector)
 
-        heatmap_legend = HeatmapLegend(self.main.legend_ext)
+        heatmap_legend = HeatmapLegend(self.main.legend_ext, self.controller)
         heatmap_legend.build_ui()
         heatmap_legend.show_legend()
 

@@ -13,9 +13,11 @@ from utils.color_map import ColorMap
 
 class HeatmapLegend(LegendBase):
 
-    def __init__(self, master):
+    def __init__(self, master, controller):
         super(HeatmapLegend, self).__init__(
-            master, title="Heatmap Legend")
+            master,
+            title="Heatmap Legend",
+            controller=controller)
 
     def show_legend(self):
         cmap = ColorMap.make_diverging05()

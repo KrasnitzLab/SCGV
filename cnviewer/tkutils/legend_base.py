@@ -8,6 +8,7 @@ from tkutils.tkimport import *  # @UnusedWildImport
 import matplotlib.colors as col
 
 from PIL import Image, ImageTk
+from tkutils.base_ui import BaseUi
 
 
 class LegendEntry(object):
@@ -64,11 +65,14 @@ class LegendEntry(object):
         self.label.bind('<Button-3>', click_callback(self.index))
 
 
-class LegendBase(object):
+class LegendBase(BaseUi):
 
-    def __init__(self, master, title):
-        self.master = master
+    def __init__(self, master, title, controller):
+        super(LegendBase, self).__init__(master, controller)
         self.title = title
+
+    def enable_ui(self):
+        pass
 
     def build_ui(self, row=20):
         frame = ttk.Frame(
@@ -92,6 +96,7 @@ class LegendBase(object):
             background='white')
         self.canvas.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
         scrollbar.config(command=self.canvas.yview)
+        super(LegendBase, self).build_ui()
 
         def configure_update(event):
             self.canvas.configure(scrollregion=self.canvas.bbox('all'))
