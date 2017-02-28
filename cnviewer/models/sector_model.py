@@ -6,7 +6,7 @@ Created on Jan 10, 2017
 import numpy as np
 
 
-class SectorDataModel(object):
+class SectorsDataModel(object):
 
     def __init__(self, model):
         self.model = model
@@ -30,7 +30,7 @@ class SectorDataModel(object):
     def make(self):
         ordering = self.build_ordering()
 
-        self.column_labels = np.array(self.seg_df.columns[3:])[ordering]
+        self.column_labels = np.array(self.data.seg_df.columns[3:])[ordering]
         self.label_midpoints = (
             np.arange(self.samples) + 0.5) * self.interval_length
 
@@ -78,7 +78,7 @@ class SingleSectorDataModel(object):
         sector_val = self.sector_mapping[self.sector_id]
         sector_index = self.sector == sector_val
 
-        self.column_labels = np.array(self.seg_df.columns[3:])[ordering]
+        self.column_labels = np.array(self.data.seg_df.columns[3:])[ordering]
         self.column_labels = self.column_labels[sector_index]
 
         self.samples = len(self.column_labels)

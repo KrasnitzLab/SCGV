@@ -4,6 +4,7 @@ Created on Dec 21, 2016
 @author: lubo
 '''
 from scipy.cluster.hierarchy import dendrogram
+from scipy.cluster.hierarchy import linkage
 
 import numpy as np
 import pandas as pd
@@ -11,7 +12,7 @@ import pandas as pd
 from models.loader import DataLoader
 
 
-class DataModel(DataLoader):
+class DataModel(object):
     CLONE_COLUMN = 'clone'
     SUBCLONE_COLUMN = 'subclone'
     GATE_COLUMN = 'gate'
@@ -19,9 +20,12 @@ class DataModel(DataLoader):
     SECTOR_COLUMN = 'sector'
     PATHOLOGY_COLUMN = 'Pathology'
 
-    def __init__(self, zip_filename):
-        super(DataModel, self).__init__(zip_filename)
-        self.seg_data = self.seg_df.ix[:, 3:].values
+    def __init__(self, filename):
+        self.data = DataLoader(filename)
+        self.data.load()
+        self.data.filter_samples()
+
+        self.seg_data = self.data.seg_df.ix[:, 3:].values
         self.bins, self.samples = self.seg_data.shape
         self.lmat = None
         self.Z = None
@@ -29,6 +33,8 @@ class DataModel(DataLoader):
         self._chrom_x_index = None
         self._bar_extent = None
         self._heat_extent = None
+
+        self.interval_length = None
 
     @property
     def bar_extent(self):
@@ -50,8 +56,21 @@ class DataModel(DataLoader):
     def chrom_x_index(self):
         if self._chrom_x_index is None:
             self._chrom_x_index = \
-                np.where(self.seg_df[self.CHROM_COLUMN] == 23)[0][0]
+                np.where(self.data.seg_df[self.CHROM_COLUMN] == 23)[0][0]
         return self._chrom_x_index
+
+    def calc_chrom_lines(self):
+        chrom_lines = self.calc_chrom_lines_index()
+        return np.array(self.model.seg_df['abspos'][chrom_lines][:])
+
+    def calc_chrom_lines_index(self):
+        df = self.data.seg_df
+        chrom_pos = df.chrom.values
+        chrom_shift = np.roll(chrom_pos, -1)
+        chrom_boundaries = chrom_pos != chrom_shift
+        chrom_boundaries[0] = True
+        chrom_lines = np.where(chrom_boundaries)
+        return chrom_lines[0]
 
     def make(self):
         self.make_linkage()
@@ -70,13 +89,16 @@ class DataModel(DataLoader):
     def make_linkage(self):
         if self.lmat is not None:
             return
-        assert len(self.tree_df) + 1 == self.samples
-        df = self.tree_df.copy()
+        if self.data.tree_df is None:
+            self.lmat = linkage(self.seg_data.transpose(), method="ward")
+        else:
+            assert len(self.data.tree_df) + 1 == self.samples
+            df = self.data.tree_df.copy()
 
-        df.height = -1 * df.height
-        max_height = df.height.max()
-        df.height = 1.11 * max_height - df.height
-        self.lmat = df.values
+            df.height = -1 * df.height
+            max_height = df.height.max()
+            df.height = 1.11 * max_height - df.height
+            self.lmat = df.values
 
     def make_dendrogram(self):
         if self.Z is not None:
@@ -91,7 +113,7 @@ class DataModel(DataLoader):
         ordering = np.array(self.Z['leaves'])
 
         self.column_labels = \
-            np.array(self.seg_df.columns[3:])[ordering]
+            np.array(self.data.seg_df.columns[3:])[ordering]
         self.label_midpoints = (
             np.arange(self.samples) + 0.5) * self.interval_length
         return ordering
@@ -122,21 +144,26 @@ class DataModel(DataLoader):
         return data[:, ordering]
 
     def make_pinmat(self, ordering):
+        if self.data.pins_df is None or self.data.pinmat_df is None:
+            return None
+
         assert self.bins is not None
         assert self.samples is not None
-        assert self.pins_df is not None
-        assert self.pinmat_df is not None
+        assert self.data.pins_df is not None
+        assert self.data.pinmat_df is not None
 
-        self.pinmat_df = self.pinmat_df.ix[:, ordering].copy()
-        assert np.all(list(self.pinmat_df.columns) == self.column_labels)
+        self.data.pinmat_df = self.data.pinmat_df.ix[:, ordering].copy()
+        assert np.all(list(self.data.pinmat_df.columns) == self.column_labels)
 
         pins = np.zeros((self.bins, self.samples))
-        negative = self.pins_df[self.pins_df.sign == -1].bin
-        positive = self.pins_df[self.pins_df.sign == 1].bin
+        negative = self.data.pins_df[self.data.pins_df.sign == -1].bin
+        positive = self.data.pins_df[self.data.pins_df.sign == 1].bin
 
         # assert len(negative) + len(positive) == self.bins
-        pins[negative, :] = -1 * self.pinmat_df.ix[negative.index, :].values
-        pins[positive, :] = 1 * self.pinmat_df.ix[positive.index, :].values
+        pins[negative, :] = \
+            -1 * self.data.pinmat_df.ix[negative.index, :].values
+        pins[positive, :] = \
+            +1 * self.data.pinmat_df.ix[positive.index, :].values
 
         psi = int(self.bins / 600)
         kernel = np.ones(2 * psi)
@@ -152,8 +179,10 @@ class DataModel(DataLoader):
 
     def make_clone(self, ordering):
         assert ordering is not None
+        if self.data.clone_df is None:
+            return None
 
-        clone_column_df = self.clone_df.iloc[ordering, :]
+        clone_column_df = self.data.clone_df.iloc[ordering, :]
         self._reset_heatmap_color()
         clone, _clone_mapping = self._make_heatmap_array(
             clone_column_df[self.CLONE_COLUMN])
@@ -205,11 +234,13 @@ class DataModel(DataLoader):
     }
 
     def make_gate(self, ordering):
-        if self.GATE_COLUMN not in self.guide_df.columns:
-            self.gate = None
-            return
+        if self.data.guide_df is None:
+            return None
 
-        gate_column_df = self.guide_df.iloc[ordering, :]
+        if self.GATE_COLUMN not in self.data.guide_df.columns:
+            return None
+
+        gate_column_df = self.data.guide_df.iloc[ordering, :]
         res = list(map(
             lambda g: self.GATE_MAPPING.get(g, 2),
             gate_column_df[self.GATE_COLUMN].values
@@ -217,35 +248,38 @@ class DataModel(DataLoader):
         return np.array(res)
 
     def make_sector(self, ordering):
-        if(self.SECTOR_COLUMN not in self.guide_df.columns):
-            self.sector = None
-        sector_df = self.guide_df[self.SECTOR_COLUMN]
+        if self.data.guide_df is None:
+            return None, None
+        if(self.SECTOR_COLUMN not in self.data.guide_df.columns):
+            return None, None
+        sector_df = self.data.guide_df[self.SECTOR_COLUMN]
         self._reset_heatmap_color()
         sector, sector_mapping = self._make_heatmap_array(sector_df)
-        print(sector_mapping)
 
         return sector[ordering], sector_mapping
 
     def make_multiplier(self, ordering):
-        data = self.seg_df.iloc[:self.chrom_x_index, 3:]
+        data = self.data.seg_df.iloc[:self.chrom_x_index, 3:]
         multiplier = data.mean().ix[ordering]
         return multiplier.values
 
     def make_error(self, ordering):
-        df_s = self.seg_df.iloc[:self.chrom_x_index, 3:].values
-        df_r = self.ratio_df.iloc[:self.chrom_x_index, 3:].values
+        if self.data.ratio_df is None:
+            return None
+        df_s = self.data.seg_df.iloc[:self.chrom_x_index, 3:].values
+        df_r = self.data.ratio_df.iloc[:self.chrom_x_index, 3:].values
         return np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=0))[ordering]
 
     def make_sectors_legend(self):
-        sectors = self.guide_df[self.SECTOR_COLUMN].unique()
+        if self.data.guide_df is None:
+            return None
+        sectors = self.data.guide_df[self.SECTOR_COLUMN].unique()
         sectors.sort()
-
-        print(sectors)
 
         result = []
         for sector in sectors:
-            sector_df = self.guide_df[
-                self.guide_df[self.SECTOR_COLUMN] == sector]
+            sector_df = self.data.guide_df[
+                self.data.guide_df[self.SECTOR_COLUMN] == sector]
             pathology = sector_df[self.PATHOLOGY_COLUMN].values[0]
             if not np.all(sector_df[self.PATHOLOGY_COLUMN] == pathology):
                 print("single sector '{}'; different pathologies: {}".format(

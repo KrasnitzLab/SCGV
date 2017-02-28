@@ -16,9 +16,30 @@ def load_df(filename):
     return df
 
 
-class DataLoader(dict):
+class DataLoader(object):
     TYPES = set(['ratio', 'pinmat', 'clone', 'tree', 'seg', 'pins', 'guide'])
     GUIDE_SAMPLES_COLUMN = 'seq.unit.id'
+
+    def __init__(self, filename):
+        self.pathology = None
+        self.data = {}
+        self.filename = filename
+
+    def load(self):
+        if os.path.isdir(self.filename):
+            self._load_dir(self.filename)
+        else:
+            self._load_zipfile(self.filename)
+
+        self.seg_df = self.data.get('seg', None)
+        self.ratio_df = self.data.get('ratio', None)
+        self.clone_df = self.data.get('clone', None)
+        self.tree_df = self.data.get('tree', None)
+        self.guide_df = self.data.get('guide', None)
+        self.pinmat_df = self.data.get('pinmat', None)
+        self.pins_df = self.data.get('pins', None)
+
+        assert self.seg_df is not None
 
     @classmethod
     def _organize_filenames(cls, namelist):
@@ -44,7 +65,7 @@ class DataLoader(dict):
                 infile = zipdata.open(filename)
                 df = pd.read_csv(infile, sep='\t')
                 assert df is not None
-                self[filetype] = df
+                self.data[filetype] = df
             self.pathology = self._load_images_zipfile(zipdata)
 
     def _load_images_zipfile(self, zipdata):
@@ -84,16 +105,13 @@ class DataLoader(dict):
             if os.path.isfile(os.path.join(dir_filename, f))]
         print(all_filenames)
         filenames = self._organize_filenames(all_filenames)
-        print(filenames)
-        print(set(filenames.keys()))
-        print(self.TYPES)
 
         for filetype, filename in filenames.items():
             print("loading: {}".format(filename))
             infile = open(filename)
             df = pd.read_csv(infile, sep='\t')
             assert df is not None
-            self[filetype] = df
+            self.data[filetype] = df
 
         self.pathology = None
         pathology_dirname = os.path.join(dir_filename, 'pathology')
@@ -124,58 +142,50 @@ class DataLoader(dict):
             result[row['pathology']] = image, notes
         return result
 
-    def __init__(self, filename):
-        self.pathology = None
+    def filter_samples(self):
+        assert self.seg_df is not None
 
-        if os.path.isdir(filename):
-            self._load_dir(filename)
-        else:
-            self._load_zipfile(filename)
+        if self.pinmat_df is None:
+            return
 
-        self.filename = filename
-
-        self.seg_df = self['seg']
-        self.ratio_df = self['ratio']
-        self.clone_df = self['clone']
-        self.tree_df = self['tree']
-        self.guide_df = self['guide']
-        self.pinmat_df = self['pinmat']
-        self.pins_df = self['pins']
-        self._filter_samples()
-
-    def _filter_samples(self):
         self.sample_names = set(self.pinmat_df.columns)
-        self.guide_df = self.guide_df[self.guide_df[
-            self.GUIDE_SAMPLES_COLUMN].isin(self.sample_names)].copy()
-        self.guide_df.reset_index(inplace=True)
-
-        self['guide'] = self.guide_df
-
-        assert len(self.sample_names) == len(self.guide_df)
-
-        assert np.all(
-            self.pinmat_df.columns ==
-            self.guide_df[self.GUIDE_SAMPLES_COLUMN])
-        assert len(self.sample_names) == len(self.clone_df)
-        assert len(self.sample_names) == len(self.tree_df) + 1
-        self.tree_df = self.tree_df.ix[:, 0:4].copy()
-        self['tree'] = self.tree_df
-
         seg_columns = list(self.seg_df.columns[:3])
         for c in self.seg_df.columns[3:]:
             if c in self.sample_names:
                 seg_columns.append(c)
 
         self.seg_df = self.seg_df.ix[:, seg_columns].copy()
-        self['seg'] = self.seg_df
-        assert np.all(
-            self.seg_df.columns[3:] ==
-            self.guide_df[self.GUIDE_SAMPLES_COLUMN])
-        self.ratio_df = self.ratio_df.ix[:, seg_columns].copy()
-        self['ratio'] = self.ratio_df
-        assert np.all(
-            self.ratio_df.columns[3:] ==
-            self.guide_df[self.GUIDE_SAMPLES_COLUMN])
-
+        self.data['seg'] = self.seg_df
         assert len(self.seg_df.columns) == len(self.sample_names) + 3
-        assert len(self.ratio_df.columns) == len(self.sample_names) + 3
+
+        if self.guide_df is not None:
+            self.guide_df = self.guide_df[self.guide_df[
+                self.GUIDE_SAMPLES_COLUMN].isin(self.sample_names)].copy()
+            self.guide_df.reset_index(inplace=True)
+            self.data['guide'] = self.guide_df
+
+            assert len(self.sample_names) == len(self.guide_df)
+
+            assert np.all(
+                self.pinmat_df.columns ==
+                self.guide_df[self.GUIDE_SAMPLES_COLUMN])
+            assert np.all(
+                self.seg_df.columns[3:] ==
+                self.guide_df[self.GUIDE_SAMPLES_COLUMN])
+
+        if self.clone_df is not None:
+            assert len(self.sample_names) == len(self.clone_df)
+
+        if self.tree_df is not None:
+            assert len(self.sample_names) == len(self.tree_df) + 1
+            self.tree_df = self.tree_df.ix[:, 0:4].copy()
+            self.data['tree'] = self.tree_df
+
+        if self.ratio_df is not None:
+            self.ratio_df = self.ratio_df.ix[:, seg_columns].copy()
+            self.data['ratio'] = self.ratio_df
+            assert np.all(
+                self.ratio_df.columns[3:] ==
+                self.seg_df.columns[3:])
+
+            assert len(self.ratio_df.columns) == len(self.sample_names) + 3
