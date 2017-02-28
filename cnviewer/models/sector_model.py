@@ -6,7 +6,7 @@ Created on Jan 10, 2017
 import numpy as np
 
 
-class SectorDataModel(object):
+class SectorsDataModel(object):
 
     def __init__(self, model):
         self.model = model

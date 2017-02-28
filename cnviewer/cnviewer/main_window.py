@@ -22,7 +22,7 @@ from cnviewer.pinmat_window import PinmatWindow
 from cnviewer.base_window import BaseHeatmapWindow
 
 import matplotlib.pyplot as plt
-from models.sector_model import SectorDataModel
+from models.sector_model import SectorsDataModel
 from cnviewer.sectors_window import SectorsWindow
 
 
@@ -126,7 +126,7 @@ class MainWindow(BaseHeatmapWindow):
         sectors_button.disable_ui()
 
         root = tk.Toplevel()
-        sectors_model = SectorDataModel(self.model)
+        sectors_model = SectorsDataModel(self.model)
         sectors_model.make()
 
         controller = SectorsController(sectors_model)
