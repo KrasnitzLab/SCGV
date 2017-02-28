@@ -3,8 +3,6 @@ Created on Dec 15, 2016
 
 @author: lubo
 '''
-import numpy as np
-
 from views.base import ViewerBase
 from utils.color_map import ColorMap
 
@@ -16,9 +14,8 @@ class SectorViewer(ViewerBase):
         self.cmap = ColorMap.make_qualitative12()
 
     def draw_sector(self, ax):
-        assert self.model.sector is not None
-
-        print(np.unique(self.model.sector))
+        if self.model.sector is None:
+            return
 
         ax.imshow(
             [self.model.sector],

@@ -16,7 +16,8 @@ class MultiplierViewer(ViewerBase):
         self.cmap = ColorMap.make_diverging05()
 
     def draw_multiplier(self, ax):
-        assert self.model.multiplier is not None
+        if self.model.multiplier is None:
+            return
 
         ax.imshow(
             [self.model.multiplier],

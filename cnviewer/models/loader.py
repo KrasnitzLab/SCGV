@@ -60,7 +60,7 @@ class DataLoader(object):
         assert zipfile.is_zipfile(zip_filename)
         with zipfile.ZipFile(zip_filename, 'r') as zipdata:
             filenames = self._organize_filenames(zipdata.namelist())
-            assert set(filenames.keys()) == self.TYPES
+            assert 'seg' in set(filenames.keys())
             for filetype, filename in filenames.items():
                 infile = zipdata.open(filename)
                 df = pd.read_csv(infile, sep='\t')

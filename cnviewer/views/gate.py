@@ -16,7 +16,9 @@ class GateViewer(ViewerBase):
         self.cmap = ColorMap.make_diverging05()
 
     def draw_ploidy(self, ax):
-        assert self.model.gate is not None
+        if self.model.gate is None:
+            return
+
         ax.imshow(
             [self.model.gate],
             aspect='auto',

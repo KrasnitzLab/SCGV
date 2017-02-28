@@ -5,10 +5,10 @@ Created on Dec 2, 2016
 '''
 import pytest
 import os
-from utils.loader import load_df
+from models.loader import load_df
 from views.heatmap import HeatmapViewer
-from views.sample import SampleViewer
-from utils.model import DataModel
+from views.sample import SamplesViewer
+from models.model import DataModel
 
 
 @pytest.fixture(scope='session')
@@ -49,7 +49,7 @@ def heatmap(request, seg_filename):
 
 @pytest.fixture(scope='session')
 def sample_viewer(request, seg_df, ratio_df):
-    viewer = SampleViewer(seg_df, ratio_df)
+    viewer = SamplesViewer(seg_df, ratio_df)
 
     return viewer
 

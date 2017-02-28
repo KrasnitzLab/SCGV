@@ -16,27 +16,29 @@ class SamplesViewer(ViewerBase):
         self.end_pos = None
 
     def calc_chrom_lines(self):
-        chrom_lines = self.calc_chrom_lines_pos(self.model.seg_df)
-        return np.array(self.model.seg_df['abspos'][chrom_lines][:])
+        return self.model.calc_chrom_lines()
 
     def calc_ploidy(self, sample_name):
-        return self.model\
+        return self.model.data\
             .seg_df[sample_name]\
             .iloc[:self.model.chrom_x_index]\
             .mean()
 
     def upto_chrom_x(self, data):
-        assert len(data) == len(self.model.seg_df)
+        assert len(data) == len(self.model.data.seg_df)
         return data[0:self.model.chrom_x_index]
 
     def calc_error(self, sample_name):
-        df_r = self.upto_chrom_x(self.model.ratio_df[sample_name].values)
-        df_s = self.upto_chrom_x(self.model.seg_df[sample_name].values)
+        if self.model.data.ratio_df is None:
+            return np.NaN
+        df_r = self.upto_chrom_x(self.model.data.ratio_df[sample_name].values)
+        df_s = self.upto_chrom_x(self.model.data.seg_df[sample_name].values)
         return np.sqrt(np.sum(((df_r - df_s) / df_s)**2))
 
     def calc_shredded(self, sample_name):
         upto_x_data = \
-            self.model.seg_df[sample_name].values[0:self.model.chrom_x_index]
+            self.model.data \
+            .seg_df[sample_name].values[0:self.model.chrom_x_index]
         shredded = np.sum(upto_x_data < 0.4) / float(self.model.chrom_x_index)
         return shredded
 
@@ -60,17 +62,18 @@ class SamplesViewer(ViewerBase):
             for hl in [1, 2, 3, 4, 5, 6]:
                 ax.axhline(y=hl, color="#000000", linewidth=1, linestyle="--")
 
+            if self.model.data.ratio_df is not None:
+                ax.plot(
+                    self.model.ratio_df['abspos'],
+                    self.model.ratio_df[sample_name],
+                    color="#bbbbbb", alpha=0.8)
             ax.plot(
-                self.model.ratio_df['abspos'],
-                self.model.ratio_df[sample_name],
-                color="#bbbbbb", alpha=0.8)
-            ax.plot(
-                self.model.seg_df['abspos'],
-                self.model.seg_df[sample_name],
+                self.model.data.seg_df['abspos'],
+                self.model.data.seg_df[sample_name],
                 color='b', alpha=0.8)
             ax.set_yscale('log')
 
-            ax.set_xlim((0, self.model.ratio_df['abspos'].values[-1]))
+            ax.set_xlim((0, self.model.data.seg_df['abspos'].values[-1]))
             ax.set_ylim((0.05, 20))
 
             ploidy = self.calc_ploidy(sample_name)
@@ -103,8 +106,8 @@ class SamplesViewer(ViewerBase):
                 self.open_genome_browser()
 
     def translate_xcoord(self, xdata):
-        index = np.abs(self.model.seg_df.abspos.values - xdata).argmin()
-        chrom, chrompos = self.model.seg_df.iloc[index, [0, 1]]
+        index = np.abs(self.model.data.seg_df.abspos.values - xdata).argmin()
+        chrom, chrompos = self.model.data.seg_df.iloc[index, [0, 1]]
         return (int(chrom), int(chrompos))
 
     def open_genome_browser(self):

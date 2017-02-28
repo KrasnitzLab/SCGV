@@ -76,11 +76,10 @@ class DataModel(object):
         self.lmat = self.make_linkage()
         self.ordering = self.make_dendrogram(self.lmat)
 
-        self.clone, self.subclone = self.make_clone(
+        self.heatmap = self.make_heatmap(
             ordering=self.ordering)
 
-        # self.pins = self.make_pinmat(ordering=ordering)
-        self.heatmap = self.make_heatmap(
+        self.clone, self.subclone = self.make_clone(
             ordering=self.ordering)
         self.gate = self.make_gate(
             ordering=self.ordering)
@@ -181,7 +180,7 @@ class DataModel(object):
     def make_clone(self, ordering):
         assert ordering is not None
         if self.data.clone_df is None:
-            return None
+            return None, None
 
         clone_column_df = self.data.clone_df.iloc[ordering, :]
         self._reset_heatmap_color()

@@ -4,7 +4,7 @@ Created on Dec 21, 2016
 @author: lubo
 '''
 import numpy as np
-from utils.model import DataModel  # , gate_compare
+from models.model import DataModel  # , gate_compare
 # import pytest
 
 
@@ -74,3 +74,19 @@ def test_convolution():
 #     gates = ['>2C', '2C Rt', '2C']
 #     sorted_gates = sorted(gates, key=gate_compare)
 #     assert ['2C', '2C Rt', '>2C'] == sorted_gates
+
+
+def test_data_minimal_dataset():
+    model = DataModel('tests/data/cnviewer_data_example_02.zip')
+    assert model.data is not None
+    model.make()
+
+    assert model.heatmap is not None
+    assert model.multiplier is not None
+
+    assert model.clone is None
+    assert model.subclone is None
+    assert model.gate is None
+    assert model.sector is None
+    assert model.sector_mapping is None
+    assert model.error is None

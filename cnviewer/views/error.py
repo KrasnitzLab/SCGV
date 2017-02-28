@@ -16,7 +16,8 @@ class ErrorViewer(ViewerBase):
         super(ErrorViewer, self).__init__(model)
 
     def draw_error(self, ax):
-        assert self.model.error is not None
+        if self.model.error is None:
+            return
 
         ax.imshow(
             [self.model.error],
