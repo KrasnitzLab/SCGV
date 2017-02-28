@@ -3,24 +3,12 @@ Created on Feb 8, 2017
 
 @author: lubo
 '''
-import sys  # @UnusedImport
+from tkutils.tkimport import *  # @UnusedWildImport
+
 import matplotlib.colors as col
 
 from PIL import Image, ImageTk
-
-if sys.version_info[0] < 3:
-    import Tkinter as tk  # @UnusedImport @UnresolvedImport
-    import ttk  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
-    import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
-else:
-    import tkinter as tk  # @Reimport @UnresolvedImport @UnusedImport
-    from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
-    from tkinter.filedialog \
-        import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter.filedialog \
-        import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
+from tkutils.base_ui import BaseUi
 
 
 class LegendEntry(object):
@@ -77,13 +65,17 @@ class LegendEntry(object):
         self.label.bind('<Button-3>', click_callback(self.index))
 
 
-class LegendBase(object):
+class LegendBase(BaseUi):
 
-    def __init__(self, master, title):
-        self.master = master
+    def __init__(self, master, title, controller):
+        super(LegendBase, self).__init__(master, controller)
         self.title = title
 
+    def enable_ui(self):
+        pass
+
     def build_ui(self, row=20):
+        self.entries = []
         frame = ttk.Frame(
             self.master,
             borderwidth=5,
@@ -119,8 +111,8 @@ class LegendBase(object):
         self.container = tk.Frame(self.canvas, background='white')
         self.canvas.create_window((0, 0), window=self.container, anchor='nw')
 
-        self.entries = []
         configure_update(None)
+        super(LegendBase, self).build_ui()
 
     def append_entry(self, text, color=None):
         index = len(self.entries)

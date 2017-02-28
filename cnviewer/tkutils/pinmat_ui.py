@@ -3,40 +3,15 @@ Created on Jan 18, 2017
 
 @author: lubo
 '''
-import sys  # @UnusedImport
-from tkutils.canvas_ui import CanvasWindow
-from views.controller import MainController
-from tkutils.profiles_ui import ProfilesUi
-if sys.version_info[0] < 3:
-    import Tkinter as tk  # @UnusedImport @UnresolvedImport
-    import ttk  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
-    import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
-else:
-    import tkinter as tk  # @Reimport @UnresolvedImport
-    from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
-    from tkinter.filedialog \
-        import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter.filedialog \
-        import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
+from tkutils.tkimport import *  # @UnusedWildImport
+from tkutils.base_ui import BaseUi
 
 
-class PinmatWindow(CanvasWindow):
+class PinmatUi(BaseUi):
 
-    def __init__(self, root):
-        super(PinmatWindow, self).__init__(root)
-        profiles = ProfilesUi(self.button_ext, self)
-        profiles.build_ui()
-        self.register_on_controller_callback(profiles.connect_controller)
-
-
-class PinmatUi(object):
-
-    def __init__(self, master):
-        self.master = master
-        self.controller = None
-        self.root = None
+    def __init__(self, master, controller):
+        super(PinmatUi, self).__init__(master, controller)
+        self.pinmat_callbacks = []
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -53,31 +28,20 @@ class PinmatUi(object):
             column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
+        super(PinmatUi, self).build_ui()
+
+    def register_on_pinmat(self, callback):
+        self.pinmat_callbacks.append(callback)
 
     def _show_pinmat(self):
-        self.show_pinmat.config(state=tk.DISABLED)
-
         print("show pins called...")
-        if self.controller is None:
-            return
         assert self.controller is not None
 
-        controller = MainController(self.controller.model)
-        self.root = tk.Toplevel()
-        main = PinmatWindow(self.root)
+        for cb in self.pinmat_callbacks:
+            cb(self)
 
-        controller.build_pinmat(main.fig)
-        main.connect_controller(controller)
-        main.register_on_closing_callback(self.on_closing)
-
-        self.root.mainloop()
-
-    def on_closing(self):
-        print("PinmatUi::on_closing called...")
+    def enable_ui(self):
         self.show_pinmat.config(state=tk.ACTIVE)
 
-    def connect_controller(self, controller):
-        assert controller is not None
-        self.controller = controller
-
-        self.show_pinmat.config(state=tk.ACTIVE)
+    def disable_ui(self):
+        self.show_pinmat.config(state=tk.DISABLED)

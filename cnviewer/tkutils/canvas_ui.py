@@ -8,30 +8,18 @@ import matplotlib as mpl
 mpl.use('TkAgg')
 
 
-from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
+from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
-
-if sys.version_info[0] < 3:
-    import Tkinter as tk  # @UnusedImport @UnresolvedImport
-    import ttk  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
-    import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
-else:
-    import tkinter as tk  # @Reimport @UnresolvedImport
-    from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
-    from tkinter.filedialog \
-        import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter.filedialog \
-        import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
-
-    from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
+from tkutils.tkimport import *  # @UnusedWildImport @IgnorePep8
 
 
 class CanvasWindow(object):
 
-    def __init__(self, root, legend=True):
+    def __init__(self, root, controller, legend=True):
         self.legend = legend
+        self.controller = controller
+
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
@@ -87,20 +75,10 @@ class CanvasWindow(object):
         if self.legend:
             self._build_legend_ext()
 
-        self.on_controller_callbacks = []
         self.on_closing_callbacks = []
-
-    def register_on_controller_callback(self, cb):
-        self.on_controller_callbacks.append(cb)
 
     def register_on_closing_callback(self, cb):
         self.on_closing_callbacks.append(cb)
-
-    def connect_controller(self, controller):
-        for cb in self.on_controller_callbacks:
-            cb(controller)
-
-        self.canvas.draw()
 
     def refresh(self):
         self.canvas.draw_idle()

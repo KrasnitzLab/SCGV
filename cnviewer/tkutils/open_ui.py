@@ -3,35 +3,18 @@ Created on Jan 17, 2017
 
 @author: lubo
 '''
-import threading
-import sys  # @UnusedImport
-from views.controller import MainController
-from utils.model import DataModel
-import traceback
+from tkutils.tkimport import *  # @UnusedWildImport
 
-if sys.version_info[0] < 3:
-    import Tkinter as tk  # @UnusedImport @UnresolvedImport
-    import ttk  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askdirectory  # @UnusedImport @UnresolvedImport
-    import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
-else:
-    import tkinter as tk  # @Reimport @UnresolvedImport
-    from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
-    from tkinter.filedialog \
-        import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter.filedialog \
-        import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
+import threading
+import traceback
 
 
 class OpenUi(object):
     DELAY = 500
 
-    def __init__(self, main_window, master, fig):
-        self.main_window = main_window
+    def __init__(self, master, controller):
         self.master = master
-        self.fig = fig
+        self.controller = controller
         self.model_lock = threading.RLock()
         self.model = None
 
@@ -113,11 +96,13 @@ class OpenUi(object):
 
         with self.model_lock:
             if self.model:
-                self.controller = MainController(self.model)
-                self.controller.build_main(self.fig)
                 self.progress.stop()
                 self.progress.grid_remove()
-                self.main_window.connect_controller(self.controller)
+                self.master.after(
+                    self.DELAY,
+                    self.controller.trigger_on_model_callbacks)
+                # self.controller.trigger_on_model_callbacks()
+
             else:
                 self.progress.stop()
                 self.progress.grid_remove()
@@ -129,11 +114,7 @@ class OpenUi(object):
         with self.model_lock:
             try:
                 print("loading '{}'".format(self.filename))
-                model = DataModel(self.filename)
-                print("preparing '{}'".format(self.filename))
-                model.make()
-                self.model = model
-
+                self.model = self.controller.load_model(self.filename)
                 return True
             except Exception:
                 print("wrong dataset format")

@@ -3,28 +3,11 @@ Created on Feb 1, 2017
 
 @author: lubo
 '''
-import sys  # @UnusedImport
+from tkutils.tkimport import *  # @UnusedWildImport
 
 from PIL import ImageTk
 from tkutils.legend_base import LegendBase
 from utils.color_map import ColorMap
-# from utils.sector_model import SingleSectorDataModel
-# from views.controller import MainController
-# from tkutils.sectors_ui import SectorsWindow
-
-if sys.version_info[0] < 3:
-    import Tkinter as tk  # @UnusedImport @UnresolvedImport
-    import ttk  # @UnusedImport @UnresolvedImport
-    from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
-    import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
-else:
-    import tkinter as tk  # @Reimport @UnresolvedImport @UnusedImport
-    from tkinter import ttk  # @UnresolvedImport @UnusedImport @Reimport
-    from tkinter.filedialog \
-        import askopenfilename  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter.filedialog \
-        import askdirectory  # @UnresolvedImport @Reimport@UnusedImport
-    from tkinter import messagebox  # @UnresolvedImport @Reimport @UnusedImport
 
 
 class ShowPathologyDialog(tk.Toplevel):
@@ -40,7 +23,6 @@ class ShowPathologyDialog(tk.Toplevel):
             self.title(title)
 
         self.master = master
-        self.parent = master
 
         body = ttk.Frame(self)
         self.initial_focus = self.body(body)
@@ -60,9 +42,6 @@ class ShowPathologyDialog(tk.Toplevel):
         self.wait_window(self)
 
     def buttonbox(self):
-        # add standard button box. override if you don't want the
-        # standard buttons
-
         box = ttk.Frame(self)
 
         w = ttk.Button(
@@ -76,7 +55,7 @@ class ShowPathologyDialog(tk.Toplevel):
 
     def cancel(self, event=None):
         # put focus back to the parent window
-        self.parent.focus_set()
+        self.master.focus_set()
         self.destroy()
 
     def body(self, master):
@@ -101,14 +80,14 @@ class ShowPathologyDialog(tk.Toplevel):
 
 class SectorsLegend2(LegendBase):
 
-    def __init__(self, master):
+    def __init__(self, master, controller):
         super(SectorsLegend2, self).__init__(
-            master, title="Sectors Legend")
-        self.controller = None
+            master, title="Sectors Legend",
+            controller=controller)
 
-    def register_controller(self, controller):
-        self.controller = controller
-        self.sectors = self.controller.model.make_sectors_legend()
+    def on_model(self, model):
+        self.model = model
+        self.sectors = self.model.make_sectors_legend()
         self.cmap = ColorMap.make_qualitative12()
 
         for (index, (sector, pathology)) in enumerate(self.sectors):
@@ -138,16 +117,12 @@ class SectorsLegend2(LegendBase):
         ShowPathologyDialog(image, notes, self.master)
         print("pathology dialog done...")
 
-    def connect_controller(self, controller):
-        assert controller is not None
-        self.controller = controller
-
     def show_single_sector(self, index):
         print("show single sector viewer with index: ", index)
         (sector, _) = self.sectors[index]
         print("working with sector: ", sector)
 
-        self.show_single_sector_callback(self.controller.model, sector)
+        self.show_single_sector_callback(self.model, sector)
 
 #
 #         root = tk.Toplevel()
