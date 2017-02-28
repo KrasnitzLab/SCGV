@@ -88,6 +88,9 @@ class SectorsLegend2(LegendBase):
     def on_model(self, model):
         self.model = model
         self.sectors = self.model.make_sectors_legend()
+        if self.sectors is None:
+            return
+
         self.cmap = ColorMap.make_qualitative12()
 
         for (index, (sector, pathology)) in enumerate(self.sectors):
@@ -104,6 +107,8 @@ class SectorsLegend2(LegendBase):
         self.show_single_sector_callback = callback
 
     def show_sector_pathology(self, index):
+        if self.sectors is None:
+            return
         print("show sector pathology with index: ", index)
         (sector, pathology) = self.sectors[index]
         print(self.sectors)
@@ -118,6 +123,8 @@ class SectorsLegend2(LegendBase):
         print("pathology dialog done...")
 
     def show_single_sector(self, index):
+        if self.sectors is None:
+            return
         print("show single sector viewer with index: ", index)
         (sector, _) = self.sectors[index]
         print("working with sector: ", sector)

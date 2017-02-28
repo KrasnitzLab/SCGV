@@ -61,7 +61,7 @@ class DataModel(object):
 
     def calc_chrom_lines(self):
         chrom_lines = self.calc_chrom_lines_index()
-        return np.array(self.model.seg_df['abspos'][chrom_lines][:])
+        return np.array(self.data.seg_df['abspos'][chrom_lines][:])
 
     def calc_chrom_lines_index(self):
         df = self.data.seg_df
