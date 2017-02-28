@@ -108,7 +108,7 @@ class MainWindow(BaseHeatmapWindow):
         self.main.refresh()
 
     def build_pinmat(self, pinmat_button):
-        pinmat_button.diable_ui()
+        pinmat_button.disable_ui()
 
         root = tk.Toplevel()
         controller = PinmatController(self.model)

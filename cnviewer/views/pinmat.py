@@ -35,7 +35,8 @@ class PinmatViewer(ViewerBase):
         ax.set_xticklabels(self.model.column_labels,
                            rotation='vertical',
                            fontsize=10)
-        chrom_lines = self.calc_chrom_lines_pos(self.model.seg_df)
+
+        chrom_lines = self.model.calc_chrom_lines_index()
         for chrom_line in chrom_lines:
             ax.axhline(y=chrom_line, color="#888888", linewidth=0.5)
         chrom_labelspos = self.calc_chrom_labels_pos(chrom_lines)

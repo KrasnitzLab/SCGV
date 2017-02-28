@@ -18,7 +18,8 @@ class HeatmapViewer(ViewerBase):
         self.cmap = ColorMap.make_diverging05()
 
     def draw_heatmap(self, ax):
-        assert self.model.heatmap is not None
+        if self.model.heatmap is None:
+            return
 
         ax.imshow(self.model.heatmap,
                   aspect='auto',
@@ -30,7 +31,7 @@ class HeatmapViewer(ViewerBase):
                   # norm=self.cmap.norm,
                   extent=self.model.heat_extent)
 
-        chrom_lines = self.calc_chrom_lines_pos(self.model.seg_df)
+        chrom_lines = self.model.calc_chrom_lines_index()
         for chrom_line in chrom_lines:
             ax.axhline(y=chrom_line, color="#888888", linewidth=0.5)
         chrom_labelspos = self.calc_chrom_labels_pos(chrom_lines)
