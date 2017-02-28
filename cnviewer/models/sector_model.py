@@ -4,12 +4,15 @@ Created on Jan 10, 2017
 @author: lubo
 '''
 import numpy as np
+from models.model_delegate import ModelDelegate
 
 
-class SectorsDataModel(object):
+class SectorsDataModel(ModelDelegate):
 
     def __init__(self, model):
-        self.model = model
+        super(SectorsDataModel, self).__init__(model)
+        assert self.model.sector is not None
+
         self.bins, self.samples = self.model.seg_data.shape
 
     def build_ordering(self):
@@ -43,14 +46,14 @@ class SectorsDataModel(object):
         self.multiplier = self.model.make_multiplier(ordering=ordering)
         self.error = self.model.make_error(ordering=ordering)
 
-    def __getattr__(self, name):
-        return getattr(self.model, name)
 
-
-class SingleSectorDataModel(object):
+class SingleSectorDataModel(ModelDelegate):
 
     def __init__(self, model, sector_id):
-        self.model = model
+        super(SingleSectorDataModel, self).__init__(model)
+        assert self.model.sector is not None
+        assert self.model.sector_mapping is not None
+
         self.sector_id = sector_id
         assert self.sector_id in self.model.sector_mapping
         self.bins, self.samples = self.model.seg_data.shape
@@ -105,6 +108,3 @@ class SingleSectorDataModel(object):
 
         self.error = self.model.make_error(ordering=ordering)
         self.error = self.error[sector_index]
-
-    def __getattr__(self, name):
-        return getattr(self.model, name)

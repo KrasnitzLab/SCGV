@@ -73,24 +73,27 @@ class DataModel(object):
         return chrom_lines[0]
 
     def make(self):
-        self.make_linkage()
-        ordering = self.make_dendrogram()
-        self.ordering = ordering
+        self.lmat = self.make_linkage()
+        self.ordering = self.make_dendrogram(self.lmat)
 
-        self.clone, self.subclone = self.make_clone(ordering=ordering)
+        self.clone, self.subclone = self.make_clone(
+            ordering=self.ordering)
 
-        self.pins = self.make_pinmat(ordering=ordering)
-        self.heatmap = self.make_heatmap(ordering=ordering)
-        self.gate = self.make_gate(ordering=ordering)
-        self.sector, self.sector_mapping = self.make_sector(ordering=ordering)
-        self.multiplier = self.make_multiplier(ordering=ordering)
-        self.error = self.make_error(ordering=ordering)
+        # self.pins = self.make_pinmat(ordering=ordering)
+        self.heatmap = self.make_heatmap(
+            ordering=self.ordering)
+        self.gate = self.make_gate(
+            ordering=self.ordering)
+        self.sector, self.sector_mapping = self.make_sector(
+            ordering=self.ordering)
+        self.multiplier = self.make_multiplier(
+            ordering=self.ordering)
+        self.error = self.make_error(
+            ordering=self.ordering)
 
     def make_linkage(self):
-        if self.lmat is not None:
-            return
         if self.data.tree_df is None:
-            self.lmat = linkage(self.seg_data.transpose(), method="ward")
+            return linkage(self.seg_data.transpose(), method="ward")
         else:
             assert len(self.data.tree_df) + 1 == self.samples
             df = self.data.tree_df.copy()
@@ -98,13 +101,11 @@ class DataModel(object):
             df.height = -1 * df.height
             max_height = df.height.max()
             df.height = 1.11 * max_height - df.height
-            self.lmat = df.values
+            return df.values
 
-    def make_dendrogram(self):
-        if self.Z is not None:
-            return
+    def make_dendrogram(self, lmat):
         self.Z = dendrogram(
-            self.lmat, ax=None, no_plot=True, color_threshold=99999999)
+            lmat, ax=None, no_plot=True, color_threshold=99999999)
         self.icoord = np.array(self.Z['icoord'])
         self.dcoord = np.array(self.Z['dcoord'])
         self.min_x = np.min(self.icoord)
