@@ -41,6 +41,8 @@ class PinmatUi(BaseUi):
             cb(self)
 
     def enable_ui(self):
+        if self.model.data.pins_df is None:
+            return
         self.show_pinmat.config(state=tk.ACTIVE)
 
     def disable_ui(self):

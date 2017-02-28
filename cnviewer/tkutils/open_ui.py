@@ -101,7 +101,6 @@ class OpenUi(object):
                 self.master.after(
                     self.DELAY,
                     self.controller.trigger_on_model_callbacks)
-                # self.controller.trigger_on_model_callbacks()
 
             else:
                 self.progress.stop()

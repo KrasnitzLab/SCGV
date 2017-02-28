@@ -32,6 +32,8 @@ class SectorsUi(BaseUi):
         super(SectorsUi, self).build_ui()
 
     def enable_ui(self):
+        if self.model.sector is None:
+            return
         self.show_sectors.config(state=tk.ACTIVE)
 
     def disable_ui(self):

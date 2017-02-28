@@ -66,7 +66,6 @@ class BaseHeatmapWindow(object):
 
         heatmap_viewer = HeatmapViewer(self.model)
         heatmap_viewer.draw_heatmap(ax_heat)
-        # heatmap_viewer.draw_legend()
 
         ax_sector = self.fig.add_axes(
             [0.1, 0.175, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
