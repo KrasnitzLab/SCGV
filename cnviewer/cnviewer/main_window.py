@@ -47,7 +47,7 @@ class MainWindow(BaseHeatmapWindow):
 
         root = tk.Toplevel()
         model = PinmatModel(self.model)
-        model.make()
+        # model.make()
 
         controller = PinmatController(model)
         pinmat_window = BaseHeatmapWindow(root, controller)

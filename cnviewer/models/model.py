@@ -79,6 +79,9 @@ class DataModel(object):
         self.heatmap = self.make_heatmap(
             ordering=self.ordering)
 
+        self.pinmat = self.make_pinmat(
+            ordering=self.ordering)
+
         self.clone, self.subclone = self.make_clone(
             ordering=self.ordering)
         self.gate = self.make_gate(

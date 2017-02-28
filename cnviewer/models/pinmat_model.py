@@ -12,6 +12,4 @@ class PinmatModel(ModelDelegate):
         super(PinmatModel, self).__init__(model)
         assert self.model.data.pins_df is not None
         assert self.model.data.pinmat_df is not None
-
-    def make_heatmap(self):
-        return self.model.make_pinmat()
+        self.heatmap = self.model.pinmat
