@@ -21,7 +21,8 @@ class PinmatViewer(ViewerBase):
         self.cmap = ColorMap.make_diverging05()
 
     def draw_heatmap(self, ax):
-        assert self.model.heatmap is not None
+        if self.model.pinmat is None:
+            return
 
         ax.imshow(self.model.pins,
                   aspect='auto',
