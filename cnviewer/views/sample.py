@@ -64,8 +64,8 @@ class SamplesViewer(ViewerBase):
 
             if self.model.data.ratio_df is not None:
                 ax.plot(
-                    self.model.ratio_df['abspos'],
-                    self.model.ratio_df[sample_name],
+                    self.model.data.ratio_df['abspos'],
+                    self.model.data.ratio_df[sample_name],
                     color="#bbbbbb", alpha=0.8)
             ax.plot(
                 self.model.data.seg_df['abspos'],
