@@ -23,3 +23,5 @@ class SamplesWindow(object):
     def draw_canvas(self):
         samples_viewer = SamplesViewer(self.controller.model)
         samples_viewer.draw_samples(self.main.fig, self.samples)
+
+        self.controller.event_loop_connect(self.main.fig)

@@ -5,15 +5,13 @@ Created on Dec 14, 2016
 '''
 import numpy as np
 from views.base import ViewerBase
-import webbrowser
+from controllers.controller_base import ControllerBase
 
 
-class SamplesViewer(ViewerBase):
+class SamplesViewer(ViewerBase, ControllerBase):
 
     def __init__(self, model):
         super(SamplesViewer, self).__init__(model)
-        self.start_pos = None
-        self.end_pos = None
 
     def calc_chrom_lines(self):
         return self.model.calc_chrom_lines()
@@ -43,7 +41,6 @@ class SamplesViewer(ViewerBase):
         return shredded
 
     def draw_samples(self, fig, sample_list):
-
         self.chrom_lines = self.calc_chrom_lines()
 
         ax_common = None
@@ -91,42 +88,6 @@ class SamplesViewer(ViewerBase):
             ax.set_xticks(chrom_labels_pos)
             ax.set_xticklabels(self.CHROM_LABELS, rotation='vertical')
 
-        fig.canvas.mpl_connect('button_press_event', self.event_handler)
-        fig.canvas.mpl_connect('key_press_event', self.event_handler)
-        fig.canvas.mpl_connect('button_release_event', self.event_handler)
-
-    def event_handler(self, event):
-        # self.debug_event(event)
-        if event.name == 'button_press_event' and event.button == 3:
-            pos = self.translate_xcoord(event.xdata)
-            if self.start_pos is None:
-                self.start_pos = pos
-            else:
-                self.end_pos = pos
-                self.open_genome_browser()
-
-    def translate_xcoord(self, xdata):
-        index = np.abs(self.model.data.seg_df.abspos.values - xdata).argmin()
-        chrom, chrompos = self.model.data.seg_df.iloc[index, [0, 1]]
-        return (int(chrom), int(chrompos))
-
-    def open_genome_browser(self):
-        if self.start_pos is None or self.end_pos is None:
-            return
-        if self.start_pos[0] != self.end_pos[0]:
-            self.start_pos = None
-            self.end_pos = None
-            return
-        chrom = self.start_pos[0]
-        if chrom == 23:
-            chrom = 'X'
-        if chrom == 24:
-            chrom = 'Y'
-        position = 'chr{}:{}-{}'.format(
-            chrom, self.start_pos[1], self.end_pos[1])
-        url = "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position={}"\
-            .format(position)
-        print('opening url: ', url)
-        webbrowser.open(url, new=False, autoraise=True)
-        self.start_pos = None
-        self.end_pos = None
+#         fig.canvas.mpl_connect('button_press_event', self.event_handler)
+#         fig.canvas.mpl_connect('key_press_event', self.event_handler)
+#         print("canvas events connected")

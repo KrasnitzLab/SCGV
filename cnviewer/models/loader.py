@@ -39,8 +39,10 @@ class DataLoader(object):
         self.guide_df = self.data.get('guide', None)
         self.pinmat_df = self.data.get('pinmat', None)
         self.pins_df = self.data.get('pins', None)
+        self.genome = self.data.get('genome', 'hg19')
 
         assert self.seg_df is not None
+        assert self.genome is not None
 
     @classmethod
     def _organize_filenames(cls, namelist):

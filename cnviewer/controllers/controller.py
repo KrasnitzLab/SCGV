@@ -4,8 +4,11 @@ Created on Dec 14, 2016
 @author: lubo
 '''
 
+import webbrowser
+
 from controllers.controller_base import HeatmapControllerBase, ControllerBase
 from models.model import DataModel
+import numpy as np
 
 
 class SamplesController(ControllerBase):
@@ -13,6 +16,48 @@ class SamplesController(ControllerBase):
     def __init__(self, model):
         super(SamplesController, self).__init__()
         self.model = model
+        self.start_pos = None
+        self.end_pos = None
+
+    def event_handler(self, event):
+        print("event_handler called...")
+        self.debug_event(event)
+        if event.name == 'button_press_event' and event.button == 3:
+            pos = self.translate_xcoord(event.xdata)
+            if self.start_pos is None:
+                self.start_pos = pos
+            else:
+                self.end_pos = pos
+                self.open_genome_browser()
+
+    def translate_xcoord(self, xdata):
+        index = np.abs(self.model.data.seg_df.abspos.values - xdata).argmin()
+        chrom, chrompos = self.model.data.seg_df.iloc[index, [0, 1]]
+        return (int(chrom), int(chrompos))
+
+    def open_genome_browser(self):
+        if self.start_pos is None or self.end_pos is None:
+            return
+        if self.start_pos[0] != self.end_pos[0]:
+            self.start_pos = None
+            self.end_pos = None
+            return
+        chrom = self.start_pos[0]
+        if chrom == 23:
+            chrom = 'X'
+        if chrom == 24:
+            chrom = 'Y'
+        position = 'chr{}:{}-{}'.format(
+            chrom, self.start_pos[1], self.end_pos[1])
+        genome = self.model.data.genome
+        assert genome is not None
+
+        url = "http://genome.ucsc.edu/cgi-bin/hgTracks?db={}&position={}"\
+            .format(genome, position)
+        print('opening url: ', url)
+        webbrowser.open(url, new=False, autoraise=True)
+        self.start_pos = None
+        self.end_pos = None
 
 
 class SectorsController(HeatmapControllerBase):

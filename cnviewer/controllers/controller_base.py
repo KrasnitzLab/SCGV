@@ -40,6 +40,13 @@ class ControllerBase(object):
         else:
             print("???: {}".format(event.name))
 
+    def event_loop_connect(self, fig):
+        fig.canvas.mpl_connect('button_press_event', self.event_handler)
+        fig.canvas.mpl_connect('key_press_event', self.event_handler)
+
+    def event_handler(self, event):
+        raise NotImplemented()
+
 
 class HeatmapControllerBase(ControllerBase):
 
@@ -56,10 +63,6 @@ class HeatmapControllerBase(ControllerBase):
             self.on_clear_samples_callbacks.append(clear_cb)
         if display_cb:
             self.on_display_samples_callbacks.append(display_cb)
-
-    def event_loop_connect(self, fig):
-        fig.canvas.mpl_connect('button_press_event', self.event_handler)
-        fig.canvas.mpl_connect('key_press_event', self.event_handler)
 
     def event_handler(self, event):
         self.debug_event(event)
