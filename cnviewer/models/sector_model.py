@@ -57,6 +57,7 @@ class SingleSectorDataModel(ModelDelegate):
         self.sector_id = sector_id
         assert self.sector_id in self.model.sector_mapping
         self.bins, self.samples = self.model.seg_data.shape
+        self.lmat = None
 
     def build_ordering(self):
         index = np.array(self.model.Z['leaves'])
@@ -72,6 +73,100 @@ class SingleSectorDataModel(ModelDelegate):
             ))
 
         return index[res]
+
+    def make_subtree(self):
+        return self.get_subtree(
+            self.model.lmat[:],
+            self.model.column_labels,
+            self.column_labels
+        )
+
+    @staticmethod
+    def remove_leaf(lmat, leafNames, removeName):
+        ans = dict()
+        ans["lmat"] = []
+        ans["leafNames"] = []
+
+        # find number of leaf to remove
+        newLeafNames = []
+        removeNumber = -1
+        for i in range(len(leafNames)):
+            if leafNames[i] == removeName:
+                removeNumber = i
+            else:
+                newLeafNames.append(leafNames[i])
+
+        if removeNumber == -1:
+            return ans
+
+        # remove row from lmat
+        newLmat = []
+        parentNumber = -1
+        partnerNumber = -1
+        for i in range(len(lmat)):
+            if lmat[i][0] == removeNumber:
+                parentNumber = len(leafNames) + i
+                partnerNumber = lmat[i][1]
+            elif lmat[i][1] == removeNumber:
+                parentNumber = len(leafNames) + i
+                partnerNumber = lmat[i][0]
+            else:
+                newLmat.append(list(lmat[i]))
+
+        if parentNumber == -1:
+            print("ERROR PARENT NUMBER")
+            return ans
+
+        # update parent row
+        for i in range(len(newLmat)):
+            if newLmat[i][0] == parentNumber:
+                newLmat[i][0] = partnerNumber
+                newLmat[i][3] -= 1
+                break
+            if newLmat[i][1] == parentNumber:
+                newLmat[i][1] = partnerNumber
+                newLmat[i][3] -= 1
+                break
+
+        # decrement all numbers > parentNumber and then > removeNumber
+        for i in range(len(newLmat)):
+            if newLmat[i][0] > parentNumber:
+                newLmat[i][0] -= 1
+            if newLmat[i][1] > parentNumber:
+                newLmat[i][1] -= 1
+
+        for i in range(len(newLmat)):
+            if newLmat[i][0] > removeNumber:
+                newLmat[i][0] -= 1
+            if newLmat[i][1] > removeNumber:
+                newLmat[i][1] -= 1
+
+        ans["lmat"] = newLmat
+        ans["leafNames"] = newLeafNames
+        return ans
+
+    @classmethod
+    def get_subtree(cls, lmat, fulltreeLeafNames, subtreeLeafNames):
+        removeList = []
+
+        for i in range(len(fulltreeLeafNames)):
+            if fulltreeLeafNames[i] in subtreeLeafNames:
+                pass
+            else:
+                removeList.append(fulltreeLeafNames[i])
+
+        # print "get_subtree, removeList", removeList
+
+        workLeafNames = list(fulltreeLeafNames)
+        workLmat = []
+        for i in range(len(lmat)):
+            workLmat.append(list(lmat[i]))
+
+        for i in range(len(removeList)):
+            rlans = cls.remove_leaf(workLmat, workLeafNames, removeList[i])
+            workLmat = rlans["lmat"]
+            workLeafNames = rlans["leafNames"]
+        return workLmat
 
     def make(self):
         ordering = self.build_ordering()
@@ -113,3 +208,5 @@ class SingleSectorDataModel(ModelDelegate):
         self.error = self.model.make_error(ordering=ordering)
         if self.error is not None:
             self.error = self.error[sector_index]
+
+        self.lmat = self.make_subtree()
