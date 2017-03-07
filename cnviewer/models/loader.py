@@ -186,18 +186,29 @@ class DataLoader(object):
 
             assert len(self.sample_names) == len(self.guide_df)
 
+            assert set(self.pinmat_df.columns) == \
+                set(self.guide_df[self.GUIDE_SAMPLES_COLUMN].values), \
+                "guide file and pinmat file cells mismatched"
             assert np.all(
                 self.pinmat_df.columns ==
-                self.guide_df[self.GUIDE_SAMPLES_COLUMN])
+                self.guide_df[self.GUIDE_SAMPLES_COLUMN]), \
+                "guide file and pinmat file cells ordering mismatched"
+
+            assert set(self.seg_df.columns[3:]) == \
+                set(self.guide_df[self.GUIDE_SAMPLES_COLUMN].values), \
+                "guide file and seg file cells does mismatched"
             assert np.all(
                 self.seg_df.columns[3:] ==
-                self.guide_df[self.GUIDE_SAMPLES_COLUMN])
+                self.guide_df[self.GUIDE_SAMPLES_COLUMN]), \
+                "guide file and seg file cells ordering mismatched"
 
         if self.clone_df is not None:
-            assert len(self.sample_names) == len(self.clone_df)
+            assert len(self.sample_names) == len(self.clone_df), \
+                "clone file size mismatched"
 
         if self.tree_df is not None:
-            assert len(self.sample_names) == len(self.tree_df) + 1
+            assert len(self.sample_names) == len(self.tree_df) + 1, \
+                "tree file size mismatched"
             self.tree_df = self.tree_df.ix[:, 0:4].copy()
             self.data['tree'] = self.tree_df
 
@@ -206,6 +217,5 @@ class DataLoader(object):
             self.data['ratio'] = self.ratio_df
             assert np.all(
                 self.ratio_df.columns[3:] ==
-                self.seg_df.columns[3:])
-
-            assert len(self.ratio_df.columns) == len(self.sample_names) + 3
+                self.seg_df.columns[3:]), \
+                "ration file cell ordering mismatched"
