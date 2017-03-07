@@ -66,6 +66,9 @@ class SingleSectorDataModel(ModelDelegate):
         sector = self.model.sector
         self.sector_mapping = self.model.sector_mapping
 
+        print("order", order)
+        print("sector", sector)
+
         res = np.lexsort(
             (
                 order,
@@ -178,6 +181,8 @@ class SingleSectorDataModel(ModelDelegate):
 
         self.column_labels = np.array(self.data.seg_df.columns[3:])[ordering]
         self.column_labels = self.column_labels[sector_index]
+        self.lmat = self.make_subtree()
+        print(self.lmat)
 
         self.samples = len(self.column_labels)
         self.interval_length = (self.model.max_x - self.model.min_x) / \
@@ -185,6 +190,8 @@ class SingleSectorDataModel(ModelDelegate):
         self.label_midpoints = (
             np.arange(self.samples) + 0.5) * self.interval_length
         self.bins = self.model.bins
+
+        self.make_dendrogram(self.lmat)
 
         self.clone, self.subclone = self.make_clone(ordering=ordering)
         if self.clone is not None:
@@ -208,5 +215,3 @@ class SingleSectorDataModel(ModelDelegate):
         self.error = self.model.make_error(ordering=ordering)
         if self.error is not None:
             self.error = self.error[sector_index]
-
-        self.lmat = self.make_subtree()

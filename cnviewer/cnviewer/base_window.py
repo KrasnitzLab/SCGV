@@ -140,7 +140,7 @@ class BaseHeatmapWindow(object):
             controller = SingleSectorController(sector_model)
 
             root = tk.Toplevel()
-            main = SingleSectorWindow(root, controller)
+            main = BaseHeatmapWindow(root, controller)
             main.build_ui()
             main.draw_canvas()
 

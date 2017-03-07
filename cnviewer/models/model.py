@@ -80,7 +80,13 @@ class DataModel(object):
 
     def make(self):
         self.lmat = self.make_linkage()
-        self.ordering = self.make_dendrogram(self.lmat)
+        self.Z = self.make_dendrogram(self.lmat)
+        self.ordering = self.make_ordering(self.Z)
+        self.column_labels = self.make_column_labels(
+            ordering=self.ordering)
+        self.interval_length = self.make_interval_length(self.Z)
+
+        self.label_midpoints = self.make_label_midpoints()
 
         self.heatmap = self.make_heatmap(
             ordering=self.ordering)
@@ -112,20 +118,26 @@ class DataModel(object):
             return df.values
 
     def make_dendrogram(self, lmat):
-        self.Z = dendrogram(
+        Z = dendrogram(
             lmat, ax=None, no_plot=True, color_threshold=99999999)
-        self.icoord = np.array(self.Z['icoord'])
-        self.dcoord = np.array(self.Z['dcoord'])
-        self.min_x = np.min(self.icoord)
-        self.max_x = np.max(self.icoord)
-        self.interval_length = (self.max_x - self.min_x) / (self.samples - 1)
-        ordering = np.array(self.Z['leaves'])
+        return Z
 
-        self.column_labels = \
-            np.array(self.data.seg_df.columns[3:])[ordering]
-        self.label_midpoints = (
-            np.arange(self.samples) + 0.5) * self.interval_length
-        return ordering
+    def make_label_midpoints(self):
+        return (np.arange(self.samples) + 0.5) * self.interval_length
+
+    def make_ordering(self, Z):
+        return np.array(Z['leaves'])
+
+    def make_column_labels(self, ordering):
+        return np.array(self.data.seg_df.columns[3:])[ordering]
+
+    def make_interval_length(self, Z):
+        icoord = np.array(Z['icoord'])
+        min_x = np.min(icoord)
+        max_x = np.max(icoord)
+        samples = len(Z['leaves'])
+        interval_length = (max_x - min_x) / (samples - 1)
+        return interval_length
 
     @classmethod
     def _reset_heatmap_color(cls):

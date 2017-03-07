@@ -16,7 +16,7 @@ class DendrogramViewer(ViewerBase):
     def _draw_dendrogram(self, ax):
         assert self.model.Z is not None
 
-        dcoord = self.model.dcoord
+        dcoord = np.array(self.model.Z['dcoord'])
         max_dcoord = np.max(dcoord)
         dcoord_hang = 0.1 * max_dcoord
 
@@ -30,7 +30,7 @@ class DendrogramViewer(ViewerBase):
         zeros = dcoord[:, 3] == 0
         dcoord[zeros, 3] = ys[zeros]
 
-        icoord = self.model.icoord
+        icoord = np.array(self.model.Z['icoord'])
         color_list = np.array(self.model.Z['color_list'])
 
         min_x = np.min(icoord)
@@ -38,6 +38,7 @@ class DendrogramViewer(ViewerBase):
 
         min_y = np.min(dcoord)
         max_y = np.max(dcoord)
+        print(min_x, max_x)
 
         for xs, ys, color in zip(icoord, dcoord, color_list):
             ax.plot(xs, ys, color, linewidth=0.5)

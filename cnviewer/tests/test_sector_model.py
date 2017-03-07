@@ -92,3 +92,30 @@ def test_single_sector_subtree_experiments():
 
     assert np.all(SECTOR_5_LMM_LMAT[:, 0] == lmat[:, 0])
     assert np.all(SECTOR_5_LMM_LMAT[:, 1] == lmat[:, 1])
+
+
+def test_single_sector_subtree_twice():
+    model = DataModel('tests/data/cnviewer_data_example_01.zip')
+    assert model is not None
+    model.make()
+    print(model.sector_mapping)
+
+    single_sector_model = SingleSectorDataModel(model, ' 5 LMM')
+    single_sector_model.make()
+
+    lmat = np.array(single_sector_model.lmat)
+    print(lmat[:, 0])
+    print(lmat[:, 1])
+
+    assert np.all(SECTOR_5_LMM_LMAT[:, 0] == lmat[:, 0])
+    assert np.all(SECTOR_5_LMM_LMAT[:, 1] == lmat[:, 1])
+
+    single_sector_model = SingleSectorDataModel(model, ' 5 LMM')
+    single_sector_model.make()
+
+    lmat = np.array(single_sector_model.lmat)
+    print(lmat[:, 0])
+    print(lmat[:, 1])
+
+    assert np.all(SECTOR_5_LMM_LMAT[:, 0] == lmat[:, 0])
+    assert np.all(SECTOR_5_LMM_LMAT[:, 1] == lmat[:, 1])
