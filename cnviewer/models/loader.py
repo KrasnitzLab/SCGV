@@ -17,7 +17,8 @@ def load_df(filename):
 
 
 class DataLoader(object):
-    TYPES = set(['ratio', 'pinmat', 'clone', 'tree', 'seg', 'pins', 'guide'])
+    TYPES = set([
+        'ratio', 'pinmat', 'clone', 'tree', 'seg', 'pins', 'guide', 'genome'])
     GUIDE_SAMPLES_COLUMN = 'seq.unit.id'
 
     def __init__(self, filename):
@@ -63,9 +64,15 @@ class DataLoader(object):
             assert 'seg' in set(filenames.keys())
             for filetype, filename in filenames.items():
                 infile = zipdata.open(filename)
-                df = pd.read_csv(infile, sep='\t')
-                assert df is not None
-                self.data[filetype] = df
+
+                if filetype == 'genome':
+                    genome = infile.readline().strip()
+                    if genome:
+                        self.data['genome'] = genome
+                else:
+                    df = pd.read_csv(infile, sep='\t')
+                    assert df is not None
+                    self.data[filetype] = df
             self.pathology = self._load_images_zipfile(zipdata)
 
     def _load_images_zipfile(self, zipdata):
@@ -112,9 +119,14 @@ class DataLoader(object):
         for filetype, filename in filenames.items():
             print("loading: {}".format(filename))
             infile = open(filename)
-            df = pd.read_csv(infile, sep='\t')
-            assert df is not None
-            self.data[filetype] = df
+            if filetype == 'genome':
+                genome = infile.readline().strip()
+                if genome:
+                    self.data['genome'] = genome
+            else:
+                df = pd.read_csv(infile, sep='\t')
+                assert df is not None
+                self.data[filetype] = df
 
         self.pathology = None
         pathology_dirname = os.path.join(dir_filename, 'pathology')
