@@ -51,9 +51,6 @@ class SingleSectorDataModel(BaseModel):
 
         sector = self.model.sector
 
-        print("order", order)
-        print("sector", sector)
-
         res = np.lexsort(
             (
                 order,
