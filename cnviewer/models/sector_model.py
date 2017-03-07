@@ -5,17 +5,17 @@ Created on Jan 10, 2017
 '''
 import numpy as np
 from models.model_delegate import ModelDelegate
+from models.model import BaseModel
 
 
-class SectorsDataModel(ModelDelegate):
+class SectorsDataModel(BaseModel):
 
     def __init__(self, model):
-        super(SectorsDataModel, self).__init__(model)
+        super(SectorsDataModel, self).__init__(model.data)
+        self.model = model
         assert self.model.sector is not None
 
-        self.bins, self.samples = self.model.seg_data.shape
-
-    def build_ordering(self):
+    def make_ordering(self):
         index = np.array(self.model.Z['leaves'])
         order = np.arange(len(index))
 
@@ -31,20 +31,30 @@ class SectorsDataModel(ModelDelegate):
         return index[res]
 
     def make(self):
-        ordering = self.build_ordering()
+        self.lmat = self.make_linkage()
+        self.Z = self.make_dendrogram(self.lmat)
 
-        self.column_labels = np.array(self.data.seg_df.columns[3:])[ordering]
-        self.label_midpoints = (
-            np.arange(self.samples) + 0.5) * self.interval_length
+        self.ordering = self.make_ordering()
 
-        self.clone, self.subclone = self.make_clone(ordering=ordering)
+        self.column_labels = self.make_column_labels(
+            ordering=self.ordering)
+        self.interval_length = self.make_interval_length(self.Z)
 
-        self.heatmap = self.model.make_heatmap(ordering=ordering)
-        self.gate = self.model.make_gate(ordering=ordering)
-        self.sector, self.sector_mapping = \
-            self.model.make_sector(ordering=ordering)
-        self.multiplier = self.model.make_multiplier(ordering=ordering)
-        self.error = self.model.make_error(ordering=ordering)
+        self.label_midpoints = self.make_label_midpoints()
+
+        self.heatmap = self.make_heatmap(
+            ordering=self.ordering)
+
+        self.clone, self.subclone = self.make_clone(
+            ordering=self.ordering)
+        self.gate = self.make_gate(
+            ordering=self.ordering)
+        self.sector, self.sector_mapping = self.make_sector(
+            ordering=self.ordering)
+        self.multiplier = self.make_multiplier(
+            ordering=self.ordering)
+        self.error = self.make_error(
+            ordering=self.ordering)
 
 
 class SingleSectorDataModel(ModelDelegate):

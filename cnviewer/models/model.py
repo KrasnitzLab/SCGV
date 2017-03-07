@@ -12,7 +12,7 @@ import pandas as pd
 from models.loader import DataLoader
 
 
-class DataModel(object):
+class BaseModel(object):
     CLONE_COLUMN = 'clone'
     SUBCLONE_COLUMN = 'subclone'
     GATE_COLUMN = 'gate'
@@ -20,11 +20,8 @@ class DataModel(object):
     SECTOR_COLUMN = 'sector'
     PATHOLOGY_COLUMN = 'Pathology'
 
-    def __init__(self, filename):
-        self.data = DataLoader(filename)
-        self.data.load()
-        self.data.filter_samples()
-
+    def __init__(self, data):
+        self.data = data
         self.seg_data = self.data.seg_df.ix[:, 3:].values
         self.bins, self.samples = self.seg_data.shape
         self.lmat = None
@@ -81,7 +78,7 @@ class DataModel(object):
     def make(self):
         self.lmat = self.make_linkage()
         self.Z = self.make_dendrogram(self.lmat)
-        self.ordering = self.make_ordering(self.Z)
+        self.ordering = self.make_ordering()
         self.column_labels = self.make_column_labels(
             ordering=self.ordering)
         self.interval_length = self.make_interval_length(self.Z)
@@ -89,9 +86,6 @@ class DataModel(object):
         self.label_midpoints = self.make_label_midpoints()
 
         self.heatmap = self.make_heatmap(
-            ordering=self.ordering)
-
-        self.pinmat = self.make_pinmat(
             ordering=self.ordering)
 
         self.clone, self.subclone = self.make_clone(
@@ -125,8 +119,8 @@ class DataModel(object):
     def make_label_midpoints(self):
         return (np.arange(self.samples) + 0.5) * self.interval_length
 
-    def make_ordering(self, Z):
-        return np.array(Z['leaves'])
+    def make_ordering(self):
+        return np.array(self.Z['leaves'])
 
     def make_column_labels(self, ordering):
         return np.array(self.data.seg_df.columns[3:])[ordering]
@@ -308,3 +302,12 @@ class DataModel(object):
                     sector_df[self.PATHOLOGY_COLUMN].unique()))
             result.append((sector, str(pathology).strip()))
         return result
+
+
+class DataModel(BaseModel):
+
+    def __init__(self, filename):
+        self.data = DataLoader(filename)
+        self.data.load()
+        self.data.filter_samples()
+        super(DataModel, self).__init__(self.data)
