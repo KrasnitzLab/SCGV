@@ -8,6 +8,7 @@ if sys.version_info[0] < 3:
     import Tkinter as tk  # @UnusedImport @UnresolvedImport
     import ttk  # @UnusedImport @UnresolvedImport
     from tkFileDialog import askopenfilename  # @UnusedImport @UnresolvedImport
+    from tkFileDialog import askdirectory  # @UnusedImport @UnresolvedImport
     import tkMessageBox as messagebox  # @UnusedImport @UnresolvedImport
     import tkSimpleDialog as simpledialog  # @UnusedImport @UnresolvedImport
 else:
