@@ -74,6 +74,15 @@ class OpenUi(object):
         self.progress.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.progress.start()
 
+    def _reset_loading(self):
+        self.progress.stop()
+        self.progress.grid_remove()
+        self.open_archive_button.config(state=tk.ACTIVE)
+        self.open_dir_button.config(state=tk.ACTIVE)
+        self.controller.reset_model()
+        self.model = None
+        self.model_lock.release()
+
     def _open_archive(self):
         print("opening archive...")
         filename = askopenfilename(filetypes=(
@@ -103,8 +112,7 @@ class OpenUi(object):
                     self.controller.trigger_on_model_callbacks)
 
             else:
-                self.progress.stop()
-                self.progress.grid_remove()
+                self._reset_loading()
                 messagebox.showerror(
                     title="Wrong file/directory type",
                     message="Single Cell Genomics data set expected")

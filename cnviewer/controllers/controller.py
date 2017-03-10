@@ -101,6 +101,9 @@ class MainController(HeatmapControllerBase):
         self.model.make()
         return self.model
 
+    def reset_model(self):
+        self.model = None
+
     def trigger_on_model_callbacks(self):
         for cb in self.on_model_callbacks:
             cb(self.model)
