@@ -14,10 +14,6 @@ class ViewerBase(object):
         "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y"
     ]
 
-    COPYNUM_LABELS = [
-        "med - 2+", "med - 1", "median", "med + 1", "med + 2+"
-    ]
-
     PLOIDY_LABELS = ["<2C", "2C", ">2C-4C", "4C", ">4C"]
 
     def __init__(self, model):

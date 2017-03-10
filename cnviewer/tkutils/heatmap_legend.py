@@ -6,12 +6,13 @@ Created on Feb 8, 2017
 from tkutils.tkimport import *  # @UnusedWildImport
 
 from tkutils.legend_base import LegendBase
-# import matplotlib.pyplot as plt
-from views.base import ViewerBase
 from utils.color_map import ColorMap
 
 
 class HeatmapLegend(LegendBase):
+    COPYNUM_LABELS = [
+        "    0", "    1", "    2", "    3", "    4+"
+    ]
 
     def __init__(self, master, controller):
         super(HeatmapLegend, self).__init__(
@@ -21,6 +22,6 @@ class HeatmapLegend(LegendBase):
 
     def show_legend(self):
         cmap = ColorMap.make_diverging05()
-        for index, label in enumerate(ViewerBase.COPYNUM_LABELS):
+        for index, label in enumerate(self.COPYNUM_LABELS):
             color = cmap.colors(index)
             self.append_entry(label, color)
