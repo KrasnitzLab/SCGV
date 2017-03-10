@@ -309,5 +309,7 @@ class DataModel(BaseModel):
     def __init__(self, filename):
         self.data = DataLoader(filename)
         self.data.load()
-        self.data.filter_samples()
+        self.data.filter_cells()
+        self.data.order_cells()
+
         super(DataModel, self).__init__(self.data)

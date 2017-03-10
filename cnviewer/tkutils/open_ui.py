@@ -70,7 +70,7 @@ class OpenUi(object):
         self.open_dir_button.config(state=tk.DISABLED)
         self.loader_task = threading.Thread(target=self._loading, args=[self])
         self.loader_task.start()
-        self.master.after(4 * self.DELAY, self._on_loading_progress, self)
+        self.master.after(1 * self.DELAY, self._on_loading_progress, self)
         self.progress.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.progress.start()
 
