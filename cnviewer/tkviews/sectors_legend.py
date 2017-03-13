@@ -83,10 +83,10 @@ class ShowPathologyDialog(tk.Toplevel):
         return panel
 
 
-class SectorsLegend2(LegendBase):
+class SectorsLegend(LegendBase):
 
     def __init__(self, master, controller):
-        super(SectorsLegend2, self).__init__(
+        super(SectorsLegend, self).__init__(
             master, title="Sectors Legend",
             controller=controller)
 

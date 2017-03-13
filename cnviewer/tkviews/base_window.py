@@ -7,7 +7,7 @@ from tkviews.tkimport import *  # @UnusedWildImport
 
 from tkviews.canvas_ui import CanvasWindow
 from tkviews.profiles_ui import ProfilesUi
-from tkviews.sectors_legend2 import SectorsLegend2
+from tkviews.sectors_legend import SectorsLegend
 from tkviews.heatmap_legend import HeatmapLegend
 from tkviews.samples_window import SamplesWindow
 from controllers.controller import SamplesController, SingleSectorController
@@ -114,7 +114,7 @@ class BaseHeatmapWindow(object):
         profiles = ProfilesUi(self.main.button_ext, self.controller)
         profiles.build_ui()
 
-        sectors_legend = SectorsLegend2(self.main.legend_ext, self.controller)
+        sectors_legend = SectorsLegend(self.main.legend_ext, self.controller)
         sectors_legend.build_ui(row=10)
         sectors_legend.register_show_single_sector_callback(
             self.build_single_sector_window)

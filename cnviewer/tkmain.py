@@ -6,11 +6,11 @@ Created on Jan 16, 2017
 import matplotlib as mpl
 mpl.use('TkAgg')
 
-from tkutils.tkimport import *  # @UnusedWildImport @NoMove @IgnorePep8
+from tkviews.tkimport import *  # @UnusedWildImport @NoMove @IgnorePep8
 
 # from models.sector_model import SingleSectorDataModel
 from controllers.controller import MainController  # @IgnorePep8
-from cnviewer.main_window import MainWindow  # @IgnorePep8
+from tkviews.main_window import MainWindow  # @IgnorePep8
 
 
 def main():
