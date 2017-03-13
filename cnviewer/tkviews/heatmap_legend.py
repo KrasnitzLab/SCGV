@@ -5,7 +5,7 @@ Created on Feb 8, 2017
 '''
 from tkutils.tkimport import *  # @UnusedWildImport
 
-from tkutils.legend_base import LegendBase
+from tkviews.legend_base import LegendBase
 from utils.color_map import ColorMap
 
 

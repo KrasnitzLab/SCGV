@@ -4,9 +4,9 @@ Created on Jan 18, 2017
 @author: lubo
 '''
 
-from tkutils.tkimport import *  # @UnusedWildImport
+from tkviews.tkimport import *  # @UnusedWildImport
 
-from tkutils.canvas_ui import CanvasWindow
+from tkviews.canvas_ui import CanvasWindow
 from views.sample import SamplesViewer
 
 

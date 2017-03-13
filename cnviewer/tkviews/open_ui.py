@@ -3,7 +3,7 @@ Created on Jan 17, 2017
 
 @author: lubo
 '''
-from tkutils.tkimport import *  # @UnusedWildImport
+from tkviews.tkimport import *  # @UnusedWildImport
 
 import threading
 import traceback

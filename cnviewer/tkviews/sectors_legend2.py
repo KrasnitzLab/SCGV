@@ -3,10 +3,10 @@ Created on Feb 1, 2017
 
 @author: lubo
 '''
-from tkutils.tkimport import *  # @UnusedWildImport
+from tkviews.tkimport import *  # @UnusedWildImport
 
 from PIL import ImageTk
-from tkutils.legend_base import LegendBase
+from tkviews.legend_base import LegendBase
 from utils.color_map import ColorMap
 
 

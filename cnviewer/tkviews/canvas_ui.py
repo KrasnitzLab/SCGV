@@ -11,7 +11,7 @@ mpl.use('TkAgg')
 from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
-from tkutils.tkimport import *  # @UnusedWildImport @IgnorePep8
+from tkviews.tkimport import *  # @UnusedWildImport @IgnorePep8
 
 
 class CanvasWindow(object):

@@ -3,17 +3,17 @@ Created on Feb 21, 2017
 
 @author: lubo
 '''
-from tkutils.tkimport import *  # @UnusedWildImport
+from tkviews.tkimport import *  # @UnusedWildImport
 
 
-from tkutils.open_ui import OpenUi
-from tkutils.pinmat_ui import PinmatUi
-from tkutils.sectors_ui import SectorsUi
+from tkviews.open_ui import OpenUi
+from tkviews.pinmat_ui import PinmatUi
+from tkviews.sectors_ui import SectorsUi
 
-from cnviewer.base_window import BaseHeatmapWindow
+from tkviews.base_window import BaseHeatmapWindow
 
 from models.sector_model import SectorsDataModel
-from cnviewer.sectors_window import SectorsWindow
+from tkviews.sectors_window import SectorsWindow
 from models.pinmat_model import PinmatModel
 from controllers.controller import PinmatController, SectorsController
 

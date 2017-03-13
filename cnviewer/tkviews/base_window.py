@@ -3,13 +3,13 @@ Created on Feb 21, 2017
 
 @author: lubo
 '''
-from tkutils.tkimport import *  # @UnusedWildImport
+from tkviews.tkimport import *  # @UnusedWildImport
 
-from tkutils.canvas_ui import CanvasWindow
-from tkutils.profiles_ui import ProfilesUi
-from tkutils.sectors_legend2 import SectorsLegend2
-from tkutils.heatmap_legend import HeatmapLegend
-from cnviewer.samples_window import SamplesWindow
+from tkviews.canvas_ui import CanvasWindow
+from tkviews.profiles_ui import ProfilesUi
+from tkviews.sectors_legend2 import SectorsLegend2
+from tkviews.heatmap_legend import HeatmapLegend
+from tkviews.samples_window import SamplesWindow
 from controllers.controller import SamplesController, SingleSectorController
 
 import numpy as np

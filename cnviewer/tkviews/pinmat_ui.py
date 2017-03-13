@@ -3,8 +3,8 @@ Created on Jan 18, 2017
 
 @author: lubo
 '''
-from tkutils.tkimport import *  # @UnusedWildImport
-from tkutils.base_ui import BaseUi
+from tkviews.tkimport import *  # @UnusedWildImport
+from tkviews.base_ui import BaseUi
 
 
 class PinmatUi(BaseUi):

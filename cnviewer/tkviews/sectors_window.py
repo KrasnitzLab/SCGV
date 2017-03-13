@@ -5,7 +5,7 @@ Created on Feb 22, 2017
 '''
 import matplotlib.pyplot as plt
 
-from cnviewer.base_window import BaseHeatmapWindow
+from tkviews.base_window import BaseHeatmapWindow
 from views.clone import CloneViewer
 from views.heatmap import HeatmapViewer
 from views.sector import SectorViewer
