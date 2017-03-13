@@ -69,11 +69,11 @@ class DataLoader(object):
             assert 'seg' in set(filenames.keys())
             for filetype, filename in filenames.items():
                 infile = zipdata.open(filename)
-
                 if filetype == 'genome':
-                    genome = infile.readline().strip()
+                    genome = self._load_genome_build(infile)
                     if genome:
                         self.data['genome'] = genome
+                    print(genome)
                 else:
                     df = pd.read_csv(infile, sep='\t')
                     assert df is not None
@@ -112,6 +112,13 @@ class DataLoader(object):
 
         return result
 
+    def _load_genome_build(self, infile):
+        df = pd.read_csv(infile, sep=',')
+        df = df[df['in_use'] == 1]
+        if len(df) == 0:
+            return None
+        return df.id.values[0]
+
     def _load_dir(self, dir_filename):
         assert os.path.exists(dir_filename)
         assert os.path.isdir(dir_filename)
@@ -125,9 +132,10 @@ class DataLoader(object):
             print("loading: {}".format(filename))
             infile = open(filename)
             if filetype == 'genome':
-                genome = infile.readline().strip()
+                genome = self._load_genome_build(infile)
                 if genome:
                     self.data['genome'] = genome
+                print(genome)
             else:
                 df = pd.read_csv(infile, sep='\t')
                 assert df is not None
