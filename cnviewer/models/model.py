@@ -52,7 +52,6 @@ class BaseModel(object):
         if self._heat_extent is None:
             self._heat_extent = (0, self.samples * self.interval_length,
                                  self.bins, 0)
-        print(self._heat_extent)
         return self._heat_extent
 
     @property
@@ -206,7 +205,7 @@ class BaseModel(object):
 
         mapping = clone_mapping
         mapping.update(subclone_mapping)
-        print("clone/subclone", mapping)
+        # print("clone/subclone", mapping)
 
         return clone[ordering], subclone[ordering]
 

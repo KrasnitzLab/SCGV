@@ -111,14 +111,17 @@ class LegendBase(BaseUi):
         self.container = tk.Frame(self.canvas, background='white')
         self.canvas.create_window((0, 0), window=self.container, anchor='nw')
 
+        self.connect_controller()
         configure_update(None)
-        super(LegendBase, self).build_ui()
 
     def append_entry(self, text, color=None):
         index = len(self.entries)
         entry = LegendEntry(index, text, color)
         entry.build_label(self.container)
         self.entries.append(entry)
+
+    def update(self, *args, **kwargs):
+        self.canvas.configure(scrollregion=self.canvas.bbox('all'))
 
     def bind_dbl_left_click(self, callback):
         for entry in self.entries:

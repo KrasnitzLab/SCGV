@@ -73,7 +73,6 @@ class DataLoader(object):
                     genome = self._load_genome_build(infile)
                     if genome:
                         self.data['genome'] = genome
-                    print(genome)
                 else:
                     df = pd.read_csv(infile, sep='\t')
                     assert df is not None
@@ -93,7 +92,6 @@ class DataLoader(object):
             if 'image' in row:
                 filename = os.path.join('pathology', str(row['image']))
                 if filename in zipdata.namelist():
-                    print("loading: ", filename)
                     image = Image.open(zipdata.open(filename))
                     # image.load()
             else:
@@ -103,7 +101,6 @@ class DataLoader(object):
             if 'notes' in row:
                 filename = os.path.join('pathology', str(row['notes']))
                 if filename in zipdata.namelist():
-                    print("loading: ", filename)
                     notes = zipdata.open(filename).readlines()
                     # image.load()
                 else:
@@ -125,17 +122,14 @@ class DataLoader(object):
         all_filenames = [
             os.path.join(dir_filename, f) for f in os.listdir(dir_filename)
             if os.path.isfile(os.path.join(dir_filename, f))]
-        print(all_filenames)
         filenames = self._organize_filenames(all_filenames)
 
         for filetype, filename in filenames.items():
-            print("loading: {}".format(filename))
             infile = open(filename)
             if filetype == 'genome':
                 genome = self._load_genome_build(infile)
                 if genome:
                     self.data['genome'] = genome
-                print(genome)
             else:
                 df = pd.read_csv(infile, sep='\t')
                 assert df is not None
@@ -143,7 +137,6 @@ class DataLoader(object):
 
         self.pathology = None
         pathology_dirname = os.path.join(dir_filename, 'pathology')
-        print('checking pahtology directory: {}'.format(pathology_dirname))
         if os.path.exists(pathology_dirname) and \
                 os.path.isdir(pathology_dirname):
             self.pathology = self._load_pathology_dir(pathology_dirname)
@@ -159,14 +152,12 @@ class DataLoader(object):
             image = None
             if 'image' in row:
                 filename = os.path.join(pathology_dirname, str(row['image']))
-                print("looking for image in: {}".format(filename))
                 if os.path.exists(filename):
                     image = Image.open(filename)
 
             notes = None
             if 'notes' in row:
                 filename = os.path.join(pathology_dirname, str(row['notes']))
-                print("looking for notes in: {}".format(filename))
                 if os.path.exists(filename):
                     with open(filename, 'r') as notesfile:
                         notes = notesfile.readlines()

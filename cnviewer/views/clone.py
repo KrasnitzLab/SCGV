@@ -31,7 +31,6 @@ class CloneViewer(ViewerBase):
         ax.set_yticklabels(["Clone"])
 
     def draw_subclone(self, ax):
-        print("subclone", self.model.subclone)
         if self.model.subclone is not None:
             ax.imshow(
                 [self.model.subclone],

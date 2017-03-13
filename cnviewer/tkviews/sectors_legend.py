@@ -100,13 +100,13 @@ class SectorsLegend(LegendBase):
 
         for (index, (sector, pathology)) in enumerate(self.sectors):
             color = self.cmap.colors(index)
-            print(color)
             self.append_entry(
                 text='{}: {}'.format(sector, pathology),
                 color=color)
 
         self.bind_right_click(self.show_sector_pathology)
         self.bind_dbl_left_click(self.show_single_sector)
+        self.master.after(500, self.update, self)
 
     def register_show_single_sector_callback(self, callback):
         self.show_single_sector_callback = callback
@@ -114,10 +114,7 @@ class SectorsLegend(LegendBase):
     def show_sector_pathology(self, index):
         if self.sectors is None:
             return
-        print("show sector pathology with index: ", index)
-        (sector, pathology) = self.sectors[index]
-        print(self.sectors)
-        print(sector, pathology)
+        (_sector, pathology) = self.sectors[index]
         if self.controller.model.pathology is None:
             print("model.pathology is None; stopping...")
             return
@@ -125,27 +122,10 @@ class SectorsLegend(LegendBase):
             pathology, (None, None))
         if image is None and notes is None:
             return
-
         ShowPathologyDialog(image, notes, self.master)
-        print("pathology dialog done...")
 
     def show_single_sector(self, index):
         if self.sectors is None:
             return
-        print("show single sector viewer with index: ", index)
         (sector, _) = self.sectors[index]
-        print("working with sector: ", sector)
-
         self.show_single_sector_callback(self.model, sector)
-
-#
-#         root = tk.Toplevel()
-#         main = SectorsWindow(root)
-#         controller.build_sector(main.fig)
-#
-#         main.connect_controller(controller)
-#
-#         def on_closing():
-#             pass
-#         main.register_on_closing_callback(on_closing)
-#         root.mainloop()

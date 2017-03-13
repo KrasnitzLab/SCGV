@@ -56,12 +56,10 @@ class OpenUi(object):
         frame.grid_rowconfigure(0, weight=1)
 
     def _open_dir(self):
-        print("opening directory...")
         filename = askdirectory()
         if not filename:
             print("open directory canceled...")
             return
-        print(filename)
         self.filename = filename
         self._start_loading()
 
@@ -84,7 +82,6 @@ class OpenUi(object):
         self.model_lock.release()
 
     def _open_archive(self):
-        print("opening archive...")
         filename = askopenfilename(filetypes=(
             ("Zip archive", "*.zip"),
             ("Zip archive", "*.ZIP"),
@@ -120,7 +117,6 @@ class OpenUi(object):
     def _loading(self, *args):
         with self.model_lock:
             try:
-                print("loading '{}'".format(self.filename))
                 self.model = self.controller.load_model(self.filename)
                 return True
             except Exception:

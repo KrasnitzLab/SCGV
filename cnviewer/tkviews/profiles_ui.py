@@ -43,7 +43,7 @@ class ProfilesUi(BaseUi):
         label = ttk.Label(frame, text="Profiles")
         label.grid(column=0, row=1)
 
-        self.profile_ui = tk.Listbox(frame, width=7, height=7)
+        self.profile_ui = tk.Listbox(frame, width=7, height=5)
         self.profile_ui.grid(
             column=0, row=10, sticky=(tk.N, tk.S, tk.E, tk.W))
 
