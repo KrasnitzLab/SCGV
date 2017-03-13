@@ -165,7 +165,6 @@ class SingleSectorDataModel(BaseModel):
         self.column_labels = self.column_labels[sector_index]
 
         self.lmat = self.make_subtree()
-        print(self.lmat)
         self.Z = self.make_dendrogram(self.lmat)
 
         self.samples = len(self.column_labels)

@@ -20,7 +20,9 @@ class CloneViewer(ViewerBase):
                 aspect='auto',
                 interpolation='nearest',
                 cmap=self.cmap.colors,
-                norm=self.cmap.norm,
+                # norm=self.cmap.norm,
+                vmin=0,
+                vmax=6,
                 extent=self.model.bar_extent)
 
         ax.set_xticks([])
@@ -29,6 +31,7 @@ class CloneViewer(ViewerBase):
         ax.set_yticklabels(["Clone"])
 
     def draw_subclone(self, ax):
+        print("subclone", self.model.subclone)
         if self.model.subclone is not None:
             ax.imshow(
                 [self.model.subclone],
@@ -36,6 +39,8 @@ class CloneViewer(ViewerBase):
                 interpolation='nearest',
                 cmap=self.cmap.colors,
                 # norm=self.cmap.norm,
+                vmin=0,
+                vmax=6,
                 extent=self.model.bar_extent)
 
         ax.set_xticks([])

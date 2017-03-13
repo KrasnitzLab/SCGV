@@ -197,13 +197,18 @@ class BaseModel(object):
         if self.data.clone_df is None:
             return None, None
 
-        clone_column_df = self.data.clone_df.iloc[ordering, :]
+        clone_df = self.data.clone_df
         self._reset_heatmap_color()
-        clone, _clone_mapping = self._make_heatmap_array(
-            clone_column_df[self.CLONE_COLUMN])
-        subclone, _subclone_mapping = self._make_heatmap_array(
-            clone_column_df[self.SUBCLONE_COLUMN])
-        return clone, subclone
+        clone, clone_mapping = self._make_heatmap_array(
+            clone_df[self.CLONE_COLUMN])
+        subclone, subclone_mapping = self._make_heatmap_array(
+            clone_df[self.SUBCLONE_COLUMN])
+
+        mapping = clone_mapping
+        mapping.update(subclone_mapping)
+        print("clone/subclone", mapping)
+
+        return clone[ordering], subclone[ordering]
 
     EPCAM = {
         '2C EpCAM Neg': 2,
