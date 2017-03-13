@@ -4,7 +4,7 @@ Created on Jan 10, 2017
 @author: lubo
 '''
 import numpy as np
-from models.model import BaseModel
+from models.model import BaseModel, DataModel
 
 
 class SectorsDataModel(BaseModel):
@@ -34,7 +34,10 @@ class SingleSectorDataModel(BaseModel):
 
     def __init__(self, model, sector_id):
         super(SingleSectorDataModel, self).__init__(model.data)
-        self.model = model
+        if isinstance(model, DataModel):
+            self.model = model
+        else:
+            self.model = model.model
         assert self.model.sector is not None
         assert self.model.sector_mapping is not None
 
