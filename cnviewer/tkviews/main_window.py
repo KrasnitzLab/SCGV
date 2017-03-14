@@ -16,6 +16,7 @@ from models.sector_model import SectorsDataModel
 from tkviews.sectors_window import SectorsWindow
 from models.pinmat_model import PinmatModel
 from controllers.controller import PinmatController, SectorsController
+from models.subject import DataSubject
 
 
 class MainWindow(BaseHeatmapWindow):
@@ -70,9 +71,11 @@ class MainWindow(BaseHeatmapWindow):
         sectors_model.make()
 
         controller = SectorsController(sectors_model)
-
-        sectors_window = SectorsWindow(root, controller)
+        subject = DataSubject()
+        sectors_window = SectorsWindow(root, controller, subject)
         sectors_window.build_ui()
+
+        subject.set_model(sectors_model)
 
         def on_close():
             sectors_button.enable_ui()
