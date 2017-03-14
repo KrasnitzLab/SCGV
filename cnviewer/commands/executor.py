@@ -5,6 +5,8 @@ Created on Mar 14, 2017
 '''
 
 import sys  # @UnusedImport
+from commands import command
+from commands.command import Command
 if sys.version_info[0] < 3:
     import Queue as queue  # @UnusedImport @UnresolvedImport
 else:
@@ -41,4 +43,5 @@ class CommandExecutor(object):
 
     @classmethod
     def execute(cls, command):
+        assert isinstance(command, Command)
         cls.EXECUTOR.queue.put(command)

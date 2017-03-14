@@ -5,18 +5,15 @@ Created on Feb 21, 2017
 '''
 from tkviews.tkimport import *  # @UnusedWildImport
 
-
+from commands.command import MacroCommand
+from commands.executor import CommandExecutor
+from commands.show import ShowPinsCommand
+from commands.show import ShowSectorsReorderCommand
+from commands.widget import EnableCommand, DisableCommand
+from tkviews.base_window import BaseHeatmapWindow
 from tkviews.open_ui import OpenUi
 from tkviews.pinmat_ui import PinmatUi
 from tkviews.sectors_ui import SectorsUi
-
-from tkviews.base_window import BaseHeatmapWindow
-
-from models.sector_model import SectorsDataModel
-from tkviews.sectors_window import SectorsWindow
-from models.pinmat_model import PinmatModel
-from controllers.controller import PinmatController, SectorsController
-from models.subject import DataSubject
 
 
 class MainWindow(BaseHeatmapWindow):
@@ -31,7 +28,7 @@ class MainWindow(BaseHeatmapWindow):
         pinmat = PinmatUi(
             self.main.button_ext, self.controller, self.subject)
         pinmat.build_ui()
-        pinmat.register_on_pinmat(self.build_pinmat)
+        pinmat.register_on_pinmat(self.show_pins)
 
         sectors = SectorsUi(
             self.main.button_ext, self.controller, self.subject)
@@ -45,44 +42,16 @@ class MainWindow(BaseHeatmapWindow):
         self.model = model
         self.draw_canvas()
 
-    def build_pinmat(self, pinmat_button):
-        pinmat_button.disable_ui()
-
-        root = tk.Toplevel()
-        model = PinmatModel(self.model)
-        # model.make()
-
-        controller = PinmatController(model)
-        subject = DataSubject()
-        pinmat_window = BaseHeatmapWindow(root, controller, subject)
-        pinmat_window.build_ui()
-
-        subject.set_model(model)
-
-        def on_close():
-            pinmat_button.enable_ui()
-        pinmat_window.register_on_closing_callback(on_close)
-
-        pinmat_window.draw_canvas()
-        root.mainloop()
+    def show_pins(self, pinmat_button):
+        disable_command = DisableCommand(pinmat_button.show_pinmat)
+        show_pins = ShowPinsCommand(
+            self.model, EnableCommand(pinmat_button.show_pinmat))
+        macro = MacroCommand(disable_command, show_pins)
+        CommandExecutor.execute(macro)
 
     def build_sectors_reorder(self, sectors_button):
-        sectors_button.disable_ui()
-
-        root = tk.Toplevel()
-        sectors_model = SectorsDataModel(self.model)
-        sectors_model.make()
-
-        controller = SectorsController(sectors_model)
-        subject = DataSubject()
-        sectors_window = SectorsWindow(root, controller, subject)
-        sectors_window.build_ui()
-
-        subject.set_model(sectors_model)
-
-        def on_close():
-            sectors_button.enable_ui()
-        sectors_window.register_on_closing_callback(on_close)
-
-        sectors_window.draw_canvas()
-        root.mainloop()
+        disable_command = DisableCommand(sectors_button.show_sectors)
+        show_sectors = ShowSectorsReorderCommand(
+            self.model, EnableCommand(sectors_button.show_sectors))
+        macro = MacroCommand(disable_command, show_sectors)
+        CommandExecutor.execute(macro)

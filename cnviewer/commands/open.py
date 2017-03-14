@@ -9,9 +9,10 @@ import traceback
 
 from models.model import DataModel
 from commands.executor import CommandExecutor
+from commands.command import Command
 
 
-class SetModelCommand(object):
+class SetModelCommand(Command):
 
     def __init__(self, subject, model):
         self.subject = subject
@@ -21,7 +22,7 @@ class SetModelCommand(object):
         self.subject.set_model(self.model)
 
 
-class OpenCommand(object):
+class OpenCommand(Command):
     DELAY = 500
 
     def __init__(self, master, subject, filename):
