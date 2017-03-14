@@ -5,14 +5,14 @@ Created on Feb 21, 2017
 '''
 from tkviews.tkimport import *  # @UnusedWildImport
 
-from commands.command import MacroCommand
+from commands.command import MacroCommand, Command
 from commands.executor import CommandExecutor
 from commands.show import ShowPinsCommand
 from commands.show import ShowSectorsReorderCommand
 from commands.widget import EnableCommand, DisableCommand
 from tkviews.base_window import BaseHeatmapWindow
-from tkviews.open_ui import OpenUi
 from utils.observer import Observer
+from commands.open import OpenCommand
 
 
 class PinsButton(Observer):
@@ -97,6 +97,104 @@ class SectorsButton(Observer):
         CommandExecutor.execute(macro)
 
 
+class StartProgress(Command):
+
+    def __init__(self, progress):
+        self.progress = progress
+
+    def execute(self):
+        self.progress.grid(
+            row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.progress.start()
+
+
+class StopProgress(Command):
+
+    def __init__(self, progress):
+        self.progress = progress
+
+    def execute(self):
+        self.progress.stop()
+        self.progress.grid_remove()
+
+
+class OpenButtons(Observer):
+
+    def __init__(self, master, subject):
+        super(OpenButtons, self).__init__(subject)
+        self.master = master
+
+    def build_ui(self):
+        frame = ttk.Frame(
+            self.master,
+            relief='flat',
+            borderwidth=5
+        )
+        frame.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+        self.open_archive_button = ttk.Button(
+            master=frame,
+            text="Open Archive",
+            command=self._open_archive)
+        self.open_archive_button.grid(
+            column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.open_dir_button = ttk.Button(
+            master=frame,
+            text="Open Directory",
+            command=self._open_dir)
+        self.open_dir_button.grid(
+            column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+        progress_frame = ttk.Frame(
+            master=frame,
+            relief='flat',
+            borderwidth=5,
+            height=20,
+        )
+        progress_frame.grid(
+            row=3, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        progress_frame.columnconfigure(0, weight=99)
+
+        self.progress = ttk.Progressbar(
+            progress_frame, mode='indeterminate')
+        # self.progress.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(0, weight=1)
+
+    def _open_dir(self):
+        filename = askdirectory()
+        if not filename:
+            print("open directory canceled...")
+            return
+        self._start_loading(filename)
+
+    def _start_loading(self, filename):
+        macro = MacroCommand(
+            DisableCommand(self.open_archive_button),
+            DisableCommand(self.open_dir_button),
+            StartProgress(self.progress),
+            OpenCommand(self.master, self.subject, filename)
+        )
+        CommandExecutor.execute(macro)
+
+    def update(self):
+        macro = MacroCommand(StopProgress(self.progress))
+        if self.get_model() is None:
+            macro.add_command(EnableCommand(self.open_archive_button))
+            macro.add_command(EnableCommand(self.open_dir_button))
+        CommandExecutor.execute(macro)
+
+    def _open_archive(self):
+        filename = askopenfilename(filetypes=(
+            ("Zip archive", "*.zip"),
+            ("Zip archive", "*.ZIP"),
+            ("Zip archive", "*.Zip")))
+        if not filename:
+            print("openfilename canceled...")
+            return
+        self._start_loading(filename)
+
+
 class MainWindow(BaseHeatmapWindow):
 
     def __init__(self, master, controller, subject):
@@ -114,7 +212,7 @@ class MainWindow(BaseHeatmapWindow):
             self.main.button_ext, self.subject)
         sectors.build_ui()
 
-        open_buttons = OpenUi(self.main.button_ext, self.subject)
+        open_buttons = OpenButtons(self.main.button_ext, self.subject)
         open_buttons.build_ui()
 
     def on_model_callback(self, model):
