@@ -24,7 +24,6 @@ import traceback
 from views.dendrogram import DendrogramViewer
 from utils.observer import DataObserver, ProfilesObserver
 from models.subject import DataSubject, ProfilesSubject
-from commands.widget import DisableCommand, EnableCommand
 from commands.executor import CommandExecutor
 from commands.profiles import ShowProfilesCommand,\
     ClearProfilesCommand, AddProfilesCommand
@@ -94,24 +93,20 @@ class ProfilesUi(DataObserver, ProfilesObserver):
         self.clear_profiles.grid(
             column=0, row=13, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        disable_command = DisableCommand(
-            self.add_profile,
-            self.show_profiles,
-            self.clear_profiles)
-        CommandExecutor.execute(disable_command)
-
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
+
+        self.add_profile.config(state=tk.DISABLED)
+        self.show_profiles.config(state=tk.DISABLED)
+        self.clear_profiles.config(state=tk.DISABLED)
 
     def update(self):
         self.model = self.get_model()
         if self.model is None:
             return
-        enable_command = EnableCommand(
-            self.add_profile,
-            self.show_profiles,
-            self.clear_profiles)
-        CommandExecutor.execute(enable_command)
+        self.add_profile.config(state=tk.ACTIVE)
+        self.show_profiles.config(state=tk.ACTIVE)
+        self.clear_profiles.config(state=tk.ACTIVE)
 
     def update_profiles(self):
         if self.get_profiles().get_available_profiles():
