@@ -1,0 +1,4 @@
+id,desc,in_use
+hg19,,1
+hg38,,0
+

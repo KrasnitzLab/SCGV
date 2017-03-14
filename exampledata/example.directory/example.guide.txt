@@ -1,0 +1,131 @@
+seq.unit.id	sector	gate	Pathology
+CJA0749	1	2C Rt	Benign prostatic tissue 
+CJA0750	1	2C Rt	Benign prostatic tissue 
+CJA0753	1	2C Rt	Benign prostatic tissue 
+CJA0754	1	2C Rt	Benign prostatic tissue 
+CJA0766	1	2C Lt	Benign prostatic tissue 
+CJA0767	1	2C Lt	Benign prostatic tissue 
+CJA0773	1	<2C	Benign prostatic tissue 
+CJA0790	1	>2C-4C	Benign prostatic tissue 
+CJA0864	3	>2C-4C Lt	Gleason 9 and invading seminal vesicle
+CJA0866	3	>2C-4C Lt	Gleason 9 and invading seminal vesicle
+CJA0876	3	>2C-4C Lt	Gleason 9 and invading seminal vesicle
+CJA0900	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0901	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0902	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0903	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0908	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0911	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0912	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0913	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0915	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0918	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA0919	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA1023	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA1028	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA1031	3	>2C-4C Rt	Gleason 9 and invading seminal vesicle
+CJA1035	3	4C	Gleason 9 and invading seminal vesicle
+CJA1044	3	4C	Gleason 9 and invading seminal vesicle
+CJA1047	3	4C	Gleason 9 and invading seminal vesicle
+CJA1052	3	4C	Gleason 9 and invading seminal vesicle
+CJA1056	3	4C	Gleason 9 and invading seminal vesicle
+CJA1104	3	2C Lt	Gleason 9 and invading seminal vesicle
+CJA1106	3	2C Lt	Gleason 9 and invading seminal vesicle
+CJA1113	3	2C Lt	Gleason 9 and invading seminal vesicle
+CJA1130	3	2C Rt	Gleason 9 and invading seminal vesicle
+CJA1140	3	2C Rt	Gleason 9 and invading seminal vesicle
+CJA1145	3	2C Rt	Gleason 9 and invading seminal vesicle
+CJA1149	3	2C Lt	Gleason 9 and invading seminal vesicle
+CJA1154	3	2C Lt	Gleason 9 and invading seminal vesicle
+CJA1156	3	2C Lt	Gleason 9 and invading seminal vesicle
+CJA1159	3	>4C	Gleason 9 and invading seminal vesicle
+CJA1168	3	>4C	Gleason 9 and invading seminal vesicle
+CJA1169	3	>4C	Gleason 9 and invading seminal vesicle
+CJA1177	3	>4C	Gleason 9 and invading seminal vesicle
+CJA1183	5	<2C	Gleason 9 at capsule
+CJA1197	5	<2C	Gleason 9 at capsule
+CJA1200	5	2C Rt	Gleason 9 at capsule
+CJA1202	5	2C Rt	Gleason 9 at capsule
+CJA1205	5	2C Lt	Gleason 9 at capsule
+CJA1211	5	2C Lt	Gleason 9 at capsule
+CJA1216	5	>4C	Gleason 9 at capsule
+CJA1221	5	>4C	Gleason 9 at capsule
+CJA1223	5	>4C	Gleason 9 at capsule
+CJA1224	5	>4C	Gleason 9 at capsule
+CJA1225	5	>4C	Gleason 9 at capsule
+CJA1231	5	2C Rt	Gleason 9 at capsule
+CJA1237	5	2C Rt	Gleason 9 at capsule
+CJA1243	5	2C Lt	Gleason 9 at capsule
+CJA1244	5	2C Lt	Gleason 9 at capsule
+CJA1250	5	2C Lt	Gleason 9 at capsule
+CJA1252	5	2C Lt	Gleason 9 at capsule
+CJA1253	5	>4C	Gleason 9 at capsule
+CJA1255	5	>4C	Gleason 9 at capsule
+CJA1259	5	>4C	Gleason 9 at capsule
+CJA1319	4	2C Rt	Gleason 9 near urethra
+CJA1321	4	2C Rt	Gleason 9 near urethra
+CJA1326	4	2C Rt	Gleason 9 near urethra
+CJA1330	4	2C Rt	Gleason 9 near urethra
+CJA1333	4	2C Lt	Gleason 9 near urethra
+CJA1335	4	2C Lt	Gleason 9 near urethra
+CJA1336	4	2C Lt	Gleason 9 near urethra
+CJA1337	4	2C Lt	Gleason 9 near urethra
+CJA1338	4	2C Lt	Gleason 9 near urethra
+CJA1340	4	2C Lt	Gleason 9 near urethra
+CJA1352	4	>2C-4C	Gleason 9 near urethra
+CJA1359	4	>2C-4C	Gleason 9 near urethra
+CJA1360	4	>2C-4C	Gleason 9 near urethra
+CJA1361	4	>2C-4C	Gleason 9 near urethra
+CJA1367	4	>2C-4C	Gleason 9 near urethra
+CJA1369	4	>2C-4C	Gleason 9 near urethra
+CJA1371	4	4C	Gleason 9 near urethra
+CJA1372	4	4C	Gleason 9 near urethra
+CJA1373	4	4C	Gleason 9 near urethra
+CJA1374	4	4C	Gleason 9 near urethra
+CJA1401	4	4C	Gleason 9 near urethra
+CJA1404	4	4C	Gleason 9 near urethra
+CJA1405	4	4C	Gleason 9 near urethra
+CJA1406	4	4C	Gleason 9 near urethra
+CJA1409	4	4C	Gleason 9 near urethra
+CJA1412	4	>4C	Gleason 9 near urethra
+CJA1413	4	>4C	Gleason 9 near urethra
+CJA1414	4	>4C	Gleason 9 near urethra
+CJA1417	4	>4C	Gleason 9 near urethra
+CJA1418	4	>4C	Gleason 9 near urethra
+CJA1449	2	>2C-4C	Pin and benign prostate
+CJA1452	2	>2C-4C	Pin and benign prostate
+CJA1454	2	4C	Pin and benign prostate
+CJA1457	2	4C	Pin and benign prostate
+CJA1458	2	4C	Pin and benign prostate
+CJA1467	2	4C	Pin and benign prostate
+CJA1468	2	4C	Pin and benign prostate
+CJA1472	2	4C	Pin and benign prostate
+CJA1473	2	4C	Pin and benign prostate
+CJA1478	2	4C	Pin and benign prostate
+CJA1481	2	>4C	Pin and benign prostate
+CJA1483	2	>4C	Pin and benign prostate
+CJA1853	2	2C Lt	Pin and benign prostate
+CJA1867	2	<2C	Pin and benign prostate
+CJA1868	2	>2C-4C	Pin and benign prostate
+CJA1873	2	>2C-4C	Pin and benign prostate
+CJA1874	2	>2C-4C	Pin and benign prostate
+CJA1879	2	>2C-4C	Pin and benign prostate
+CJA1881	2	>4C	Pin and benign prostate
+CJA5253	1	4C	Benign prostatic tissue 
+CJA5254	1	4C	Benign prostatic tissue 
+CJA5255	1	4C	Benign prostatic tissue 
+CJA5256	1	4C	Benign prostatic tissue 
+CJA5257	1	4C	Benign prostatic tissue 
+CJA5258	1	4C	Benign prostatic tissue 
+CJA5263	1	4C	Benign prostatic tissue 
+CJA5264	1	4C	Benign prostatic tissue 
+CJA5268	1	4C	Benign prostatic tissue 
+CJA5269	1	4C	Benign prostatic tissue 
+CJA5273	1	>4C	Benign prostatic tissue 
+CJA5274	1	>4C	Benign prostatic tissue 
+CJA5276	1	>4C	Benign prostatic tissue 
+CJA5278	1	>4C	Benign prostatic tissue 
+CJA5280	1	>4C	Benign prostatic tissue 
+CJA5284	1	>2C-4C	Benign prostatic tissue 
+CJA5290	1	>2C-4C	Benign prostatic tissue 
+CJA5294	1	>2C-4C	Benign prostatic tissue 
