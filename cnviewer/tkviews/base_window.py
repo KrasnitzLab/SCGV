@@ -26,6 +26,7 @@ from views.error import ErrorViewer
 import traceback
 from views.dendrogram import DendrogramViewer
 from utils.observer import Observer
+from models.subject import DataSubject
 
 
 class BaseHeatmapWindow(Observer):
@@ -150,9 +151,10 @@ class BaseHeatmapWindow(Observer):
             controller = SingleSectorController(sector_model)
 
             root = tk.Toplevel()
-            main = BaseHeatmapWindow(root, controller)
+            subject = DataSubject()
+            main = BaseHeatmapWindow(root, controller, subject)
             main.build_ui()
-            main.draw_canvas()
+            subject.set_model(sector_model)
 
             root.mainloop()
         except Exception:

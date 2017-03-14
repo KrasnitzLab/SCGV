@@ -74,7 +74,7 @@ class ProfilesUi(BaseUi):
 
 #     def connect_controller(self):
 #         super(ProfilesUi, self).connect_controller()
-# 
+#
 #         self.controller.register_sample_cb(
 #             self.on_add_samples_callback,
 #             None,
