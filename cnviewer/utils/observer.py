@@ -5,7 +5,7 @@ Created on Mar 14, 2017
 '''
 
 
-class Observer(object):
+class DataObserver(object):
 
     def __init__(self, subject):
         self.subject = subject
@@ -19,3 +19,15 @@ class Observer(object):
 
     def get_model(self):
         return self.subject.model
+
+
+class ProfilesObserver(object):
+
+    def __init__(self, profiles):
+        self.profiles = profiles
+
+    def update_profiles(self):
+        raise NotImplemented()
+
+    def get_profiles(self):
+        return self.profiles

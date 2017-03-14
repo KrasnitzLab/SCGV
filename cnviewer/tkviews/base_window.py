@@ -6,11 +6,9 @@ Created on Feb 21, 2017
 from tkviews.tkimport import *  # @UnusedWildImport
 
 from tkviews.canvas_ui import CanvasWindow
-from tkviews.profiles_ui import ProfilesUi
 from tkviews.sectors_legend import SectorsLegend
 from tkviews.heatmap_legend import HeatmapLegend
-from tkviews.samples_window import SamplesWindow
-from controllers.controller import SamplesController, SingleSectorController
+from controllers.controller import SingleSectorController
 
 import numpy as np
 from models.sector_model import SingleSectorDataModel
@@ -25,28 +23,153 @@ from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 import traceback
 from views.dendrogram import DendrogramViewer
-from utils.observer import Observer
+from utils.observer import DataObserver
 from models.subject import DataSubject
+from commands.widget import DisableCommand, EnableCommand
+from commands.executor import CommandExecutor
+from commands.profiles import AddProfilesCommand, ShowProfilesCommand,\
+    ClearProfilesCommand
+from commands.command import MacroCommand
 
 
-class BaseHeatmapWindow(Observer):
+class AddProfileDialog(simpledialog.Dialog):
+
+    def body(self, master):
+        self.result = None
+
+        ttk.Label(master, text="Profiles:").grid(row=0)
+        self.entry = tk.Text(
+            master,
+            height=2,
+            width=20,
+        )
+        self.entry.grid(row=0, column=1)
+        return self.entry  # initial focus
+
+    def apply(self):
+        result = self.entry.get('1.0', tk.END)
+        self.result = result
+        return self.result
+
+
+class ProfilesUi(DataObserver):
+
+    def __init__(self, parent, frame, subject):
+        super(ProfilesUi, self).__init__(subject)
+        self.parent = parent
+        self.frame = frame
+
+    def build_ui(self):
+        frame = ttk.Frame(
+            self.frame,
+            borderwidth=5,
+            # relief='sunken'
+        )
+        frame.grid(
+            row=20, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        label = ttk.Label(frame, text="Profiles")
+        label.grid(column=0, row=1)
+
+        self.profile_ui = tk.Listbox(frame, width=7, height=5)
+        self.profile_ui.grid(
+            column=0, row=10, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+        s = ttk.Scrollbar(
+            frame, orient=tk.VERTICAL, command=self.profile_ui.yview)
+        s.grid(column=1, row=10, sticky=(tk.N, tk.S))
+        self.profile_ui['yscrollcommand'] = s.set
+
+        self.add_profile = ttk.Button(
+            master=frame, text="Add Profile", command=self._add_profile_dialog)
+        self.add_profile.grid(
+            column=0, row=11, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.show_profiles = ttk.Button(
+            master=frame, text="Show Profiles", command=self._show_profiles)
+        self.show_profiles.grid(
+            column=0, row=12, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.clear_profiles = ttk.Button(
+            master=frame, text="Clear Profiles", command=self._clear_profiles)
+        self.clear_profiles.grid(
+            column=0, row=13, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+        disable_command = DisableCommand(
+            self.add_profile,
+            self.show_profiles,
+            self.clear_profiles)
+        CommandExecutor.execute(disable_command)
+
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(0, weight=1)
+
+    def update(self):
+        self.model = self.get_model()
+        if self.model is None:
+            return
+        enable_command = EnableCommand(
+            self.add_profile,
+            self.show_profiles,
+            self.clear_profiles)
+        CommandExecutor.execute(enable_command)
+
+    def _add_profile_samples(self, samples):
+        CommandExecutor.execute(
+            AddProfilesCommand(
+                self.parent,
+                self.profile_ui,
+                samples))
+
+    def _show_profiles(self):
+        print("show profiles called...")
+        samples = self.profile_ui.get(0, 'end')
+        if not samples:
+            return
+
+        CommandExecutor.execute(
+            MacroCommand(
+                ShowProfilesCommand(self.model, samples),
+                ClearProfilesCommand(self.parent, self.profile_ui)
+            )
+        )
+
+    def _clear_profiles(self):
+        print("clear profiles called...")
+        CommandExecutor.execute(
+            ClearProfilesCommand(
+                self.parent, self.profile_ui
+            )
+        )
+
+    def _add_profile_dialog(self):
+        print("add profile dialog added...")
+        add_dialog = AddProfileDialog(self.master.master)
+        # self.master.wait_window(add_dialog.top)
+        profiles = add_dialog.result
+        print("add profile result is: ", profiles)
+        if profiles is None:
+            return
+        profiles = profiles.replace(',', ' ')
+        profiles = [p.strip() for p in profiles.split()]
+        profiles = [
+            p for p in profiles
+            if p in self.model.column_labels
+        ]
+        self._add_profile_samples(profiles)
+
+
+class BaseHeatmapWindow(DataObserver):
 
     def __init__(self, master, controller, subject):
-        super(BaseHeatmapWindow, self).__init__(subject)
+        DataObserver.__init__(self, subject)
 
         self.master = master
         self.controller = controller
-        self.controller.register_sample_cb(
-            self.highlight_profiles_labels,
-            self.unhighlight_profile_labels,
-            self.build_sample_window
-        )
         self.ax_label = None
 
     def update(self):
         self.model = self.get_model()
         if self.model is not None:
             self.draw_canvas()
+        self.controller.set_model(self.model)
 
     def refresh(self):
         self.main.refresh()
@@ -109,8 +232,26 @@ class BaseHeatmapWindow(Observer):
         plt.setp(ax_gate.get_xticklabels(), visible=False)
         plt.setp(ax_multiplier.get_xticklabels(), visible=False)
 
-        self.controller.event_loop_connect(self.fig)
+        self.fig.canvas.mpl_connect('button_press_event', self.event_handler)
+        self.fig.canvas.mpl_connect('key_press_event', self.event_handler)
+
         self.main.refresh()
+
+    def event_handler(self, event):
+        if event.name == 'button_press_event' and event.button == 3:
+            sample = self.locate_sample_click(event)
+            self.add_samples([sample])
+
+    def add_samples(self, samples):
+        print(samples)
+
+    def locate_sample_click(self, event):
+        if event.xdata is None:
+            return None
+        xloc = int(event.xdata / self.model.interval_length)
+        sample_name = self.model.column_labels[xloc]
+        print("xloc: {}; sample name: {}".format(xloc, sample_name))
+        return sample_name
 
     def build_ui(self):
         self.build_base_ui()
@@ -120,7 +261,7 @@ class BaseHeatmapWindow(Observer):
         self.fig = self.main.fig
 
         profiles = ProfilesUi(
-            self.main.button_ext, self.controller, self.subject)
+            self, self.main.button_ext, self.subject)
         profiles.build_ui()
 
         sectors_legend = SectorsLegend(
@@ -136,12 +277,6 @@ class BaseHeatmapWindow(Observer):
 
     def build_sample_window(self, samples):
         print("build_sample_window called... showing: {}".format(samples))
-        root = tk.Toplevel()
-        controller = SamplesController(self.controller.model)
-        samples_window = SamplesWindow(root, controller, samples)
-        samples_window.build_ui()
-        samples_window.draw_canvas()
-        root.mainloop()
 
     def build_single_sector_window(self, model, sector_id):
         try:

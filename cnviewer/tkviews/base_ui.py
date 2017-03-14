@@ -3,10 +3,10 @@ Created on Feb 22, 2017
 
 @author: lubo
 '''
-from utils.observer import Observer
+from utils.observer import DataObserver
 
 
-class BaseUi(Observer):
+class BaseUi(DataObserver):
 
     def __init__(self, master, controller, subject):
         super(BaseUi, self).__init__(subject)

@@ -11,11 +11,11 @@ from commands.show import ShowPinsCommand
 from commands.show import ShowSectorsReorderCommand
 from commands.widget import EnableCommand, DisableCommand
 from tkviews.base_window import BaseHeatmapWindow
-from utils.observer import Observer
+from utils.observer import DataObserver
 from commands.open import OpenCommand
 
 
-class PinsButton(Observer):
+class PinsButton(DataObserver):
 
     def __init__(self, master, subject):
         super(PinsButton, self).__init__(subject)
@@ -55,7 +55,7 @@ class PinsButton(Observer):
         CommandExecutor.execute(enable_command)
 
 
-class SectorsButton(Observer):
+class SectorsButton(DataObserver):
 
     def __init__(self, master, subject):
         super(SectorsButton, self).__init__(subject)
@@ -118,7 +118,7 @@ class StopProgress(Command):
         self.progress.grid_remove()
 
 
-class OpenButtons(Observer):
+class OpenButtons(DataObserver):
 
     def __init__(self, master, subject):
         super(OpenButtons, self).__init__(subject)

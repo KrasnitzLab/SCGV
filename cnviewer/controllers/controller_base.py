@@ -56,6 +56,9 @@ class HeatmapControllerBase(ControllerBase):
         self.on_clear_samples_callbacks = []
         self.on_display_samples_callbacks = []
 
+    def set_model(self, model):
+        self.model = model
+
     def register_sample_cb(self, add_cb, clear_cb, display_cb):
         if add_cb:
             self.on_add_samples_callbacks.append(add_cb)
