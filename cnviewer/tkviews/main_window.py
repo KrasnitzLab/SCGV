@@ -12,8 +12,48 @@ from commands.show import ShowSectorsReorderCommand
 from commands.widget import EnableCommand, DisableCommand
 from tkviews.base_window import BaseHeatmapWindow
 from tkviews.open_ui import OpenUi
-from tkviews.pinmat_ui import PinmatUi
 from tkviews.sectors_ui import SectorsUi
+from utils.observer import Observer
+
+
+class PinsButton(Observer):
+
+    def __init__(self, master, subject):
+        super(PinsButton, self).__init__(subject)
+        self.master = master
+
+    def build_ui(self):
+        frame = ttk.Frame(
+            self.master,
+            borderwidth=5)
+        frame.grid(
+            row=30, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+        self.button = ttk.Button(
+            master=frame, text="Show Pins", command=self._show_pinmat)
+        self.button.config(state=tk.DISABLED)
+
+        self.button.grid(
+            column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(0, weight=1)
+
+    def _show_pinmat(self):
+        print("show pins called...")
+        assert self.model is not None
+
+        disable_command = DisableCommand(self.button)
+        show_pins = ShowPinsCommand(
+            self.model, EnableCommand(self.button))
+        macro = MacroCommand(disable_command, show_pins)
+        CommandExecutor.execute(macro)
+
+    def update(self):
+        self.model = self.get_model()
+        if self.model is None or self.model.data.pins_df is None:
+            return
+        enable_command = EnableCommand(self.button)
+        CommandExecutor.execute(enable_command)
 
 
 class MainWindow(BaseHeatmapWindow):
@@ -25,10 +65,9 @@ class MainWindow(BaseHeatmapWindow):
     def build_ui(self):
         self.build_base_ui()
 
-        pinmat = PinmatUi(
-            self.main.button_ext, self.controller, self.subject)
+        pinmat = PinsButton(
+            self.main.button_ext, self.subject)
         pinmat.build_ui()
-        pinmat.register_on_pinmat(self.show_pins)
 
         sectors = SectorsUi(
             self.main.button_ext, self.controller, self.subject)
@@ -41,13 +80,6 @@ class MainWindow(BaseHeatmapWindow):
     def on_model_callback(self, model):
         self.model = model
         self.draw_canvas()
-
-    def show_pins(self, pinmat_button):
-        disable_command = DisableCommand(pinmat_button.show_pinmat)
-        show_pins = ShowPinsCommand(
-            self.model, EnableCommand(pinmat_button.show_pinmat))
-        macro = MacroCommand(disable_command, show_pins)
-        CommandExecutor.execute(macro)
 
     def build_sectors_reorder(self, sectors_button):
         disable_command = DisableCommand(sectors_button.show_sectors)
