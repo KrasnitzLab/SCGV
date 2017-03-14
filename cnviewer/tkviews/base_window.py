@@ -6,14 +6,13 @@ Created on Feb 21, 2017
 from tkviews.tkimport import *  # @UnusedWildImport
 
 from tkviews.canvas_ui import CanvasWindow
-from tkviews.sectors_legend import SectorsLegend
-from tkviews.heatmap_legend import HeatmapLegend
 from controllers.controller import SingleSectorController
 
 import numpy as np
 from models.sector_model import SingleSectorDataModel
 
 import matplotlib.pyplot as plt
+import matplotlib.colors as col
 
 from views.clone import CloneViewer
 from views.heatmap import HeatmapViewer
@@ -29,6 +28,10 @@ from commands.widget import DisableCommand, EnableCommand
 from commands.executor import CommandExecutor
 from commands.profiles import ShowProfilesCommand,\
     ClearProfilesCommand, AddProfilesCommand
+from tkviews.base_ui import BaseUi
+from PIL import ImageTk, Image
+from utils.color_map import ColorMap
+from commands.command import Command
 
 
 class AddProfileDialog(simpledialog.Dialog):
@@ -160,6 +163,298 @@ class ProfilesUi(DataObserver, ProfilesObserver):
         )
 
 
+class ShowPathologyDialog(tk.Toplevel):
+
+    def __init__(self, image, notes, master, title=None, **kwargs):
+        self.image = image
+        self.notes = notes
+        tk.Toplevel.__init__(self, master, **kwargs)
+        # super(ShowPathologyDialog, self).__init__(master, **kwargs)
+
+        # self.transient(master)
+        if title:
+            self.title(title)
+
+        self.master = master
+
+        body = ttk.Frame(self)
+        self.initial_focus = self.body(body)
+        body.pack(padx=5, pady=5)
+        self.buttonbox()
+
+        # self.grab_set()
+
+        if not self.initial_focus:
+            self.initial_focus = self
+
+        self.protocol("WM_DELETE_WINDOW", self.cancel)
+
+        self.geometry("+%d+%d" % (master.winfo_rootx() + 50,
+                                  master.winfo_rooty() + 50))
+        self.initial_focus.focus_set()
+        self.wait_window(self)
+
+    def buttonbox(self):
+        box = ttk.Frame(self)
+
+        w = ttk.Button(
+            box, text="OK", width=10, command=self.cancel, default=tk.ACTIVE)
+        w.pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.bind("<Return>", self.cancel)
+        self.bind("<Escape>", self.cancel)
+
+        box.pack()
+
+    def cancel(self, event=None):
+        # put focus back to the parent window
+        self.master.focus_set()
+        self.destroy()
+
+    def body(self, master):
+        panel = None
+        if self.image is not None:
+            self.image = ImageTk.PhotoImage(self.image)
+            panel = tk.Label(master, image=self.image)
+            panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES)
+
+        text = tk.Text(master, width=80, height=20)
+        scrollbar = tk.Scrollbar(master)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        text.pack(side=tk.LEFT, padx=10, fill=tk.Y)
+        scrollbar.config(command=text.yview)
+        text.config(yscrollcommand=scrollbar.set)
+
+        if self.notes is not None:
+            text.tag_configure('big', font=('Verdana', 15, 'bold'))
+            text.insert(tk.END, self.notes[0], 'big')
+            for line in self.notes[1:]:
+                text.insert(tk.END, line)
+
+        if panel is None:
+            panel = text
+        return panel
+
+
+class LegendEntry(object):
+    IMAGE_SIZE = 15
+
+    def __init__(self, index, text, color):
+        self.index = index
+        self.text = text
+        self.color = color
+        self.image = None
+        if color:
+            tkcolor = self.tkcolor(color)
+            image = Image.new(
+                'RGBA',
+                size=(self.IMAGE_SIZE, self.IMAGE_SIZE),
+                color=tkcolor)
+            self.image = ImageTk.PhotoImage(image=image)
+
+    @staticmethod
+    def tkcolor(color):
+        c = col.to_rgba(color)
+        if len(c) == 3:
+            r, g, b = color
+            a = 1
+        elif len(c) == 4:
+            r, g, b, a = color
+        else:
+            raise ValueError("strange color: {}".format(str(color)))
+        return (int(255 * r), int(255 * g), int(255 * b), int(255 * a))
+
+    def build_label(self, master):
+        self.label = ttk.Label(
+            master,
+            text=self.text,
+            image=self.image,
+            compound=tk.LEFT,
+            background='white',
+        )
+        self.label.pack(anchor=tk.W)
+
+    def bind_dbl_left_click(self, callback):
+        def click_callback(index):
+            return lambda event: callback(index)
+        self.label.bind('<Double-Button-1>', click_callback(self.index))
+
+    def bind_dbl_right_click(self, callback):
+        def click_callback(index):
+            return lambda event: callback(index)
+        self.label.bind('<Double-Button-3>', click_callback(self.index))
+
+    def bind_right_click(self, callback):
+        def click_callback(index):
+            return lambda event: callback(index)
+        self.label.bind('<Button-3>', click_callback(self.index))
+
+
+class LegendBase(BaseUi):
+
+    def __init__(self, master, title, controller, subject):
+        super(LegendBase, self).__init__(master, controller, subject)
+        self.title = title
+
+    def enable_ui(self):
+        pass
+
+    def build_ui(self, row=20):
+        self.entries = []
+        frame = ttk.Frame(
+            self.master,
+            borderwidth=5,
+            relief='sunken',
+        )
+        frame.grid(row=row, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+        label = ttk.Label(frame, text=self.title)
+        label.grid(column=0, row=0, columnspan=2)
+
+        scrollbar = ttk.Scrollbar(
+            frame, orient=tk.VERTICAL)
+        scrollbar.grid(column=1, row=1, sticky=(tk.N, tk.S))
+
+        self.canvas = tk.Canvas(
+            frame,
+            yscrollcommand=scrollbar.set,
+            height=100, width=100,
+            background='white')
+        self.canvas.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        scrollbar.config(command=self.canvas.yview)
+
+        def configure_update(event):
+            self.canvas.configure(scrollregion=self.canvas.bbox('all'))
+
+        self.canvas.bind(
+            '<Configure>',
+            configure_update)
+
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(20, weight=1)
+
+        self.container = tk.Frame(self.canvas, background='white')
+        self.canvas.create_window((0, 0), window=self.container, anchor='nw')
+
+        # self.connect_controller()
+        configure_update(None)
+
+    def append_entry(self, text, color=None):
+        index = len(self.entries)
+        entry = LegendEntry(index, text, color)
+        entry.build_label(self.container)
+        self.entries.append(entry)
+
+    def configure_update(self, *args, **kwargs):
+        self.canvas.configure(scrollregion=self.canvas.bbox('all'))
+
+    def bind_dbl_left_click(self, callback):
+        for entry in self.entries:
+            entry.bind_dbl_left_click(callback)
+
+    def bind_dbl_right_click(self, callback):
+        for entry in self.entries:
+            entry.bind_dbl_right_click(callback)
+
+    def bind_right_click(self, callback):
+        for entry in self.entries:
+            entry.bind_right_click(callback)
+
+
+class HeatmapLegend(LegendBase):
+    COPYNUM_LABELS = [
+        "    0", "    1", "    2", "    3", "    4+"
+    ]
+
+    def __init__(self, master, controller, subject):
+        super(HeatmapLegend, self).__init__(
+            master,
+            title="Heatmap Legend",
+            controller=controller,
+            subject=subject)
+
+    def show_legend(self):
+        cmap = ColorMap.make_diverging05()
+        for index, label in enumerate(self.COPYNUM_LABELS):
+            color = cmap.colors(index)
+            self.append_entry(label, color)
+
+
+class ShowSingleSectorCommand(Command):
+
+    def __init__(self, model, sector_id):
+        self.model = model
+        self.sector_id = sector_id
+
+    def execute(self):
+        try:
+            sector_model = SingleSectorDataModel(self.model, self.sector_id)
+            sector_model.make()
+
+            controller = SingleSectorController(sector_model)
+
+            root = tk.Toplevel()
+            data_subject = DataSubject()
+            profiles_subject = ProfilesSubject()
+
+            main = BaseHeatmapWindow(
+                root, controller, data_subject, profiles_subject)
+            main.build_ui()
+            data_subject.set_model(sector_model)
+
+            root.mainloop()
+        except Exception:
+            traceback.print_exc()
+
+
+class SectorsLegend(LegendBase):
+
+    def __init__(self, master, controller, subject):
+        super(SectorsLegend, self).__init__(
+            master, title="Sectors Legend",
+            controller=controller,
+            subject=subject)
+
+    def update(self):
+        super(SectorsLegend, self).update()
+        if self.model is None:
+            return
+        self.sectors = self.model.make_sectors_legend()
+        if self.sectors is None:
+            return
+
+        self.cmap = ColorMap.make_qualitative12()
+
+        for (index, (sector, pathology)) in enumerate(self.sectors):
+            color = self.cmap.colors(index)
+            self.append_entry(
+                text='{}: {}'.format(sector, pathology),
+                color=color)
+
+        self.bind_right_click(self.show_sector_pathology)
+        self.bind_dbl_left_click(self.show_single_sector)
+        self.master.after(500, self.configure_update, self)
+
+    def show_sector_pathology(self, index):
+        if self.sectors is None:
+            return
+        (_sector, pathology) = self.sectors[index]
+        if self.model.pathology is None:
+            print("model.pathology is None; stopping...")
+            return
+        image, notes = self.model.pathology.get(
+            pathology, (None, None))
+        if image is None and notes is None:
+            return
+        ShowPathologyDialog(image, notes, self.master)
+
+    def show_single_sector(self, index):
+        if self.sectors is None:
+            return
+        (sector, _) = self.sectors[index]
+        CommandExecutor.execute(ShowSingleSectorCommand(self.model, sector))
+
+
 class BaseHeatmapWindow(DataObserver, ProfilesObserver):
 
     def __init__(self, master, controller, data_subject, profiles_subject):
@@ -280,33 +575,11 @@ class BaseHeatmapWindow(DataObserver, ProfilesObserver):
         sectors_legend = SectorsLegend(
             self.main.legend_ext, self.controller, self.subject)
         sectors_legend.build_ui(row=10)
-        sectors_legend.register_show_single_sector_callback(
-            self.build_single_sector_window)
 
         heatmap_legend = HeatmapLegend(
             self.main.legend_ext, self.controller, self.subject)
         heatmap_legend.build_ui(row=20)
         heatmap_legend.show_legend()
-
-    def build_single_sector_window(self, model, sector_id):
-        try:
-            sector_model = SingleSectorDataModel(model, sector_id)
-            sector_model.make()
-
-            controller = SingleSectorController(sector_model)
-
-            root = tk.Toplevel()
-            data_subject = DataSubject()
-            profiles_subject = ProfilesSubject()
-
-            main = BaseHeatmapWindow(
-                root, controller, data_subject, profiles_subject)
-            main.build_ui()
-            data_subject.set_model(sector_model)
-
-            root.mainloop()
-        except Exception:
-            traceback.print_exc()
 
     def get_profile_indices(self, profiles):
         profile_indices = []

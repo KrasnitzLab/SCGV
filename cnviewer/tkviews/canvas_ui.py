@@ -112,6 +112,7 @@ class CanvasWindow(object):
     def on_closing(self):
         print("CanvasWindow::on_closing called...")
         for cb in self.on_closing_callbacks:
+            print(cb)
             cb()
 
         self.root.quit()     # stops mainloop

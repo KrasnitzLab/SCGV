@@ -197,10 +197,9 @@ class OpenButtons(DataObserver):
 
 class MainWindow(BaseHeatmapWindow):
 
-    def __init__(self, master, controller, subject, profiles_subject):
+    def __init__(self, master, controller, data_subject, profiles_subject):
         super(MainWindow, self).__init__(
-            master, controller, subject, profiles_subject)
-        self.controller.register_on_model_callback(self.on_model_callback)
+            master, controller, data_subject, profiles_subject)
 
     def build_ui(self):
         self.build_base_ui()
@@ -215,7 +214,3 @@ class MainWindow(BaseHeatmapWindow):
 
         open_buttons = OpenButtons(self.main.button_ext, self.subject)
         open_buttons.build_ui()
-
-    def on_model_callback(self, model):
-        self.model = model
-        self.draw_canvas()

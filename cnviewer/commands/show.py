@@ -68,3 +68,6 @@ class ShowSectorsReorderCommand(Command):
 
         sectors_window.draw_canvas()
         root.mainloop()
+
+
+
