@@ -53,8 +53,11 @@ class MainWindow(BaseHeatmapWindow):
         # model.make()
 
         controller = PinmatController(model)
-        pinmat_window = BaseHeatmapWindow(root, controller)
+        subject = DataSubject()
+        pinmat_window = BaseHeatmapWindow(root, controller, subject)
         pinmat_window.build_ui()
+
+        subject.set_model(model)
 
         def on_close():
             pinmat_button.enable_ui()
