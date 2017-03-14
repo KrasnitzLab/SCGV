@@ -24,7 +24,7 @@ from views.error import ErrorViewer
 import traceback
 from views.dendrogram import DendrogramViewer
 from utils.observer import DataObserver, ProfilesObserver
-from models.subject import DataSubject
+from models.subject import DataSubject, ProfilesSubject
 from commands.widget import DisableCommand, EnableCommand
 from commands.executor import CommandExecutor
 from commands.profiles import ShowProfilesCommand,\
@@ -296,10 +296,13 @@ class BaseHeatmapWindow(DataObserver, ProfilesObserver):
             controller = SingleSectorController(sector_model)
 
             root = tk.Toplevel()
-            subject = DataSubject()
-            main = BaseHeatmapWindow(root, controller, subject)
+            data_subject = DataSubject()
+            profiles_subject = ProfilesSubject()
+
+            main = BaseHeatmapWindow(
+                root, controller, data_subject, profiles_subject)
             main.build_ui()
-            subject.set_model(sector_model)
+            data_subject.set_model(sector_model)
 
             root.mainloop()
         except Exception:
