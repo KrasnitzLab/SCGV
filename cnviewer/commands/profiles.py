@@ -13,14 +13,20 @@ from tkviews.samples_window import SamplesWindow
 
 class ShowProfilesCommand(Command):
 
-    def __init__(self, model, samples):
+    def __init__(self, model, profiles_subject):
         self.model = model
-        self.samples = samples
+        self.profiles_subject = profiles_subject
 
     def execute(self):
+        profiles = self.profiles_subject.get_available_profiles()
+        if not profiles:
+            return
+
+        self.profiles_subject.clear_profiles()
+
         root = tk.Toplevel()
         controller = SamplesController(self.model)
-        samples_window = SamplesWindow(root, controller, self.samples)
+        samples_window = SamplesWindow(root, controller, profiles)
         samples_window.build_ui()
         samples_window.draw_canvas()
         root.mainloop()
@@ -28,28 +34,18 @@ class ShowProfilesCommand(Command):
 
 class ClearProfilesCommand(Command):
 
-    def __init__(self, master, profiles_box):
-        self.master = master
-        self.profiles_box = profiles_box
+    def __init__(self, profiles_subject):
+        self.profiles_subject = profiles_subject
 
     def execute(self):
-        profiles = self.profiles_box.get(0, 'end')
-        self.profiles_box.delete(0, 'end')
-        self.master.unhighlight_profile_labels(profiles)
+        self.profiles_subject.clear_profiles()
 
 
 class AddProfilesCommand(Command):
 
-    def __init__(self, master, profiles_box, profiles):
-        self.master = master
-        self.profiles_box = profiles_box
+    def __init__(self, profiles_subject, profiles):
+        self.profiles_subject = profiles_subject
         self.profiles = profiles
 
     def execute(self):
-        for profile in self.profiles:
-            profiles = self.profile_ui.get(0, 'end')
-            if profile in profiles:
-                continue
-            self.profile_ui.insert("end", profile)
-        profiles = self.profile_ui.get(0, 'end')
-        self.master.highlight_profiles_labels(profiles)
+        self.profiles_subject.add_profiles(self.profiles)

@@ -23,13 +23,12 @@ from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 import traceback
 from views.dendrogram import DendrogramViewer
-from utils.observer import DataObserver
+from utils.observer import DataObserver, ProfilesObserver
 from models.subject import DataSubject
 from commands.widget import DisableCommand, EnableCommand
 from commands.executor import CommandExecutor
-from commands.profiles import AddProfilesCommand, ShowProfilesCommand,\
-    ClearProfilesCommand
-from commands.command import MacroCommand
+from commands.profiles import ShowProfilesCommand,\
+    ClearProfilesCommand, AddProfilesCommand
 
 
 class AddProfileDialog(simpledialog.Dialog):
@@ -52,11 +51,11 @@ class AddProfileDialog(simpledialog.Dialog):
         return self.result
 
 
-class ProfilesUi(DataObserver):
+class ProfilesUi(DataObserver, ProfilesObserver):
 
-    def __init__(self, parent, frame, subject):
-        super(ProfilesUi, self).__init__(subject)
-        self.parent = parent
+    def __init__(self, frame, subject, profiles_subject):
+        DataObserver.__init__(self, subject)
+        ProfilesObserver.__init__(self, profiles_subject)
         self.frame = frame
 
     def build_ui(self):
@@ -111,12 +110,20 @@ class ProfilesUi(DataObserver):
             self.clear_profiles)
         CommandExecutor.execute(enable_command)
 
+    def update_profiles(self):
+        if self.get_profiles().get_available_profiles():
+            self._add_profile_samples(
+                self.get_profiles().get_available_profiles())
+        elif self.get_profiles().get_removed_profiles():
+            self.profiles_ui.delete(0, 'end')
+
     def _add_profile_samples(self, samples):
-        CommandExecutor.execute(
-            AddProfilesCommand(
-                self.parent,
-                self.profile_ui,
-                samples))
+        for profile in samples:
+            profiles = self.profile_ui.get(0, 'end')
+            if profile in profiles:
+                continue
+            self.profile_ui.insert("end", profile)
+        profiles = self.profile_ui.get(0, 'end')
 
     def _show_profiles(self):
         print("show profiles called...")
@@ -125,18 +132,13 @@ class ProfilesUi(DataObserver):
             return
 
         CommandExecutor.execute(
-            MacroCommand(
-                ShowProfilesCommand(self.model, samples),
-                ClearProfilesCommand(self.parent, self.profile_ui)
-            )
+            ShowProfilesCommand(self.model, self.profiles_subject),
         )
 
     def _clear_profiles(self):
         print("clear profiles called...")
         CommandExecutor.execute(
-            ClearProfilesCommand(
-                self.parent, self.profile_ui
-            )
+            ClearProfilesCommand(self.profiles_subject)
         )
 
     def _add_profile_dialog(self):
@@ -153,13 +155,16 @@ class ProfilesUi(DataObserver):
             p for p in profiles
             if p in self.model.column_labels
         ]
-        self._add_profile_samples(profiles)
+        CommandExecutor.execute(
+            AddProfilesCommand(self.profiles_subject, profiles)
+        )
 
 
-class BaseHeatmapWindow(DataObserver):
+class BaseHeatmapWindow(DataObserver, ProfilesObserver):
 
-    def __init__(self, master, controller, subject):
-        DataObserver.__init__(self, subject)
+    def __init__(self, master, controller, data_subject, profiles_subject):
+        DataObserver.__init__(self, data_subject)
+        ProfilesObserver.__init__(self, profiles_subject)
 
         self.master = master
         self.controller = controller
@@ -169,7 +174,14 @@ class BaseHeatmapWindow(DataObserver):
         self.model = self.get_model()
         if self.model is not None:
             self.draw_canvas()
-        self.controller.set_model(self.model)
+
+    def update_profiles(self):
+        if self.get_profiles().get_available_profiles():
+            self.highlight_profiles_labels(
+                self.get_profiles().get_available_profiles())
+        elif self.get_profiles().get_removed_profiles():
+            self.unhighlight_profile_labels(
+                self.get_profiles().get_removed_profiles())
 
     def refresh(self):
         self.main.refresh()
@@ -240,10 +252,11 @@ class BaseHeatmapWindow(DataObserver):
     def event_handler(self, event):
         if event.name == 'button_press_event' and event.button == 3:
             sample = self.locate_sample_click(event)
-            self.add_samples([sample])
-
-    def add_samples(self, samples):
-        print(samples)
+            if not sample:
+                return
+            CommandExecutor.execute(
+                AddProfilesCommand(self.profiles_subject, [sample])
+            )
 
     def locate_sample_click(self, event):
         if event.xdata is None:
@@ -261,7 +274,7 @@ class BaseHeatmapWindow(DataObserver):
         self.fig = self.main.fig
 
         profiles = ProfilesUi(
-            self, self.main.button_ext, self.subject)
+            self.main.button_ext, self.subject, self.profiles_subject)
         profiles.build_ui()
 
         sectors_legend = SectorsLegend(
@@ -274,9 +287,6 @@ class BaseHeatmapWindow(DataObserver):
             self.main.legend_ext, self.controller, self.subject)
         heatmap_legend.build_ui(row=20)
         heatmap_legend.show_legend()
-
-    def build_sample_window(self, samples):
-        print("build_sample_window called... showing: {}".format(samples))
 
     def build_single_sector_window(self, model, sector_id):
         try:

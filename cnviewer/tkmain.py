@@ -4,7 +4,7 @@ Created on Jan 16, 2017
 @author: lubo
 '''
 import matplotlib as mpl
-from models.subject import DataSubject
+from models.subject import DataSubject, ProfilesSubject
 from commands.executor import CommandExecutor
 mpl.use('TkAgg')
 
@@ -21,9 +21,12 @@ def main():
 
     CommandExecutor.start(root)
 
-    subject = DataSubject()
+    data_subject = DataSubject()
+    profiles_subject = ProfilesSubject()
+
     controller = MainController()
-    main = MainWindow(root, controller, subject)
+    main = MainWindow(
+        root, controller, data_subject, profiles_subject)
     main.build_ui()
 
     root.columnconfigure(0, weight=1)

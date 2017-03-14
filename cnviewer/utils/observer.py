@@ -23,11 +23,12 @@ class DataObserver(object):
 
 class ProfilesObserver(object):
 
-    def __init__(self, profiles):
-        self.profiles = profiles
+    def __init__(self, profiles_subject):
+        self.profiles_subject = profiles_subject
+        self.profiles_subject.register_observer(self)
 
     def update_profiles(self):
         raise NotImplemented()
 
     def get_profiles(self):
-        return self.profiles
+        return self.profiles_subject
