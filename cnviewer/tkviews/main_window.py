@@ -12,7 +12,6 @@ from commands.show import ShowSectorsReorderCommand
 from commands.widget import EnableCommand, DisableCommand
 from tkviews.base_window import BaseHeatmapWindow
 from tkviews.open_ui import OpenUi
-from tkviews.sectors_ui import SectorsUi
 from utils.observer import Observer
 
 
@@ -56,6 +55,48 @@ class PinsButton(Observer):
         CommandExecutor.execute(enable_command)
 
 
+class SectorsButton(Observer):
+
+    def __init__(self, master, subject):
+        super(SectorsButton, self).__init__(subject)
+        self.master = master
+
+    def build_ui(self):
+        frame = ttk.Frame(
+            self.master,
+            borderwidth=5)
+        frame.grid(
+            row=40, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+        self.button = ttk.Button(
+            master=frame, text="Sectors Reorder", command=self._show_sectors)
+        self.button.config(state=tk.DISABLED)
+
+        self.button.grid(
+            column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(0, weight=1)
+        # super(SectorsUi, self).build_ui()
+
+    def update(self):
+        self.model = self.get_model()
+
+        if self.model is None or self.model.sector is None:
+            return
+        enable_command = EnableCommand(self.button)
+        CommandExecutor.execute(enable_command)
+
+    def _show_sectors(self):
+        print("show sectors called...")
+        assert self.model is not None
+
+        disable_command = DisableCommand(self.button)
+        show_sectors = ShowSectorsReorderCommand(
+            self.model, EnableCommand(self.button))
+        macro = MacroCommand(disable_command, show_sectors)
+        CommandExecutor.execute(macro)
+
+
 class MainWindow(BaseHeatmapWindow):
 
     def __init__(self, master, controller, subject):
@@ -69,10 +110,9 @@ class MainWindow(BaseHeatmapWindow):
             self.main.button_ext, self.subject)
         pinmat.build_ui()
 
-        sectors = SectorsUi(
-            self.main.button_ext, self.controller, self.subject)
+        sectors = SectorsButton(
+            self.main.button_ext, self.subject)
         sectors.build_ui()
-        sectors.register_on_sectors_reorder(self.build_sectors_reorder)
 
         open_buttons = OpenUi(self.main.button_ext, self.subject)
         open_buttons.build_ui()
@@ -80,10 +120,3 @@ class MainWindow(BaseHeatmapWindow):
     def on_model_callback(self, model):
         self.model = model
         self.draw_canvas()
-
-    def build_sectors_reorder(self, sectors_button):
-        disable_command = DisableCommand(sectors_button.show_sectors)
-        show_sectors = ShowSectorsReorderCommand(
-            self.model, EnableCommand(sectors_button.show_sectors))
-        macro = MacroCommand(disable_command, show_sectors)
-        CommandExecutor.execute(macro)

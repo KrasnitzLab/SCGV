@@ -3,6 +3,7 @@ Created on Mar 14, 2017
 
 @author: lubo
 '''
+import traceback
 
 
 class DataSubject(object):
@@ -23,7 +24,11 @@ class DataSubject(object):
 
     def notify(self):
         for observer in self.observers:
-            observer.update()
+            try:
+                observer.update()
+            except Exception:
+                print("unexpected exception during notify...")
+                traceback.print_exc()
 
     def get_model(self):
         return self.model
