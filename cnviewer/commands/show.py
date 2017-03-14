@@ -6,7 +6,7 @@ Created on Mar 14, 2017
 from tkviews.tkimport import *  # @UnusedWildImport
 from models.pinmat_model import PinmatModel
 from controllers.controller import PinmatController, SectorsController
-from models.subject import DataSubject
+from models.subject import DataSubject, ProfilesSubject
 from tkviews.base_window import BaseHeatmapWindow
 from commands.executor import CommandExecutor
 from commands.command import Command
@@ -28,11 +28,14 @@ class ShowPinsCommand(Command):
         # model.make()
 
         controller = PinmatController(model)
-        subject = DataSubject()
-        pinmat_window = BaseHeatmapWindow(root, controller, subject)
+        data_subject = DataSubject()
+        profiles_subject = ProfilesSubject()
+
+        pinmat_window = BaseHeatmapWindow(
+            root, controller, data_subject, profiles_subject)
         pinmat_window.build_ui()
 
-        subject.set_model(model)
+        data_subject.set_model(model)
 
         def on_close():
             CommandExecutor.execute(self.on_close)
@@ -56,11 +59,14 @@ class ShowSectorsReorderCommand(Command):
         sectors_model.make()
 
         controller = SectorsController(sectors_model)
-        subject = DataSubject()
-        sectors_window = SectorsWindow(root, controller, subject)
+        data_subject = DataSubject()
+        profiles_subject = ProfilesSubject()
+
+        sectors_window = SectorsWindow(
+            root, controller, data_subject, profiles_subject)
         sectors_window.build_ui()
 
-        subject.set_model(sectors_model)
+        data_subject.set_model(sectors_model)
 
         def on_close():
             CommandExecutor.execute(self.on_close)
@@ -68,6 +74,3 @@ class ShowSectorsReorderCommand(Command):
 
         sectors_window.draw_canvas()
         root.mainloop()
-
-
-

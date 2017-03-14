@@ -16,8 +16,9 @@ from views.error import ErrorViewer
 
 class SectorsWindow(BaseHeatmapWindow):
 
-    def __init__(self, master, controller, subject):
-        super(SectorsWindow, self).__init__(master, controller, subject)
+    def __init__(self, master, controller, data_subject, profiles_subject):
+        super(SectorsWindow, self).__init__(
+            master, controller, data_subject, profiles_subject)
         assert controller.model is not None
 
     def draw_canvas(self):
