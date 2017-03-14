@@ -115,7 +115,7 @@ class ProfilesUi(DataObserver, ProfilesObserver):
             self._add_profile_samples(
                 self.get_profiles().get_available_profiles())
         elif self.get_profiles().get_removed_profiles():
-            self.profiles_ui.delete(0, 'end')
+            self.profile_ui.delete(0, 'end')
 
     def _add_profile_samples(self, samples):
         for profile in samples:
