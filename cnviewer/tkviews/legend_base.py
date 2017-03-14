@@ -67,8 +67,8 @@ class LegendEntry(object):
 
 class LegendBase(BaseUi):
 
-    def __init__(self, master, title, controller):
-        super(LegendBase, self).__init__(master, controller)
+    def __init__(self, master, title, controller, subject):
+        super(LegendBase, self).__init__(master, controller, subject)
         self.title = title
 
     def enable_ui(self):
@@ -111,7 +111,7 @@ class LegendBase(BaseUi):
         self.container = tk.Frame(self.canvas, background='white')
         self.canvas.create_window((0, 0), window=self.container, anchor='nw')
 
-        self.connect_controller()
+        # self.connect_controller()
         configure_update(None)
 
     def append_entry(self, text, color=None):
@@ -120,7 +120,7 @@ class LegendBase(BaseUi):
         entry.build_label(self.container)
         self.entries.append(entry)
 
-    def update(self, *args, **kwargs):
+    def configure_update(self, *args, **kwargs):
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
 
     def bind_dbl_left_click(self, callback):

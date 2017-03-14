@@ -9,8 +9,8 @@ from tkviews.base_ui import BaseUi
 
 class PinmatUi(BaseUi):
 
-    def __init__(self, master, controller):
-        super(PinmatUi, self).__init__(master, controller)
+    def __init__(self, master, controller, subject):
+        super(PinmatUi, self).__init__(master, controller, subject)
         self.pinmat_callbacks = []
 
     def build_ui(self):
@@ -28,7 +28,7 @@ class PinmatUi(BaseUi):
             column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
-        super(PinmatUi, self).build_ui()
+        # super(PinmatUi, self).build_ui()
 
     def register_on_pinmat(self, callback):
         self.pinmat_callbacks.append(callback)

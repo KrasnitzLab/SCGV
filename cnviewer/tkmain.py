@@ -4,6 +4,8 @@ Created on Jan 16, 2017
 @author: lubo
 '''
 import matplotlib as mpl
+from models.subject import DataSubject
+from commands.executor import CommandExecutor
 mpl.use('TkAgg')
 
 from tkviews.tkimport import *  # @UnusedWildImport @NoMove @IgnorePep8
@@ -17,8 +19,11 @@ def main():
     root = tk.Tk()
     root.wm_title("cnviewer")
 
+    CommandExecutor.start(root)
+
+    subject = DataSubject()
     controller = MainController()
-    main = MainWindow(root, controller)
+    main = MainWindow(root, controller, subject)
     main.build_ui()
 
     root.columnconfigure(0, weight=1)

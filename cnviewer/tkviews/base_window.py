@@ -25,11 +25,14 @@ from views.multiplier import MultiplierViewer
 from views.error import ErrorViewer
 import traceback
 from views.dendrogram import DendrogramViewer
+from utils.observer import Observer
 
 
-class BaseHeatmapWindow(object):
+class BaseHeatmapWindow(Observer):
 
-    def __init__(self, master, controller):
+    def __init__(self, master, controller, subject):
+        super(BaseHeatmapWindow, self).__init__(subject)
+
         self.master = master
         self.controller = controller
         self.controller.register_sample_cb(
@@ -39,6 +42,11 @@ class BaseHeatmapWindow(object):
         )
         self.ax_label = None
 
+    def update(self):
+        self.model = self.get_model()
+        if self.model is not None:
+            self.draw_canvas()
+
     def refresh(self):
         self.main.refresh()
 
@@ -46,8 +54,7 @@ class BaseHeatmapWindow(object):
         self.main.register_on_closing_callback(cb)
 
     def draw_canvas(self):
-        assert self.controller.model is not None
-        self.model = self.controller.model
+        assert self.model is not None
 
         ax_dendro = self.fig.add_axes([0.1, 0.775, 0.8, 0.175], frame_on=True)
         dendro_viewer = DendrogramViewer(self.model)
@@ -111,15 +118,18 @@ class BaseHeatmapWindow(object):
         self.main = CanvasWindow(self.master, self.controller)
         self.fig = self.main.fig
 
-        profiles = ProfilesUi(self.main.button_ext, self.controller)
+        profiles = ProfilesUi(
+            self.main.button_ext, self.controller, self.subject)
         profiles.build_ui()
 
-        sectors_legend = SectorsLegend(self.main.legend_ext, self.controller)
+        sectors_legend = SectorsLegend(
+            self.main.legend_ext, self.controller, self.subject)
         sectors_legend.build_ui(row=10)
         sectors_legend.register_show_single_sector_callback(
             self.build_single_sector_window)
 
-        heatmap_legend = HeatmapLegend(self.main.legend_ext, self.controller)
+        heatmap_legend = HeatmapLegend(
+            self.main.legend_ext, self.controller, self.subject)
         heatmap_legend.build_ui(row=20)
         heatmap_legend.show_legend()
 

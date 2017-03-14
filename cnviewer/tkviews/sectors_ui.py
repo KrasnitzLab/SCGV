@@ -10,8 +10,8 @@ from tkviews.base_ui import BaseUi
 
 class SectorsUi(BaseUi):
 
-    def __init__(self, master, controller):
-        super(SectorsUi, self).__init__(master, controller)
+    def __init__(self, master, controller, subject):
+        super(SectorsUi, self).__init__(master, controller, subject)
         self.sectors_reorder_callbacks = []
 
     def build_ui(self):
@@ -29,7 +29,7 @@ class SectorsUi(BaseUi):
             column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
-        super(SectorsUi, self).build_ui()
+        # super(SectorsUi, self).build_ui()
 
     def enable_ui(self):
         if self.model.sector is None:

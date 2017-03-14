@@ -14,11 +14,12 @@ class HeatmapLegend(LegendBase):
         "    0", "    1", "    2", "    3", "    4+"
     ]
 
-    def __init__(self, master, controller):
+    def __init__(self, master, controller, subject):
         super(HeatmapLegend, self).__init__(
             master,
             title="Heatmap Legend",
-            controller=controller)
+            controller=controller,
+            subject=subject)
 
     def show_legend(self):
         cmap = ColorMap.make_diverging05()

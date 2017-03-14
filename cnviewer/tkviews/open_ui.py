@@ -5,18 +5,17 @@ Created on Jan 17, 2017
 '''
 from tkviews.tkimport import *  # @UnusedWildImport
 
-import threading
-import traceback
+from utils.observer import Observer
+from commands.open import OpenCommand
+from commands.executor import CommandExecutor
 
 
-class OpenUi(object):
+class OpenUi(Observer):
     DELAY = 500
 
-    def __init__(self, master, controller):
+    def __init__(self, master, subject):
+        super(OpenUi, self).__init__(subject)
         self.master = master
-        self.controller = controller
-        self.model_lock = threading.RLock()
-        self.model = None
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -60,26 +59,31 @@ class OpenUi(object):
         if not filename:
             print("open directory canceled...")
             return
-        self.filename = filename
-        self._start_loading()
+        self._start_loading(filename)
 
-    def _start_loading(self):
+    def _start_loading(self, filename):
         self.open_archive_button.config(state=tk.DISABLED)
         self.open_dir_button.config(state=tk.DISABLED)
-        self.loader_task = threading.Thread(target=self._loading, args=[self])
-        self.loader_task.start()
-        self.master.after(1 * self.DELAY, self._on_loading_progress, self)
         self.progress.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.progress.start()
+        command = OpenCommand(self.master, self.subject, filename)
+        CommandExecutor.execute(command)
+
+    def _stop_loading(self):
+        self.progress.stop()
+        self.progress.grid_remove()
+
+    def update(self):
+        if self.get_model() is None:
+            self._reset_loading()
+        else:
+            self._stop_loading()
 
     def _reset_loading(self):
         self.progress.stop()
         self.progress.grid_remove()
         self.open_archive_button.config(state=tk.ACTIVE)
         self.open_dir_button.config(state=tk.ACTIVE)
-        self.controller.reset_model()
-        self.model = None
-        self.model_lock.release()
 
     def _open_archive(self):
         filename = askopenfilename(filetypes=(
@@ -89,38 +93,4 @@ class OpenUi(object):
         if not filename:
             print("openfilename canceled...")
             return
-        self.filename = filename
-        self._start_loading()
-
-    def _on_loading_progress(self, *args):
-        if self.loader_task.is_alive():
-            self.master.after(self.DELAY, self._on_loading_progress, self)
-            return
-
-        if not self.model_lock.acquire(False):
-            return
-
-        with self.model_lock:
-            if self.model:
-                self.progress.stop()
-                self.progress.grid_remove()
-                self.master.after(
-                    self.DELAY,
-                    self.controller.trigger_on_model_callbacks)
-
-            else:
-                self._reset_loading()
-                messagebox.showerror(
-                    title="Wrong file/directory type",
-                    message="Single Cell Genomics data set expected")
-
-    def _loading(self, *args):
-        with self.model_lock:
-            try:
-                self.model = self.controller.load_model(self.filename)
-                return True
-            except Exception:
-                print("wrong dataset format")
-                traceback.print_exc()
-                self.model = None
-                return False
+        self._start_loading(filename)

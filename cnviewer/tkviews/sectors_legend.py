@@ -85,13 +85,16 @@ class ShowPathologyDialog(tk.Toplevel):
 
 class SectorsLegend(LegendBase):
 
-    def __init__(self, master, controller):
+    def __init__(self, master, controller, subject):
         super(SectorsLegend, self).__init__(
             master, title="Sectors Legend",
-            controller=controller)
+            controller=controller,
+            subject=subject)
 
-    def on_model(self, model):
-        self.model = model
+    def update(self):
+        super(SectorsLegend, self).update()
+        if self.model is None:
+            return
         self.sectors = self.model.make_sectors_legend()
         if self.sectors is None:
             return
@@ -106,7 +109,7 @@ class SectorsLegend(LegendBase):
 
         self.bind_right_click(self.show_sector_pathology)
         self.bind_dbl_left_click(self.show_single_sector)
-        self.master.after(500, self.update, self)
+        self.master.after(500, self.configure_update, self)
 
     def register_show_single_sector_callback(self, callback):
         self.show_single_sector_callback = callback

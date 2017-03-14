@@ -8,6 +8,17 @@ import threading
 import traceback
 
 from models.model import DataModel
+from commands.executor import CommandExecutor
+
+
+class SetModelCommand(object):
+
+    def __init__(self, subject, model):
+        self.subject = subject
+        self.model = model
+
+    def execute(self):
+        self.subject.set_model(self.model)
 
 
 class OpenCommand(object):
@@ -37,7 +48,5 @@ class OpenCommand(object):
             self.set_model(None)
 
     def set_model(self, model):
-        def model_setter(*args):
-            self.subject.set_model(model)
-
-        self.master.after(self.DELAY, model_setter, self)
+        command = SetModelCommand(self.subject, model)
+        CommandExecutor.execute(command)

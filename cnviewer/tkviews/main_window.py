@@ -20,22 +20,24 @@ from controllers.controller import PinmatController, SectorsController
 
 class MainWindow(BaseHeatmapWindow):
 
-    def __init__(self, master, controller):
-        super(MainWindow, self).__init__(master, controller)
+    def __init__(self, master, controller, subject):
+        super(MainWindow, self).__init__(master, controller, subject)
         self.controller.register_on_model_callback(self.on_model_callback)
 
     def build_ui(self):
         self.build_base_ui()
 
-        pinmat = PinmatUi(self.main.button_ext, self.controller)
+        pinmat = PinmatUi(
+            self.main.button_ext, self.controller, self.subject)
         pinmat.build_ui()
         pinmat.register_on_pinmat(self.build_pinmat)
 
-        sectors = SectorsUi(self.main.button_ext, self.controller)
+        sectors = SectorsUi(
+            self.main.button_ext, self.controller, self.subject)
         sectors.build_ui()
         sectors.register_on_sectors_reorder(self.build_sectors_reorder)
 
-        open_buttons = OpenUi(self.main.button_ext, self.controller)
+        open_buttons = OpenUi(self.main.button_ext, self.subject)
         open_buttons.build_ui()
 
     def on_model_callback(self, model):

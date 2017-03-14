@@ -30,8 +30,8 @@ class AddProfileDialog(simpledialog.Dialog):
 
 class ProfilesUi(BaseUi):
 
-    def __init__(self, master, controller):
-        super(ProfilesUi, self).__init__(master, controller)
+    def __init__(self, master, controller, subject):
+        super(ProfilesUi, self).__init__(master, controller, subject)
 
     def build_ui(self):
         frame = ttk.Frame(
@@ -70,16 +70,16 @@ class ProfilesUi(BaseUi):
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
 
-        super(ProfilesUi, self).build_ui()
+        # super(ProfilesUi, self).build_ui()
 
-    def connect_controller(self):
-        super(ProfilesUi, self).connect_controller()
-
-        self.controller.register_sample_cb(
-            self.on_add_samples_callback,
-            None,
-            None
-        )
+#     def connect_controller(self):
+#         super(ProfilesUi, self).connect_controller()
+# 
+#         self.controller.register_sample_cb(
+#             self.on_add_samples_callback,
+#             None,
+#             None
+#         )
 
     def disable_ui(self):
         self.add_profile.config(state=tk.DISABLED)
