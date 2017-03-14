@@ -49,6 +49,8 @@ class ProfilesSubject(object):
         self.profile_observers.append(observer)
 
     def notify_profiles(self):
+        traceback.print_stack()
+
         for observer in self.profile_observers:
             try:
                 observer.update_profiles()

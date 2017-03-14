@@ -22,8 +22,7 @@ class SectorsWindow(BaseHeatmapWindow):
         assert controller.model is not None
 
     def draw_canvas(self):
-        assert self.controller.model is not None
-        self.model = self.controller.model
+        assert self.model is not None
 
         ax_clone = self.fig.add_axes(
             [0.1, 0.9375, 0.8, 0.0125], frame_on=True)
@@ -69,4 +68,4 @@ class SectorsWindow(BaseHeatmapWindow):
         plt.setp(ax_gate.get_xticklabels(), visible=False)
         plt.setp(ax_multiplier.get_xticklabels(), visible=False)
 
-        self.controller.event_loop_connect(self.fig)
+        self.connect_event_loop()

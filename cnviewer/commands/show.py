@@ -35,13 +35,12 @@ class ShowPinsCommand(Command):
             root, controller, data_subject, profiles_subject)
         pinmat_window.build_ui()
 
-        data_subject.set_model(model)
-
         def on_close():
             CommandExecutor.execute(self.on_close)
         pinmat_window.register_on_closing_callback(on_close)
 
-        pinmat_window.draw_canvas()
+        data_subject.set_model(model)
+
         root.mainloop()
 
 
@@ -66,11 +65,9 @@ class ShowSectorsReorderCommand(Command):
             root, controller, data_subject, profiles_subject)
         sectors_window.build_ui()
 
-        data_subject.set_model(sectors_model)
-
         def on_close():
             CommandExecutor.execute(self.on_close)
         sectors_window.register_on_closing_callback(on_close)
 
-        sectors_window.draw_canvas()
+        data_subject.set_model(sectors_model)
         root.mainloop()

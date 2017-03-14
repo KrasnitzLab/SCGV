@@ -331,7 +331,6 @@ class LegendBase(BaseUi):
         self.container = tk.Frame(self.canvas, background='white')
         self.canvas.create_window((0, 0), window=self.container, anchor='nw')
 
-        # self.connect_controller()
         configure_update(None)
 
     def append_entry(self, text, color=None):
@@ -534,10 +533,12 @@ class BaseHeatmapWindow(DataObserver, ProfilesObserver):
         plt.setp(ax_gate.get_xticklabels(), visible=False)
         plt.setp(ax_multiplier.get_xticklabels(), visible=False)
 
+        self.main.refresh()
+        self.connect_event_loop()
+
+    def connect_event_loop(self):
         self.fig.canvas.mpl_connect('button_press_event', self.event_handler)
         self.fig.canvas.mpl_connect('key_press_event', self.event_handler)
-
-        self.main.refresh()
 
     def event_handler(self, event):
         if event.name == 'button_press_event' and event.button == 3:
