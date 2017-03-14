@@ -118,10 +118,10 @@ class SectorsLegend(LegendBase):
         if self.sectors is None:
             return
         (_sector, pathology) = self.sectors[index]
-        if self.controller.model.pathology is None:
+        if self.model.pathology is None:
             print("model.pathology is None; stopping...")
             return
-        image, notes = self.controller.model.pathology.get(
+        image, notes = self.model.pathology.get(
             pathology, (None, None))
         if image is None and notes is None:
             return
