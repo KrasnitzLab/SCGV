@@ -131,12 +131,14 @@ class ProfilesUi(DataObserver, ProfilesObserver):
 
         CommandExecutor.execute(
             ShowProfilesCommand(self.model, self.profiles_subject),
+            self.frame
         )
 
     def _clear_profiles(self):
         print("clear profiles called...")
         CommandExecutor.execute(
-            ClearProfilesCommand(self.profiles_subject)
+            ClearProfilesCommand(self.profiles_subject),
+            self.frame
         )
 
     def _add_profile_dialog(self):
@@ -154,7 +156,8 @@ class ProfilesUi(DataObserver, ProfilesObserver):
             if p in self.model.column_labels
         ]
         CommandExecutor.execute(
-            AddProfilesCommand(self.profiles_subject, profiles)
+            AddProfilesCommand(self.profiles_subject, profiles),
+            self.frame
         )
 
 
@@ -446,7 +449,9 @@ class SectorsLegend(LegendBase):
         if self.sectors is None:
             return
         (sector, _) = self.sectors[index]
-        CommandExecutor.execute(ShowSingleSectorCommand(self.model, sector))
+        CommandExecutor.execute(
+            ShowSingleSectorCommand(self.model, sector),
+            self.master)
 
 
 class BaseHeatmapWindow(DataObserver, ProfilesObserver):
@@ -546,7 +551,8 @@ class BaseHeatmapWindow(DataObserver, ProfilesObserver):
             if not sample:
                 return
             CommandExecutor.execute(
-                AddProfilesCommand(self.profiles_subject, [sample])
+                AddProfilesCommand(self.profiles_subject, [sample]),
+                self.master
             )
 
     def locate_sample_click(self, event):

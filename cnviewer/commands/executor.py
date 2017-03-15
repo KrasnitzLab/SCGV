@@ -42,9 +42,13 @@ class CommandExecutor(object):
         cls.EXECUTOR.run()
 
     @classmethod
-    def execute(cls, command):
+    def execute(cls, command, master):
         assert isinstance(command, Command)
-        cls.EXECUTOR.queue.put(command)
+
+        def do_command():
+            command.execute()
+
+        master.after_idle(do_command)
 
     @classmethod
     def execute_after(cls, command):

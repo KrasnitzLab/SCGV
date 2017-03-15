@@ -49,4 +49,4 @@ class OpenCommand(Command):
 
     def set_model(self, model):
         command = SetModelCommand(self.subject, model)
-        CommandExecutor.execute(command)
+        CommandExecutor.execute_after(command)
