@@ -45,14 +45,14 @@ class PinsButton(DataObserver):
         show_pins = ShowPinsCommand(
             self.model, EnableCommand(self.button))
         macro = MacroCommand(disable_command, show_pins)
-        CommandExecutor.execute(macro)
+        CommandExecutor.execute_after(macro)
 
     def update(self):
         self.model = self.get_model()
         if self.model is None or self.model.data.pins_df is None:
             return
         enable_command = EnableCommand(self.button)
-        CommandExecutor.execute(enable_command)
+        CommandExecutor.execute_after(enable_command)
 
 
 class SectorsButton(DataObserver):
@@ -84,7 +84,7 @@ class SectorsButton(DataObserver):
         if self.model is None or self.model.sector is None:
             return
         enable_command = EnableCommand(self.button)
-        CommandExecutor.execute(enable_command)
+        CommandExecutor.execute_after(enable_command)
 
     def _show_sectors(self):
         print("show sectors called...")
@@ -94,7 +94,7 @@ class SectorsButton(DataObserver):
         show_sectors = ShowSectorsReorderCommand(
             self.model, EnableCommand(self.button))
         macro = MacroCommand(disable_command, show_sectors)
-        CommandExecutor.execute(macro)
+        CommandExecutor.execute_after(macro)
 
 
 class StartProgress(Command):
@@ -175,14 +175,14 @@ class OpenButtons(DataObserver):
             StartProgress(self.progress),
             OpenCommand(self.master, self.subject, filename)
         )
-        CommandExecutor.execute(macro)
+        CommandExecutor.execute_after(macro)
 
     def update(self):
         macro = MacroCommand(StopProgress(self.progress))
         if self.get_model() is None:
             macro.add_command(EnableCommand(self.open_archive_button))
             macro.add_command(EnableCommand(self.open_dir_button))
-        CommandExecutor.execute(macro)
+        CommandExecutor.execute_after(macro)
 
     def _open_archive(self):
         filename = askopenfilename(filetypes=(

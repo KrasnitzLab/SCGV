@@ -45,3 +45,8 @@ class CommandExecutor(object):
     def execute(cls, command):
         assert isinstance(command, Command)
         cls.EXECUTOR.queue.put(command)
+
+    @classmethod
+    def execute_after(cls, command):
+        assert isinstance(command, Command)
+        cls.EXECUTOR.queue.put(command)

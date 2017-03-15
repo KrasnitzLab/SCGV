@@ -23,7 +23,6 @@ class SetModelCommand(Command):
 
 
 class OpenCommand(Command):
-    DELAY = 500
 
     def __init__(self, master, subject, filename):
         assert subject.model is None
