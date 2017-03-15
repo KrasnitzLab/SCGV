@@ -36,7 +36,7 @@ class ShowPinsCommand(Command):
         pinmat_window.build_ui()
 
         def on_close():
-            CommandExecutor.execute(self.on_close)
+            CommandExecutor.execute_after(self.on_close)
         pinmat_window.register_on_closing_callback(on_close)
 
         data_subject.set_model(model)
@@ -66,7 +66,7 @@ class ShowSectorsReorderCommand(Command):
         sectors_window.build_ui()
 
         def on_close():
-            CommandExecutor.execute(self.on_close)
+            CommandExecutor.execute_after(self.on_close)
         sectors_window.register_on_closing_callback(on_close)
 
         data_subject.set_model(sectors_model)
