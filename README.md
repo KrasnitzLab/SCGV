@@ -156,4 +156,38 @@ One directory may contain only one dataset.
 
 * `Open Archive` button allow you to select dataset stored as a `ZIP` archive.
 
+## Viewer Main Window
+
+* After dataset is loaded it will displayed into the main window.
+![CNViewer main window](docs/figs/main-window.png)
+
+* From profiles instruments you can select individual cells to display their CN profile
+into single profile viewer.
+
+* Buttons 'Show Pins' and 'Sectors Reorder' will display different views of the whole
+dataset
+
+* From 'Sectors Legend' you can visualize single sector view and pathology view for
+any given sector.
+
+## Profiles Instuments
+
+* If you right click on a single cell it will be added to list of profiles to visualize
+from 'Show Profiles' button.
+
+* Profiles could be added to this list using 'Add Profiles' dialog window that is shown
+by clicking on 'Add profile' button.
+
+* To show the selected profiles you need to click on 'Show Profiles' button. Selected 
+profiles will be visualized into sample viewer:
+![Sample view window](docs/figs/sample-window.png)
+
+## Sectors Legend
+
+* Double click on a given sector row will launch single sector viewer
+![Single sector window](docs/figs/single-sector-window.png)
+
+* Right click on a given sector row will display pathology image and notes for
+the selected sector
+![Single sector pathology window](docs/figs/single-sector-pathology-window.png)
 
