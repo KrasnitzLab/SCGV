@@ -1,6 +1,6 @@
-sector,pathology,image
-1,Benign prostatic tissue,Area1.Benign.jpg
-2,PIN and benign prostate,Area2.PIN.with.Benign.jpg
-3,Gleason 9 and invading seminal vesicle,Area3.GS9.invading.SV.jpg
-4,Gleason 9 near urethra,Area4.GS9.near.Urethra.jpg
-5,Gleason 9 at capsule,Area5.GS9.at.Capsule.jpg
+sector,pathology,image,notes
+1,Benign prostatic tissue,Area1.Benign.jpg,Area1.Benign.txt
+2,Pin and benign prostate,Area2.PIN.with.Benign.jpg,Area2.PIN.with.Benign.txt
+3,Gleason 9 and invading seminal vesicle,Area3.GS9.invading.SV.jpg,Area3.GS9.invading.SV.txt
+4,Gleason 9 near urethra,Area4.GS9.near.Urethra.jpg,Area4.GS9.near.Urethra.txt
+5,Gleason 9 at capsule,Area5.GS9.at.Capsule.jpg,Area5.GS9.at.Capsule.txt

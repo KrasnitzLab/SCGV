@@ -29,7 +29,7 @@ class PinsButton(DataObserver):
             row=30, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.button = ttk.Button(
-            master=frame, text="Show Pins", command=self._show_pinmat)
+            master=frame, text="Feature View", command=self._show_pinmat)
         self.button.config(state=tk.DISABLED)
 
         self.button.grid(
@@ -69,7 +69,7 @@ class SectorsButton(DataObserver):
             row=40, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.button = ttk.Button(
-            master=frame, text="Sectors Reorder", command=self._show_sectors)
+            master=frame, text="Order by Sector", command=self._show_sectors)
         self.button.config(state=tk.DISABLED)
 
         self.button.grid(

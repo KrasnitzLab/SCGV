@@ -40,31 +40,6 @@ On `Windows` you need to use:
 * Full instructions on how ot use and manage anaconda environments can be found
 here: [http://conda.pydata.org/docs/using/envs.html](http://conda.pydata.org/docs/using/envs.html)
 
-
-## Start the Viewer
-* Before starting the viewer you need to activate viewer Anaconda environment
-    ```
-    source activate aviewer
-    ```
-
-* To start the viewer from project main directory enter into `cnviewer` 
-subdirectory and start `tkmain.py`
-
-    ```bash
-    cd cnviewer
-    python tkmain.py
-    ```
-
-## Select Dataset
-
-* Use `Open Archive` and `Open Directory` buttons to open a data set 
-for visualization
-
-* `Open Directory` button allows you to select a directory where a dataset is located.
-One directory may contain only one dataset.
-
-* `Open Archive` button allow you to select dataset stored as a `ZIP` archive.
-
 ## Dataset Directory Structure
 
 * Files in the dataset should conform to the following naming convention. Each filename
@@ -94,10 +69,15 @@ example dataset directory is following:
     └── pathology
         ├── 9727420.color.map.060414.png
         ├── Area1.Benign.jpg
+        ├── Area1.Benign.txt
         ├── Area2.PIN.with.Benign.jpg
+        ├── Area2.PIN.with.Benign.txt
         ├── Area3.GS9.invading.SV.jpg
+        ├── Area3.GS9.invading.SV.txt
         ├── Area4.GS9.near.Urethra.jpg
+        ├── Area4.GS9.near.Urethra.txt
         ├── Area5.GS9.at.Capsule.jpg
+        ├── Area5.GS9.at.Capsule.txt
         └── description.csv
     ```
 
@@ -107,11 +87,11 @@ contains pathology images and notes. This subdirectory should contain
 
     ```
     sector,pathology,image,notes
-    1,Benign prostatic tissue,Area1.Benign.jpg
-    2,PIN and benign prostate,Area2.PIN.with.Benign.jpg
-    3,Gleason 9 and invading seminal vesicle,Area3.GS9.invading.SV.jpg
-    4,Gleason 9 near urethra,Area4.GS9.near.Urethra.jpg
-    5,Gleason 9 at capsule,Area5.GS9.at.Capsule.jpg
+    1,Benign prostatic tissue,Area1.Benign.jpg,Area1.Benign.txt
+    2,Pin and benign prostate,Area2.PIN.with.Benign.jpg,Area2.PIN.with.Benign.txt
+    3,Gleason 9 and invading seminal vesicle,Area3.GS9.invading.SV.jpg,Area3.GS9.invading.SV.txt
+    4,Gleason 9 near urethra,Area4.GS9.near.Urethra.jpg,Area4.GS9.near.Urethra.txt
+    5,Gleason 9 at capsule,Area5.GS9.at.Capsule.jpg,Area5.GS9.at.Capsule.txt
     ```
 First column in `description.txt` contains the name/id of the sector as in `guide` file, 
 the second column is a description of the sector and the last two columns contain
@@ -128,13 +108,17 @@ into project main directory. The structure of the example dataset is as follows:
     unzip -t example.archive.zip 
     Archive:  example.archive.zip
         testing: pathology/               OK
-        testing: pathology/Area1.Benign.jpg   OK
+        testing: pathology/Area2.PIN.with.Benign.txt   OK
         testing: pathology/description.csv   OK
         testing: pathology/Area5.GS9.at.Capsule.jpg   OK
+        testing: pathology/Area5.GS9.at.Capsule.txt   OK
         testing: pathology/Area4.GS9.near.Urethra.jpg   OK
+        testing: pathology/Area4.GS9.near.Urethra.txt   OK
         testing: pathology/Area3.GS9.invading.SV.jpg   OK
+        testing: pathology/Area3.GS9.invading.SV.txt   OK
         testing: pathology/Area2.PIN.with.Benign.jpg   OK
-        testing: pathology/9727420.color.map.060414.png   OK
+        testing: pathology/Area1.Benign.txt   OK
+        testing: pathology/Area1.Benign.jpg   OK
         testing: example.cells.csv        OK
         testing: example.clone.txt        OK
         testing: example.genome.txt       OK
@@ -147,3 +131,63 @@ into project main directory. The structure of the example dataset is as follows:
     No errors detected in compressed data of example.archive.zip.
     ```
     
+
+## Start the Viewer
+* Before starting the viewer you need to activate viewer Anaconda environment
+    ```
+    source activate aviewer
+    ```
+
+* To start the viewer from project main directory enter into `cnviewer` 
+subdirectory and start `tkmain.py`
+
+    ```bash
+    cd cnviewer
+    python tkmain.py
+    ```
+
+## Select Dataset
+
+* Use `Open Archive` and `Open Directory` buttons to open a data set 
+for visualization
+
+* `Open Directory` button allows you to select a directory where a dataset is located.
+One directory may contain only one dataset.
+
+* `Open Archive` button allow you to select dataset stored as a `ZIP` archive.
+
+## Viewer Main Window
+
+* After dataset is loaded it will displayed into the main window.
+![CNViewer main window](docs/figs/main-window.png)
+
+* From profiles instruments you can select individual cells to display their CN profile
+into single profile viewer.
+
+* Buttons 'Show Pins' and 'Sectors Reorder' will display different views of the whole
+dataset
+
+* From 'Sectors Legend' you can visualize single sector view and pathology view for
+any given sector.
+
+## Profiles Instuments
+
+* If you right click on a single cell it will be added to list of profiles to visualize
+from 'Show Profiles' button.
+
+* Profiles could be added to this list using 'Add Profiles' dialog window that is shown
+by clicking on 'Add profile' button.
+
+* To show the selected profiles you need to click on 'Show Profiles' button. Selected 
+profiles will be visualized into sample viewer:
+![Sample view window](docs/figs/sample-window.png)
+
+## Sectors Legend
+
+* Double click on a given sector row will launch single sector viewer
+![Single sector window](docs/figs/single-sector-window.png)
+
+* Right click on a given sector row will display pathology image and notes for
+the selected sector
+![Single sector pathology window](docs/figs/single-sector-pathology-window.png)
+
