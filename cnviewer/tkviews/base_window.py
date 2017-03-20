@@ -27,7 +27,6 @@ from models.subject import DataSubject, ProfilesSubject
 from commands.executor import CommandExecutor
 from commands.profiles import ShowProfilesCommand,\
     ClearProfilesCommand, AddProfilesCommand
-from tkviews.base_ui import BaseUi
 from PIL import ImageTk, Image
 from utils.color_map import ColorMap
 from commands.command import Command
@@ -288,21 +287,23 @@ class LegendEntry(object):
         self.label.bind('<Button-3>', click_callback(self.index))
 
 
-class LegendBase(BaseUi):
+class LegendBase(DataObserver):
 
     def __init__(self, master, title, controller, subject):
-        super(LegendBase, self).__init__(master, controller, subject)
+        super(LegendBase, self).__init__(subject)
         self.title = title
+        self.master = master
+        self.controller = controller
 
-    def enable_ui(self):
-        pass
+    def update(self):
+        self.model = self.get_model()
 
     def build_ui(self, row=20):
         self.entries = []
         frame = ttk.Frame(
             self.master,
             borderwidth=5,
-            relief='sunken',
+            # relief='sunken',
         )
         frame.grid(row=row, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
