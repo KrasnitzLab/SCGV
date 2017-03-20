@@ -18,28 +18,13 @@ def test_data_loader_bad_zip():
 
 
 def test_data_zip_loader_create_01():
-    loader = DataLoader('tests/data/cnviewer_data_example_01.zip')
+    loader = DataLoader('../exampledata/example.archive.zip')
     loader.load()
 
     assert loader is not None
-    print(loader.data.keys())
 
 
-@pytest.mark.xfail
 def test_data_dir_loader_create_01():
-    loader = DataLoader('tests/data/cnviewer_data_example_01')
-    assert loader is not None
-    print(loader.keys())
-
-
-@pytest.mark.xfail
-def test_data_loader_create_02():
-    loader = DataLoader('tests/data/example02.named.zip')
-    assert loader is not None
-    print(loader.keys())
-
-
-def test_data_load_minimal_dataset():
-    loader = DataLoader('tests/data/cnviewer_data_example_02.zip')
+    loader = DataLoader('../exampledata/example.directory/')
     loader.load()
-    print(loader.data.keys())
+    assert loader is not None

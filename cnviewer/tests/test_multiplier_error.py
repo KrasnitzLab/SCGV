@@ -5,15 +5,15 @@ Created on Jan 4, 2017
 '''
 import numpy as np
 
-from views.sample import SampleViewer
 import pytest
+from views.sample import SamplesViewer
 
 
 def test_multiplier(model_fixture):
-    sample = SampleViewer(model_fixture)
+    sample = SamplesViewer(model_fixture)
     assert sample is not None
 
-    sample_name = 'CJA4006'
+    sample_name = 'CJA5294'
     assert sample_name in model_fixture.column_labels
 
     m1 = sample.calc_ploidy(sample_name)
@@ -28,7 +28,7 @@ def test_multiplier(model_fixture):
 
 
 def test_all_mutipliers(model_fixture):
-    sample = SampleViewer(model_fixture)
+    sample = SamplesViewer(model_fixture)
 
     for sample_name in model_fixture.column_labels:
         m1 = sample.calc_ploidy(sample_name)
@@ -41,10 +41,10 @@ def test_all_mutipliers(model_fixture):
 
 
 def test_error(model_fixture):
-    sample = SampleViewer(model_fixture)
+    sample = SamplesViewer(model_fixture)
     assert sample is not None
 
-    sample_name = 'CJA4006'
+    sample_name = 'CJA5294'
     assert sample_name in model_fixture.column_labels
 
     e1 = sample.calc_error(sample_name)
@@ -59,7 +59,7 @@ def test_error(model_fixture):
 
 
 def test_all_errors(model_fixture):
-    sample = SampleViewer(model_fixture)
+    sample = SamplesViewer(model_fixture)
 
     for sample_name in model_fixture.column_labels:
         e1 = sample.calc_error(sample_name)
