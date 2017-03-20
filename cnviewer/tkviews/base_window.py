@@ -5,7 +5,7 @@ Created on Feb 21, 2017
 '''
 from tkviews.tkimport import *  # @UnusedWildImport
 
-from tkviews.canvas_ui import CanvasWindow
+from tkviews.canvas_window import CanvasWindow
 from controllers.controller import SingleSectorController
 
 import numpy as np
@@ -142,7 +142,7 @@ class ProfilesUi(DataObserver, ProfilesObserver):
 
     def _add_profile_dialog(self):
         print("add profile dialog added...")
-        add_dialog = AddProfileDialog(self.master.master)
+        add_dialog = AddProfileDialog(self.frame)
         # self.master.wait_window(add_dialog.top)
         profiles = add_dialog.result
         print("add profile result is: ", profiles)

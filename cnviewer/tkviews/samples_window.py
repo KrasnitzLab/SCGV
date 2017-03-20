@@ -6,7 +6,7 @@ Created on Jan 18, 2017
 
 from tkviews.tkimport import *  # @UnusedWildImport
 
-from tkviews.canvas_ui import CanvasWindow
+from tkviews.canvas_window import CanvasWindow
 from views.sample import SamplesViewer
 
 
