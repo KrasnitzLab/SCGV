@@ -22,7 +22,7 @@ class SectorsUi(BaseUi):
             row=40, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.show_sectors = ttk.Button(
-            master=frame, text="Sectors Reorder", command=self._show_sectors)
+            master=frame, text="Order by Sector", command=self._show_sectors)
         self.show_sectors.config(state=tk.DISABLED)
 
         self.show_sectors.grid(

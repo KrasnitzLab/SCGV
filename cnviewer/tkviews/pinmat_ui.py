@@ -21,7 +21,7 @@ class PinmatUi(BaseUi):
             row=30, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.show_pinmat = ttk.Button(
-            master=frame, text="Show Pins", command=self._show_pinmat)
+            master=frame, text="Feature View", command=self._show_pinmat)
         self.show_pinmat.config(state=tk.DISABLED)
 
         self.show_pinmat.grid(
