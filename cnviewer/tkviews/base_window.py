@@ -99,20 +99,20 @@ class ProfilesUi(DataObserver, ProfilesObserver):
         self.show_profiles.config(state=tk.DISABLED)
         self.clear_profiles.config(state=tk.DISABLED)
 
-    def update(self):
-        self.model = self.get_model()
-        if self.model is None:
-            return
-        self.add_profile.config(state=tk.ACTIVE)
-        self.show_profiles.config(state=tk.ACTIVE)
-        self.clear_profiles.config(state=tk.ACTIVE)
-
-    def update_profiles(self):
-        if self.get_profiles().get_available_profiles():
-            self._add_profile_samples(
-                self.get_profiles().get_available_profiles())
-        elif self.get_profiles().get_removed_profiles():
-            self.profile_ui.delete(0, 'end')
+    def update(self, subject):
+        if isinstance(subject, DataSubject):
+            self.model = self.get_model()
+            if self.model is None:
+                return
+            self.add_profile.config(state=tk.ACTIVE)
+            self.show_profiles.config(state=tk.ACTIVE)
+            self.clear_profiles.config(state=tk.ACTIVE)
+        elif isinstance(subject, ProfilesSubject):
+            if self.get_profiles().get_available_profiles():
+                self._add_profile_samples(
+                    self.get_profiles().get_available_profiles())
+            elif self.get_profiles().get_removed_profiles():
+                self.profile_ui.delete(0, 'end')
 
     def _add_profile_samples(self, samples):
         for profile in samples:
@@ -295,7 +295,8 @@ class LegendBase(DataObserver):
         self.master = master
         self.controller = controller
 
-    def update(self):
+    def update(self, subject):
+        assert isinstance(subject, DataSubject)
         self.model = self.get_model()
 
     def build_ui(self, row=20):
@@ -413,8 +414,8 @@ class SectorsLegend(LegendBase):
             controller=controller,
             subject=subject)
 
-    def update(self):
-        super(SectorsLegend, self).update()
+    def update(self, subject):
+        super(SectorsLegend, self).update(subject)
         if self.model is None:
             return
         self.sectors = self.model.make_sectors_legend()
@@ -465,18 +466,18 @@ class BaseHeatmapWindow(DataObserver, ProfilesObserver):
         self.controller = controller
         self.ax_label = None
 
-    def update(self):
-        self.model = self.get_model()
-        if self.model is not None:
-            self.draw_canvas()
-
-    def update_profiles(self):
-        if self.get_profiles().get_available_profiles():
-            self.highlight_profiles_labels(
-                self.get_profiles().get_available_profiles())
-        elif self.get_profiles().get_removed_profiles():
-            self.unhighlight_profile_labels(
-                self.get_profiles().get_removed_profiles())
+    def update(self, subject):
+        if isinstance(subject, DataSubject):
+            self.model = self.get_model()
+            if self.model is not None:
+                self.draw_canvas()
+        elif isinstance(subject, ProfilesSubject):
+            if self.get_profiles().get_available_profiles():
+                self.highlight_profiles_labels(
+                    self.get_profiles().get_available_profiles())
+            elif self.get_profiles().get_removed_profiles():
+                self.unhighlight_profile_labels(
+                    self.get_profiles().get_removed_profiles())
 
     def refresh(self):
         self.main.refresh()

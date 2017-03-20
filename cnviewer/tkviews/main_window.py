@@ -13,6 +13,7 @@ from commands.widget import EnableCommand, DisableCommand
 from tkviews.base_window import BaseHeatmapWindow
 from utils.observer import DataObserver
 from commands.open import OpenCommand
+from models.subject import DataSubject
 
 
 class PinsButton(DataObserver):
@@ -47,7 +48,9 @@ class PinsButton(DataObserver):
         macro = MacroCommand(disable_command, show_pins)
         CommandExecutor.execute_after(macro)
 
-    def update(self):
+    def update(self, subject):
+        assert isinstance(subject, DataSubject)
+
         self.model = self.get_model()
         if self.model is None or self.model.data.pins_df is None:
             return
@@ -78,7 +81,9 @@ class SectorsButton(DataObserver):
         frame.grid_rowconfigure(0, weight=1)
         # super(SectorsUi, self).build_ui()
 
-    def update(self):
+    def update(self, subject):
+        assert isinstance(subject, DataSubject)
+
         self.model = self.get_model()
 
         if self.model is None or self.model.sector is None:
@@ -177,7 +182,9 @@ class OpenButtons(DataObserver):
         )
         CommandExecutor.execute_after(macro)
 
-    def update(self):
+    def update(self, subject):
+        assert isinstance(subject, DataSubject)
+
         macro = MacroCommand(StopProgress(self.progress))
         if self.get_model() is None:
             macro.add_command(EnableCommand(self.open_archive_button))

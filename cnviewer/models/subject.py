@@ -27,7 +27,7 @@ class DataSubject(object):
     def notify(self):
         for observer in self.observers:
             try:
-                observer.update()
+                observer.update(self)
             except Exception:
                 print("unexpected exception during notify...")
                 traceback.print_exc()
@@ -52,7 +52,7 @@ class ProfilesSubject(object):
 
         for observer in self.profile_observers:
             try:
-                observer.update_profiles()
+                observer.update(self)
             except Exception:
                 print("unexpected exception during notify...")
                 traceback.print_exc()
@@ -66,13 +66,13 @@ class ProfilesSubject(object):
     def add_profiles(self, profiles):
         self.available_profiles.extend(profiles)
         self.removed_profiles = []
-        print("add_profiles: {}({})".format(
+        print("add_profiles: {} ({})".format(
             self.available_profiles, self.removed_profiles))
         self.notify_profiles()
 
     def clear_profiles(self):
         self.removed_profiles = self.available_profiles[:]
         self.available_profiles = []
-        print("clear_profiles: {}({})".format(
+        print("clear_profiles: {} ({})".format(
             self.available_profiles, self.removed_profiles))
         self.notify_profiles()
