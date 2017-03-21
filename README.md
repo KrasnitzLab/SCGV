@@ -18,14 +18,14 @@ coordinate, and these plots may again be zoomed into. Chromosomal regions
 selected within the profiles may be followed to UCSC genome browser to
 examine the genomic context.
 
-## Anaconda Environment Setup (python 2.7)
+## Anaconda Environment Setup
 
 ### Install Anaconda 
 * Go to anaconda web site 
 [https://www.continuum.io/downloads](https://www.continuum.io/downloads)
-and download the latest anaconda installer for your operating system. The following
-instructions use *Python 2.7* so you need to install appropriate version 
-of Anaconda. 
+and download the latest anaconda installer for your operating system. Both 
+*Python 2.7* and *Python 3.6* are supported so you can choose your preferred Python
+version. 
 
 * Install anaconda into suitable place on your local machine following
 instructions from 
@@ -43,7 +43,8 @@ instructions from
 
 ### Activate the viewer environment
 
-* To activate the anaconda environment `cnviewer` you need to use the appropriate
+* If you have already existing environmen before using it you need to activate it.
+To activate the anaconda environment `cnviewer` you need to use the appropriate
 anconda instructions to 
 [activate an environment](http://conda.pydata.org/docs/using/envs.html#change-environments-activate-deactivate). 
 For `Linux` and `OS X` you should
@@ -56,7 +57,6 @@ On `Windows` you need to use:
     ```bash
     activate aviewer
     ```
-??? There is a "source activate aviewer" statement above, just after "conda create -n aviewer". Should we keep both?
 * Full instructions on how to use and manage anaconda environments can be found
 here: [http://conda.pydata.org/docs/using/envs.html](http://conda.pydata.org/docs/using/envs.html)
 
@@ -67,10 +67,9 @@ should end with two dot separated words. The last word is the usual file extensi
 and second to last is the file type. For example:
 
     ```
-    example.pinmat.txt	???Let us rename "*.featuremat.txt" and the "*.pins.txt" "*.features.txt",here and in the following.
+    example.featuremat.txt
     ```
-is a `txt` file, that contains `pinmat` used by the viewer. Example full dataset
-should be named in following way:
+is a `txt` file, that contains `featuremat` used by the viewer. Check the example dataset.
 
 * Example dataset directory is located in subdirectory 
 `exampledata/example.directory` of the project main directory. The content of the
@@ -81,8 +80,8 @@ example dataset directory is as follows:
     ├── example.clone.txt
     ├── example.genome.txt
     ├── example.guide.txt
-    ├── example.pinmat.txt
-    ├── example.pins.txt
+    ├── example.featuremat.txt
+    ├── example.features.txt
     ├── example.ratio.txt
     ├── example.seg.txt
     ├── example.tree.txt
@@ -128,28 +127,27 @@ into project main directory. The structure of the example dataset is as follows:
     unzip -t example.archive.zip 
     Archive:  example.archive.zip
         testing: pathology/               OK
-        testing: pathology/Area2.PIN.with.Benign.txt   OK
-        testing: pathology/description.csv   OK
         testing: pathology/Area5.GS9.at.Capsule.jpg   OK
-        testing: pathology/Area5.GS9.at.Capsule.txt   OK
         testing: pathology/Area4.GS9.near.Urethra.jpg   OK
-        testing: pathology/Area4.GS9.near.Urethra.txt   OK
         testing: pathology/Area3.GS9.invading.SV.jpg   OK
-        testing: pathology/Area3.GS9.invading.SV.txt   OK
         testing: pathology/Area2.PIN.with.Benign.jpg   OK
-        testing: pathology/Area1.Benign.txt   OK
         testing: pathology/Area1.Benign.jpg   OK
+        testing: pathology/Area5.GS9.at.Capsule.txt   OK
+        testing: pathology/Area4.GS9.near.Urethra.txt   OK
+        testing: pathology/Area1.Benign.txt   OK
+        testing: pathology/description.csv   OK
+        testing: pathology/Area2.PIN.with.Benign.txt   OK
+        testing: pathology/Area3.GS9.invading.SV.txt   OK
         testing: example.cells.csv        OK
         testing: example.clone.txt        OK
+        testing: example.featuremat.txt   OK
+        testing: example.features.txt     OK
         testing: example.genome.txt       OK
         testing: example.guide.txt        OK
-        testing: example.pinmat.txt       OK
-        testing: example.pins.txt         OK
         testing: example.ratio.txt        OK
         testing: example.seg.txt          OK
         testing: example.tree.txt         OK
-    No errors detected in compressed data of example.archive.zip.
-    ```
+    No errors detected in compressed data of example.archive.zip.    ```
     
 
 ## Start the Viewer
