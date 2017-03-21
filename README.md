@@ -69,7 +69,7 @@ and second to last is the file type. For example:
     ```
     example.featuremat.txt
     ```
-is a `txt` file, that contains `featuremat` used by the viewer. Check the example dataset.
+    is a `txt` file, that contains `featuremat` used by the viewer.
 
 * Example dataset directory is located in subdirectory 
 `exampledata/example.directory` of the project main directory. The content of the
