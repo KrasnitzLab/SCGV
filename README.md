@@ -43,10 +43,9 @@ instructions from
 
 ### Activate the viewer environment
 
-* If you have already existing environmen before using it you need to activate it.
-To activate the anaconda environment `cnviewer` you need to use the appropriate
-anconda instructions to 
-[activate an environment](http://conda.pydata.org/docs/using/envs.html#change-environments-activate-deactivate). 
+* If you have existing Anaconda environmen before using it you need to activate it.
+To activate the anaconda environment `cnviewer` you need to use the appropriate 
+[Anaconda instructions](http://conda.pydata.org/docs/using/envs.html#change-environments-activate-deactivate). 
 For `Linux` and `OS X` you should
 use:
 
@@ -57,7 +56,7 @@ On `Windows` you need to use:
     ```bash
     activate aviewer
     ```
-* Full instructions on how to use and manage anaconda environments can be found
+* Full instructions on how to use and manage Anaconda environments can be found
 here: [http://conda.pydata.org/docs/using/envs.html](http://conda.pydata.org/docs/using/envs.html)
 
 ## Dataset Directory Structure
