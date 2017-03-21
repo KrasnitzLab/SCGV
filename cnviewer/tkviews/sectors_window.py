@@ -34,8 +34,8 @@ class SectorsWindow(BaseHeatmapWindow):
 
         ax_heat = self.fig.add_axes(
             [0.1, 0.20, 0.8, 0.725], frame_on=True, sharex=ax_clone)
-        pinmat_viewer = HeatmapViewer(self.model)
-        pinmat_viewer.draw_heatmap(ax_heat)
+        featuremat_viewer = HeatmapViewer(self.model)
+        featuremat_viewer.draw_heatmap(ax_heat)
 
         ax_sector = self.fig.add_axes(
             [0.1, 0.175, 0.8, 0.025], frame_on=True, sharex=ax_clone)

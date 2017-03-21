@@ -5,7 +5,7 @@ Created on Dec 21, 2016
 '''
 import numpy as np
 from models.model import DataModel  # , gate_compare
-from models.pinmat_model import PinmatModel
+from models.featuremat_model import FeaturematModel
 # import pytest
 
 
@@ -18,14 +18,14 @@ def test_data_model_make_01():
     print(sectors_legend)
 
 
-def test_make_pinmat():
+def test_make_featuremat():
     model = DataModel('../exampledata/example.archive.zip')
     assert model is not None
 
     model.make()
 
-    pinmat_model = PinmatModel(model)
-    pinmat_model.make()
+    featuremat_model = FeaturematModel(model)
+    featuremat_model.make()
 
 
 def test_convolution():

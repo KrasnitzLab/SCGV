@@ -26,7 +26,7 @@ class ColorMap(object):
     @staticmethod
     def make_cmap08():
         cmap08 = ColorMap()
-        # VZ - colormap for pins map visualization
+        # VZ - colormap for features map visualization
         cmap08.colors = col.ListedColormap(
             ['#000066', '#0000FF', '#FFFFFF', '#EE0000', '#660000'],
             'indexed')

@@ -189,9 +189,6 @@ class BaseModel(object):
             features,
             kernel,
             'same')
-        # self.pins = pins
-        # self.pins = self.pins - self.expected
-        # self.pins = pins
 
     def make_clone(self, ordering):
         assert ordering is not None

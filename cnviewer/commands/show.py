@@ -31,13 +31,13 @@ class ShowFeaturesCommand(Command):
         data_subject = DataSubject()
         profiles_subject = ProfilesSubject()
 
-        pinmat_window = BaseHeatmapWindow(
+        featuremat_window = BaseHeatmapWindow(
             root, controller, data_subject, profiles_subject)
-        pinmat_window.build_ui()
+        featuremat_window.build_ui()
 
         def on_close():
             CommandExecutor.execute_after(self.on_close)
-        pinmat_window.register_on_closing_callback(on_close)
+        featuremat_window.register_on_closing_callback(on_close)
 
         data_subject.set_model(model)
 
