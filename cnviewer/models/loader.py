@@ -18,8 +18,9 @@ def load_df(filename):
 
 class DataLoader(object):
     TYPES = set([
-        'ratio', 'pinmat', 'clone', 'tree', 'seg',
-        'pins', 'guide', 'genome', 'cells'])
+        'ratio', 'clone', 'tree', 'seg',
+        'featuremat', 'features',
+        'guide', 'genome', 'cells'])
     GUIDE_SAMPLES_COLUMN = 'seq.unit.id'
     CLONE_ID_COLUMN = 'ID'
 
@@ -39,8 +40,8 @@ class DataLoader(object):
         self.clone_df = self.data.get('clone', None)
         self.tree_df = self.data.get('tree', None)
         self.guide_df = self.data.get('guide', None)
-        self.pinmat_df = self.data.get('pinmat', None)
-        self.pins_df = self.data.get('pins', None)
+        self.pinmat_df = self.data.get('featuremat', None)
+        self.pins_df = self.data.get('features', None)
         self.genome = self.data.get('genome', 'hg19')
 
         assert self.cell_df is not None
