@@ -52,7 +52,7 @@ use:
     ```bash
     source activate aviewer
     ```
-On `Windows` you need to use:
+    On `Windows` you need to use:
 
     ```bash
     activate aviewer
