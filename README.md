@@ -53,6 +53,7 @@ use:
     source activate aviewer
     ```
 On `Windows` you need to use:
+
     ```bash
     activate aviewer
     ```
