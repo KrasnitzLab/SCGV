@@ -157,34 +157,36 @@ class BaseModel(object):
         data = np.round(self.seg_data)
         return data[:, ordering]
 
-    def make_pinmat(self, ordering):
-        if self.data.pins_df is None or self.data.pinmat_df is None:
+    def make_featuremat(self, ordering):
+        if self.data.features_df is None or self.data.featuremat_df is None:
             return None
 
         assert self.bins is not None
         assert self.samples is not None
-        assert self.data.pins_df is not None
-        assert self.data.pinmat_df is not None
+        assert self.data.features_df is not None
+        assert self.data.featuremat_df is not None
 
-        self.data.pinmat_df = self.data.pinmat_df.ix[:, ordering].copy()
-        assert np.all(list(self.data.pinmat_df.columns) == self.column_labels)
+        self.data.featuremat_df = \
+            self.data.featuremat_df.ix[:, ordering].copy()
+        assert np.all(list(self.data.featuremat_df.columns) ==
+                      self.column_labels)
 
-        pins = np.zeros((self.bins, self.samples))
-        negative = self.data.pins_df[self.data.pins_df.sign == -1].bin
-        positive = self.data.pins_df[self.data.pins_df.sign == 1].bin
+        features = np.zeros((self.bins, self.samples))
+        negative = self.data.features_df[self.data.features_df.sign == -1].bin
+        positive = self.data.features_df[self.data.features_df.sign == 1].bin
 
         # assert len(negative) + len(positive) == self.bins
-        pins[negative, :] = \
-            -1 * self.data.pinmat_df.ix[negative.index, :].values
-        pins[positive, :] = \
-            +1 * self.data.pinmat_df.ix[positive.index, :].values
+        features[negative, :] = \
+            -1 * self.data.featuremat_df.ix[negative.index, :].values
+        features[positive, :] = \
+            +1 * self.data.featuremat_df.ix[positive.index, :].values
 
         psi = int(self.bins / 600)
         kernel = np.ones(2 * psi)
         return np.apply_along_axis(
             np.convolve,
             0,
-            pins,
+            features,
             kernel,
             'same')
         # self.pins = pins

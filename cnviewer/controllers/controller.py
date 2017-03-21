@@ -67,10 +67,10 @@ class SectorsController(HeatmapControllerBase):
         self.model = model
 
 
-class PinmatController(HeatmapControllerBase):
+class FeaturematController(HeatmapControllerBase):
 
     def __init__(self, model):
-        super(PinmatController, self).__init__()
+        super(FeaturematController, self).__init__()
         self.model = model
 
 

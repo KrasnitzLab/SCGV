@@ -4,8 +4,8 @@ Created on Mar 14, 2017
 @author: lubo
 '''
 from tkviews.tkimport import *  # @UnusedWildImport
-from models.pinmat_model import PinmatModel
-from controllers.controller import PinmatController, SectorsController
+from models.featuremat_model import FeaturematModel
+from controllers.controller import FeaturematController, SectorsController
 from models.subject import DataSubject, ProfilesSubject
 from tkviews.base_window import BaseHeatmapWindow
 from commands.executor import CommandExecutor
@@ -14,7 +14,7 @@ from models.sector_model import SectorsDataModel
 from tkviews.sectors_window import SectorsWindow
 
 
-class ShowPinsCommand(Command):
+class ShowFeaturesCommand(Command):
 
     def __init__(self, model, on_close):
         assert isinstance(on_close, Command)
@@ -24,10 +24,10 @@ class ShowPinsCommand(Command):
 
     def execute(self):
         root = tk.Toplevel()
-        model = PinmatModel(self.model)
+        model = FeaturematModel(self.model)
         # model.make()
 
-        controller = PinmatController(model)
+        controller = FeaturematController(model)
         data_subject = DataSubject()
         profiles_subject = ProfilesSubject()
 

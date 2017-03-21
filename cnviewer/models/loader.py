@@ -40,8 +40,8 @@ class DataLoader(object):
         self.clone_df = self.data.get('clone', None)
         self.tree_df = self.data.get('tree', None)
         self.guide_df = self.data.get('guide', None)
-        self.pinmat_df = self.data.get('featuremat', None)
-        self.pins_df = self.data.get('features', None)
+        self.featuremat_df = self.data.get('featuremat', None)
+        self.features_df = self.data.get('features', None)
         self.genome = self.data.get('genome', 'hg19')
 
         assert self.cell_df is not None
@@ -201,9 +201,10 @@ class DataLoader(object):
             self.ratio_df = self._filter_df_columns(self.ratio_df)
             assert len(self.ratio_df.columns) == len(self.sample_names) + 3
 
-        if self.pinmat_df is not None:
-            self.pinmat_df = self._filter_df_columns(self.pinmat_df, keep=0)
-            assert len(self.pinmat_df.columns) == len(self.sample_names)
+        if self.featuremat_df is not None:
+            self.featuremat_df = self._filter_df_columns(
+                self.featuremat_df, keep=0)
+            assert len(self.featuremat_df.columns) == len(self.sample_names)
 
         if self.guide_df is not None:
             self.guide_df = self._filter_df_rows(
@@ -230,10 +231,10 @@ class DataLoader(object):
                 order, self.ratio_df, 3)
             assert np.all(self.ratio_df.columns[3:] == order)
 
-        if self.pinmat_df is not None:
-            self.pinmat_df = self._order_df_columns(
-                order, self.pinmat_df, 0)
-            assert np.all(self.pinmat_df.columns == order)
+        if self.featuremat_df is not None:
+            self.featuremat_df = self._order_df_columns(
+                order, self.featuremat_df, 0)
+            assert np.all(self.featuremat_df.columns == order)
 
         if self.guide_df is not None:
             self.guide_df = self._order_df_rows(

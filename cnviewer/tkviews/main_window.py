@@ -7,7 +7,7 @@ from tkviews.tkimport import *  # @UnusedWildImport
 
 from commands.command import MacroCommand, Command
 from commands.executor import CommandExecutor
-from commands.show import ShowPinsCommand
+from commands.show import ShowFeaturesCommand
 from commands.show import ShowSectorsReorderCommand
 from commands.widget import EnableCommand, DisableCommand
 from tkviews.base_window import BaseHeatmapWindow
@@ -16,10 +16,10 @@ from commands.open import OpenCommand
 from models.subject import DataSubject
 
 
-class PinsButton(DataObserver):
+class FeaturesButton(DataObserver):
 
     def __init__(self, master, subject):
-        super(PinsButton, self).__init__(subject)
+        super(FeaturesButton, self).__init__(subject)
         self.master = master
 
     def build_ui(self):
@@ -30,7 +30,7 @@ class PinsButton(DataObserver):
             row=30, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.button = ttk.Button(
-            master=frame, text="Feature View", command=self._show_pinmat)
+            master=frame, text="Feature View", command=self._show_featuremat)
         self.button.config(state=tk.DISABLED)
 
         self.button.grid(
@@ -38,21 +38,21 @@ class PinsButton(DataObserver):
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)
 
-    def _show_pinmat(self):
-        print("show pins called...")
+    def _show_featuremat(self):
+        print("show features called...")
         assert self.model is not None
 
         disable_command = DisableCommand(self.button)
-        show_pins = ShowPinsCommand(
+        show_features = ShowFeaturesCommand(
             self.model, EnableCommand(self.button))
-        macro = MacroCommand(disable_command, show_pins)
+        macro = MacroCommand(disable_command, show_features)
         CommandExecutor.execute_after(macro)
 
     def update(self, subject):
         assert isinstance(subject, DataSubject)
 
         self.model = self.get_model()
-        if self.model is None or self.model.data.pins_df is None:
+        if self.model is None or self.model.data.features_df is None:
             return
         enable_command = EnableCommand(self.button)
         CommandExecutor.execute_after(enable_command)
@@ -211,9 +211,9 @@ class MainWindow(BaseHeatmapWindow):
     def build_ui(self):
         self.build_base_ui()
 
-        pinmat = PinsButton(
+        featuremat = FeaturesButton(
             self.main.button_ext, self.subject)
-        pinmat.build_ui()
+        featuremat.build_ui()
 
         sectors = SectorsButton(
             self.main.button_ext, self.subject)
