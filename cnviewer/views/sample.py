@@ -87,6 +87,7 @@ class SamplesViewer(ViewerBase, ControllerBase):
             chrom_labels_pos = self.calc_chrom_labels_pos(self.chrom_lines)
             ax.set_xticks(chrom_labels_pos)
             ax.set_xticklabels(self.CHROM_LABELS, rotation='vertical')
+        fig.tight_layout()
 
 #         fig.canvas.mpl_connect('button_press_event', self.event_handler)
 #         fig.canvas.mpl_connect('key_press_event', self.event_handler)
