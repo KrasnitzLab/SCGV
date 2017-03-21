@@ -1,4 +1,4 @@
-#Interactive single-cell viewer (ISCV) 
+# Interactive single-cell viewer (ISCV) 
 
 ICSV is an interacive graphical tool for single-cell genomics data, with 
 emphasis on single-cell genomics of cancer. It facilitates examination, jointly
@@ -150,7 +150,7 @@ into project main directory. The structure of the example dataset is as follows:
     
 
 ## Start the Viewer
-* Before starting the viewer you need to activate viewer Anaconda environment
+* Before starting the viewer you need to activate viewer's Anaconda environment
     ```
     source activate aviewer
     ```
