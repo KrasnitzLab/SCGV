@@ -8,7 +8,7 @@ import matplotlib as mpl
 mpl.use('TkAgg')
 
 
-from matplotlib.backends.backend_tkagg import *  # @UnusedWildImport @IgnorePep8
+from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 from tkviews.tkimport import *  # @UnusedWildImport @IgnorePep8
@@ -43,12 +43,13 @@ class CanvasWindow(object):
             toolbar_frame,
             # relief='sunken',
             borderwidth=5,
-            # width=150
+            # width=550
         )
         self.button_ext = ttk.Frame(
             self.content, borderwidth=2,
+            # relief='sunken',
             relief='groove',
-            # width=150
+            # width=550
         )
 
         self.toolbar.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
@@ -65,10 +66,12 @@ class CanvasWindow(object):
         self.toolbar_ext.columnconfigure(0, weight=99)
         self.button_ext.grid(
             column=1, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.button_ext.columnconfigure(0, weight=99)
+        self.button_ext.columnconfigure(1, weight=0)
 
         self.content.columnconfigure(0, weight=99)
         self.content.rowconfigure(0, weight=0)
-        self.content.columnconfigure(1, weight=0)
+        self.content.columnconfigure(1, weight=0, minsize=200)
         self.content.rowconfigure(1, weight=99)
 
         self._build_button_ext()
@@ -86,7 +89,8 @@ class CanvasWindow(object):
     def _build_button_ext(self):
         frame = ttk.Frame(
             self.button_ext,
-            borderwidth=5)
+            borderwidth=5,
+        )
         frame.grid(
             row=10, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
@@ -103,7 +107,9 @@ class CanvasWindow(object):
         frame = ttk.Frame(
             self.button_ext,
             relief='flat',
-            borderwidth=0)
+            borderwidth=0,
+            # width=400,
+        )
         frame.grid(row=100, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(0, weight=1)

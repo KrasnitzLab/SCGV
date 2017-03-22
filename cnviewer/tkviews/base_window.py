@@ -485,45 +485,49 @@ class BaseHeatmapWindow(DataObserver, ProfilesObserver):
     def register_on_closing_callback(self, cb):
         self.main.register_on_closing_callback(cb)
 
+    W = 0.8875
+    X = 0.075
+
     def draw_canvas(self):
         assert self.model is not None
 
-        ax_dendro = self.fig.add_axes([0.1, 0.775, 0.8, 0.175], frame_on=True)
+        ax_dendro = self.fig.add_axes(
+            [self.X, 0.775, self.W, 0.175], frame_on=True)
         dendro_viewer = DendrogramViewer(self.model)
         dendro_viewer.draw_dendrogram(ax_dendro)
 
         ax_clone = self.fig.add_axes(
-            [0.1, 0.7625, 0.8, 0.0125], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.7625, self.W, 0.0125], frame_on=True, sharex=ax_dendro)
         clone_viewer = CloneViewer(self.model)
         clone_viewer.draw_clone(ax_clone)
         ax_subclone = self.fig.add_axes(
-            [0.1, 0.75, 0.8, 0.0125], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.75, self.W, 0.0125], frame_on=True, sharex=ax_dendro)
         clone_viewer.draw_subclone(ax_subclone)
 
         ax_heat = self.fig.add_axes(
-            [0.1, 0.20, 0.8, 0.55], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.20, self.W, 0.55], frame_on=True, sharex=ax_dendro)
 
         heatmap_viewer = HeatmapViewer(self.model)
         heatmap_viewer.draw_heatmap(ax_heat)
 
         ax_sector = self.fig.add_axes(
-            [0.1, 0.175, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.175, self.W, 0.025], frame_on=True, sharex=ax_dendro)
         # draw sector bar
         sector_viewer = SectorViewer(self.model)
         sector_viewer.draw_sector(ax_sector)
 
         ax_gate = self.fig.add_axes(
-            [0.1, 0.150, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.150, self.W, 0.025], frame_on=True, sharex=ax_dendro)
         gate_viewer = GateViewer(self.model)
         gate_viewer.draw_ploidy(ax_gate)
 
         ax_multiplier = self.fig.add_axes(
-            [0.1, 0.125, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.125, self.W, 0.025], frame_on=True, sharex=ax_dendro)
         multiplier_viewer = MultiplierViewer(self.model)
         multiplier_viewer.draw_multiplier(ax_multiplier)
 
         ax_error = self.fig.add_axes(
-            [0.1, 0.10, 0.8, 0.025], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.10, self.W, 0.025], frame_on=True, sharex=ax_dendro)
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
         error_viewer.draw_xlabels(ax_error)
