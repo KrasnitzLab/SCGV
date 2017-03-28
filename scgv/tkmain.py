@@ -17,7 +17,7 @@ from tkviews.main_window import MainWindow  # @IgnorePep8
 
 def main():
     root = tk.Tk()
-    root.wm_title("cnviewer")
+    root.wm_title("SCGV")
 
     CommandExecutor.start(root)
 
