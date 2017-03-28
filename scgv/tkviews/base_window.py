@@ -166,9 +166,6 @@ class ShowPathologyDialog(tk.Toplevel):
         self.image = image
         self.notes = notes
         tk.Toplevel.__init__(self, master, **kwargs)
-        # super(ShowPathologyDialog, self).__init__(master, **kwargs)
-
-        # self.transient(master)
         if title:
             self.title(title)
 
@@ -215,7 +212,7 @@ class ShowPathologyDialog(tk.Toplevel):
             panel = tk.Label(master, image=self.image)
             panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES)
 
-        text = tk.Text(master, width=80, height=20)
+        text = tk.Text(master, width=40, height=20, wrap=tk.WORD)
         scrollbar = tk.Scrollbar(master)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         text.pack(side=tk.LEFT, padx=10, fill=tk.Y)
@@ -223,7 +220,7 @@ class ShowPathologyDialog(tk.Toplevel):
         text.config(yscrollcommand=scrollbar.set)
 
         if self.notes is not None:
-            text.tag_configure('big', font=('Verdana', 15, 'bold'))
+            text.tag_configure('big', font=('Verdana', 12, 'bold'))
             text.insert(tk.END, self.notes[0], 'big')
             for line in self.notes[1:]:
                 text.insert(tk.END, line)
