@@ -1,21 +1,22 @@
-# Single Cell Genome Viewer (SCGV) 
+# Interactive single-cell viewer (ISCV) 
 
-SCGV is an interactive graphical tool for single-cell genomics data, 
-with emphasis on single-cell genomics of cancer. It facilitates examination, 
-jointly or individually, of DNA copy number profiles of cells harvested from 
-multiple anatomic locations (sectors). In the opening view the copy-number 
-data matrix, with columns corresponding to cells and rows to genomic locations, 
-is represented as a heat map with color-encoded integer DNA copy number. 
-If a phylogenetic tree is available for the cells comprising the dataset, 
-it can be used to order the columns of the data matrix, and clones formed by 
-closely related cells may be identified. Alternatively, the columns can be 
-ordered by the sector of origin of the cells. Cyto-pathological information 
-may be displayed in a separate view, including sector-specific slide images 
-and pathology reports. Genomic sub-regions and random subsets of cells can be 
-selected and zoomed into. Individual or multiple copy-number profiles may be 
-plotted as copy number against the genomic coordinate, and these plots may 
-again be zoomed into. Chromosomal regions selected within the profiles may be 
-followed to UCSC genome browser to examine the genomic context.
+ICSV is an interacive graphical tool for single-cell genomics data, with 
+emphasis on single-cell genomics of cancer. It facilitates examination, jointly
+or individually, of DNA copy number profiles of cells harvested from 
+multiple anatomic locations (sectors). In the opening view the copy-number
+data matrix, with columns corresponding to cells and rows to genomic locations,
+is represented as a heat map with color-encoded integer DNA copy number. If a 
+phylogenetic tree is available for the cells comprising the dataset, it can be
+be used to order the columns of the data matrix, and clones formed by closely 
+related cells may be identified. Alternatively, the columns 
+can be ordered by the sector of origin of the cells. Cyto-pathological
+information may be displayed in a separate view, including sector-specific
+slide images and pathology reports. Genomic sub-regions and
+random subsets of cells can be selected and zoomed into. Individual or multiple
+copy-number profiles may be plotted as copy number against the genomic 
+coordinate, and these plots may again be zoomed into. Chromosomal regions
+selected within the profiles may be followed to UCSC genome browser to
+examine the genomic context.
 
 ## Anaconda Environment Setup
 
@@ -30,7 +31,7 @@ version.
 instructions from 
 [https://docs.continuum.io/anaconda/install](https://docs.continuum.io/anaconda/install)
 
-### Create SCGV anaconda environment from scratch
+### Create cnviewer anaconda environment from scratch
 
 * After installing Anaconda you need to create an environment to use with the viewer:
 
@@ -43,7 +44,7 @@ instructions from
 ### Activate the viewer environment
 
 * If you have existing Anaconda environmen before using it you need to activate it.
-To activate the anaconda environment `aviewer` you need to use the appropriate 
+To activate the anaconda environment `cnviewer` you need to use the appropriate 
 [Anaconda instructions](http://conda.pydata.org/docs/using/envs.html#change-environments-activate-deactivate). 
 For `Linux` and `OS X` you should
 use:
@@ -61,9 +62,9 @@ here: [http://conda.pydata.org/docs/using/envs.html](http://conda.pydata.org/doc
 
 ## Dataset Directory Structure
 
-* Files in the dataset should conform to the following naming convention. Each filename
-should end with two dot separated words. The last word is the usual file extension
-and second to last is the file type. For example:
+* Files in the dataset should conform to the following naming convention. 
+Each filename should end with two dot separated words. The last word is the 
+usual file extension and second to last is the file type. For example:
 
     ```
     example.featuremat.txt
@@ -155,11 +156,11 @@ into project main directory. The structure of the example dataset is as follows:
     source activate aviewer
     ```
 
-* To start the viewer from project main directory enter into `scgv` 
+* To start the viewer from project main directory enter into `cnviewer` 
 subdirectory and start `tkmain.py`
 
     ```bash
-    cd scgv
+    cd cnviewer
     python tkmain.py
     ```
 
@@ -176,28 +177,33 @@ One directory may contain only one dataset.
 ## Viewer Main Window
 
 * After dataset is loaded it will displayed into the main window.
-![SCGV main window](docs/figs/main-window.png)
+![CNViewer main window](docs/figs/main-window.png)
 
-* From profiles instruments you can select individual cells to display their CN profile
-into single profile viewer.
+* From profiles instruments you can select individual cells to display their 
+CN profile into single profile viewer.
 
-* Buttons 'Feature View' and 'Reorder by Sector' will display different views of the whole
-dataset
+* Buttons 'Feature View' and 'Reorder by Sector' will display different views 
+of the whole dataset
 
 * From 'Sectors Legend' you can visualize single sector view and pathology view for
 any given sector.
 
 ## Copy-number Profile Tools
 
-* If you right click on a single cell it will be added to list of profiles to visualize
-from 'Show Profiles' button.
+* If you right click on a single cell it will be added to list of profiles to 
+visualize from 'Show Profiles' button.
 
-* Profiles could be added to this list using 'Add Profiles' dialog window that is shown
-by clicking on 'Add profile' button.
+* Profiles could be added to this list using 'Add Profiles' dialog window that 
+is shown by clicking on 'Add profile' button.
 
-* To show the selected profiles you need to click on 'Show Profiles' button. Selected 
-profiles will be visualized into sample viewer:
+* To show the selected profiles you need to click on 'Show Profiles' button. 
+Selected  profiles will be visualized as stacked plot of copy number against 
+the genomic coordinate:
 ![Sample view window](docs/figs/sample-window.png)
+
+*To examine the genomic content of an intra-chromosomal region, right-click the left, then the right boundary of the desired region in the stacked copy-number 
+profile view. This will invoke UCSC Genome Browser in a tab of your default 
+web browser
 
 ## Sectors Legend
 
