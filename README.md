@@ -19,6 +19,7 @@ selected within the profiles may be followed to UCSC genome browser to
 examine the genomic context.
 
 Short video introduction to SCGV can be found here:
+
 [![SCGV short video tutorial](https://img.youtube.com/vi/blvXRedv9xc/0.jpg)](https://www.youtube.com/watch?v=blvXRedv9xc)
 
 ## Anaconda Environment Setup
