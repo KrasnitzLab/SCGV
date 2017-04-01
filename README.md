@@ -1,6 +1,6 @@
 # Single Cell Genome Viewer (SCGV) 
 
-SCGV is an interacive graphical tool for single-cell genomics data, with 
+SCGV is an interactive graphical tool for single-cell genomics data, with 
 emphasis on single-cell genomics of cancer. It facilitates examination, jointly
 or individually, of DNA copy number profiles of cells harvested from 
 multiple anatomic locations (sectors). In the opening view the copy-number
@@ -17,6 +17,8 @@ copy-number profiles may be plotted as copy number against the genomic
 coordinate, and these plots may again be zoomed into. Chromosomal regions
 selected within the profiles may be followed to UCSC genome browser to
 examine the genomic context.
+
+[![SCGV short video tutorial](https://img.youtube.com/vi/blvXRedv9xc/0.jpg)](https://www.youtube.com/watch?v=blvXRedv9xc)
 
 ## Anaconda Environment Setup
 
