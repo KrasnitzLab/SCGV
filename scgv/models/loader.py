@@ -8,7 +8,7 @@ import pandas as pd
 import os
 import zipfile
 
-from PIL import Image
+from PIL import Image  # @UnresolvedImport
 
 
 def load_df(filename):
