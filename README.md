@@ -1,5 +1,8 @@
 # Single Cell Genome Viewer (SCGV) 
 
+
+[![DOI](https://zenodo.org/badge/76399432.svg)](https://zenodo.org/badge/latestdoi/76399432)
+
 SCGV is an interactive graphical tool for single-cell genomics data, with 
 emphasis on single-cell genomics of cancer. It facilitates examination, jointly
 or individually, of DNA copy number profiles of cells harvested from 
