@@ -298,11 +298,14 @@ class BaseModel(object):
         for sector in sectors:
             sector_df = self.data.guide_df[
                 self.data.guide_df[self.SECTOR_COLUMN] == sector]
-            pathology = sector_df[self.PATHOLOGY_COLUMN].values[0]
-            if not np.all(sector_df[self.PATHOLOGY_COLUMN] == pathology):
-                print("single sector '{}'; different pathologies: {}".format(
-                    sector,
-                    sector_df[self.PATHOLOGY_COLUMN].unique()))
+            if self.PATHOLOGY_COLUMN not in sector_df.columns:
+                pathology = sector_df[self.SECTOR_COLUMN].values[0]
+            else:
+                pathology = sector_df[self.PATHOLOGY_COLUMN].values[0]
+                if not np.all(sector_df[self.PATHOLOGY_COLUMN] == pathology):
+                    print("single sector '{}'; different pathologies: {}".format(
+                        sector,
+                        sector_df[self.PATHOLOGY_COLUMN].unique()))
             result.append((sector, str(pathology).strip()))
         return result
 
