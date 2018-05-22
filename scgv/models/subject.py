@@ -65,6 +65,8 @@ class ProfilesSubject(object):
 
     def add_profiles(self, profiles):
         self.available_profiles.extend(profiles)
+        self.available_profiles = list(set(self.available_profiles))
+
         self.removed_profiles = []
         print("add_profiles: {} ({})".format(
             self.available_profiles, self.removed_profiles))
