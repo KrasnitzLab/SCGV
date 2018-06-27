@@ -7,8 +7,8 @@ Created on Dec 14, 2016
 # import matplotlib.patches as patches
 
 # from utils.color_map import ColorMap
-from views.base import ViewerBase
-from utils.color_map import ColorMap
+from scgv.views.base import ViewerBase
+from scgv.utils.color_map import ColorMap
 
 
 class HeatmapViewer(ViewerBase):

@@ -3,12 +3,12 @@ Created on Mar 14, 2017
 
 @author: lubo
 '''
-from tkviews.tkimport import *  # @UnusedWildImport
+from scgv.tkviews.tkimport import *  # @UnusedWildImport
 
 
-from commands.command import Command
-from controllers.controller import SamplesController
-from tkviews.samples_window import SamplesWindow
+from scgv.commands.command import Command
+from scgv.controllers.controller import SamplesController
+from scgv.tkviews.samples_window import SamplesWindow
 
 
 class ShowProfilesCommand(Command):

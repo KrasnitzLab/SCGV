@@ -4,9 +4,9 @@ Created on Dec 21, 2016
 @author: lubo
 '''
 # from matplotlib import cm
-from views.base import ViewerBase
+from scgv.views.base import ViewerBase
 # import matplotlib.pyplot as plt
-from utils.color_map import ColorMap
+from scgv.utils.color_map import ColorMap
 
 
 class MultiplierViewer(ViewerBase):
