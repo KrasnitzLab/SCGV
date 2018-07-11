@@ -5,7 +5,7 @@ Created on Dec 14, 2016
 '''
 
 import numpy as np
-from views.base import ViewerBase
+from scgv.views.base import ViewerBase
 
 
 class DendrogramViewer(ViewerBase):

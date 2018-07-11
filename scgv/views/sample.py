@@ -4,8 +4,8 @@ Created on Dec 14, 2016
 @author: lubo
 '''
 import numpy as np
-from views.base import ViewerBase
-from controllers.controller_base import ControllerBase
+from scgv.views.base import ViewerBase
+from scgv.controllers.controller_base import ControllerBase
 
 
 class SamplesViewer(ViewerBase, ControllerBase):

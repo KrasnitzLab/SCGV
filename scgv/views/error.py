@@ -5,7 +5,7 @@ Created on Dec 21, 2016
 '''
 # from matplotlib import cm
 import matplotlib.pyplot as plt
-from views.base import ViewerBase
+from scgv.views.base import ViewerBase
 
 
 class ErrorViewer(ViewerBase):

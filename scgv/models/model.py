@@ -9,7 +9,7 @@ from scipy.cluster.hierarchy import linkage
 import numpy as np
 import pandas as pd
 
-from models.loader import DataLoader
+from scgv.models.loader import DataLoader
 
 
 class BaseModel(object):
@@ -303,9 +303,10 @@ class BaseModel(object):
             else:
                 pathology = sector_df[self.PATHOLOGY_COLUMN].values[0]
                 if not np.all(sector_df[self.PATHOLOGY_COLUMN] == pathology):
-                    print("single sector '{}'; different pathologies: {}".format(
-                        sector,
-                        sector_df[self.PATHOLOGY_COLUMN].unique()))
+                    print(
+                        "single sector '{}'; different pathologies: {}".format(
+                            sector,
+                            sector_df[self.PATHOLOGY_COLUMN].unique()))
             result.append((sector, str(pathology).strip()))
         return result
 

@@ -6,8 +6,9 @@ Created on Dec 14, 2016
 
 import webbrowser
 
-from controllers.controller_base import HeatmapControllerBase, ControllerBase
-from models.model import DataModel
+from scgv.controllers.controller_base import HeatmapControllerBase, \
+    ControllerBase
+from scgv.models.model import DataModel
 import numpy as np
 
 

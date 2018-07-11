@@ -5,13 +5,13 @@ Created on Feb 22, 2017
 '''
 import matplotlib.pyplot as plt
 
-from tkviews.base_window import BaseHeatmapWindow
-from views.clone import CloneViewer
-from views.heatmap import HeatmapViewer
-from views.sector import SectorViewer
-from views.gate import GateViewer
-from views.multiplier import MultiplierViewer
-from views.error import ErrorViewer
+from scgv.tkviews.base_window import BaseHeatmapWindow
+from scgv.views.clone import CloneViewer
+from scgv.views.heatmap import HeatmapViewer
+from scgv.views.sector import SectorViewer
+from scgv.views.gate import GateViewer
+from scgv.views.multiplier import MultiplierViewer
+from scgv.views.error import ErrorViewer
 
 
 class SectorsWindow(BaseHeatmapWindow):

@@ -8,11 +8,11 @@ from scgv.models.subject import DataSubject, ProfilesSubject
 from scgv.commands.executor import CommandExecutor
 mpl.use('TkAgg')
 
-from tkviews.tkimport import *  # @UnusedWildImport @NoMove @IgnorePep8
+from scgv.tkviews.tkimport import *  # @UnusedWildImport @NoMove @IgnorePep8
 
 # from models.sector_model import SingleSectorDataModel
-from controllers.controller import MainController  # @IgnorePep8
-from tkviews.main_window import MainWindow  # @IgnorePep8
+from scgv.controllers.controller import MainController  # @IgnorePep8
+from scgv.tkviews.main_window import MainWindow  # @IgnorePep8
 
 
 def main():

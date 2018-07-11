@@ -4,10 +4,10 @@ Created on Jan 18, 2017
 @author: lubo
 '''
 
-from tkviews.tkimport import *  # @UnusedWildImport
+from scgv.tkviews.tkimport import *  # @UnusedWildImport
 
-from tkviews.canvas_window import CanvasWindow
-from views.sample import SamplesViewer
+from scgv.tkviews.canvas_window import CanvasWindow
+from scgv.views.sample import SamplesViewer
 
 
 class SamplesWindow(object):

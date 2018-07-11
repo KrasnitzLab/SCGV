@@ -3,7 +3,7 @@ Created on Feb 21, 2017
 
 @author: lubo
 '''
-from tkviews.tkimport import *  # @UnusedWildImport
+from scgv.tkviews.tkimport import *  # @UnusedWildImport
 
 from scgv.commands.command import MacroCommand, Command
 from scgv.commands.executor import CommandExecutor

@@ -4,7 +4,7 @@ Created on Jan 10, 2017
 @author: lubo
 '''
 import numpy as np
-from models.model import BaseModel, DataModel
+from scgv.models.model import BaseModel, DataModel
 
 
 class SectorsDataModel(BaseModel):

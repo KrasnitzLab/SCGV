@@ -3,7 +3,7 @@ Created on Feb 28, 2017
 
 @author: lubo
 '''
-from models.model_delegate import ModelDelegate
+from scgv.models.model_delegate import ModelDelegate
 
 
 class FeaturematModel(ModelDelegate):
