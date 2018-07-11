@@ -3,8 +3,8 @@ Created on Dec 15, 2016
 
 @author: lubo
 '''
-from views.base import ViewerBase
-from utils.color_map import ColorMap
+from scgv.views.base import ViewerBase
+from scgv.utils.color_map import ColorMap
 
 
 class SectorViewer(ViewerBase):

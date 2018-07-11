@@ -7,9 +7,9 @@ import os
 import threading
 import traceback
 
-from models.model import DataModel
-from commands.executor import CommandExecutor
-from commands.command import Command
+from scgv.models.model import DataModel
+from scgv.commands.executor import CommandExecutor
+from scgv.commands.command import Command
 
 
 class SetModelCommand(Command):

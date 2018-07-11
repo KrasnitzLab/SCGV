@@ -4,8 +4,8 @@ Created on Jan 16, 2017
 @author: lubo
 '''
 import matplotlib as mpl
-from models.subject import DataSubject, ProfilesSubject
-from commands.executor import CommandExecutor
+from scgv.models.subject import DataSubject, ProfilesSubject
+from scgv.commands.executor import CommandExecutor
 mpl.use('TkAgg')
 
 from tkviews.tkimport import *  # @UnusedWildImport @NoMove @IgnorePep8

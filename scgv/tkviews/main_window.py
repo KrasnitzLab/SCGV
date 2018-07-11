@@ -5,15 +5,15 @@ Created on Feb 21, 2017
 '''
 from tkviews.tkimport import *  # @UnusedWildImport
 
-from commands.command import MacroCommand, Command
-from commands.executor import CommandExecutor
-from commands.show import ShowFeaturesCommand
-from commands.show import ShowSectorsReorderCommand
-from commands.widget import EnableCommand, DisableCommand
-from tkviews.base_window import BaseHeatmapWindow
-from utils.observer import DataObserver
-from commands.open import OpenCommand
-from models.subject import DataSubject
+from scgv.commands.command import MacroCommand, Command
+from scgv.commands.executor import CommandExecutor
+from scgv.commands.show import ShowFeaturesCommand
+from scgv.commands.show import ShowSectorsReorderCommand
+from scgv.commands.widget import EnableCommand, DisableCommand
+from scgv.tkviews.base_window import BaseHeatmapWindow
+from scgv.utils.observer import DataObserver
+from scgv.commands.open import OpenCommand
+from scgv.models.subject import DataSubject
 
 
 class FeaturesButton(DataObserver):

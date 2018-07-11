@@ -3,33 +3,34 @@ Created on Feb 21, 2017
 
 @author: lubo
 '''
-from tkviews.tkimport import *  # @UnusedWildImport
+from scgv.tkviews.tkimport import *  # @UnusedWildImport
 
-from tkviews.canvas_window import CanvasWindow
-from controllers.controller import SingleSectorController
+from scgv.tkviews.canvas_window import CanvasWindow
+from scgv.controllers.controller import SingleSectorController
 
 import numpy as np
-from models.sector_model import SingleSectorDataModel
+from scgv.models.sector_model import SingleSectorDataModel
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as col
 
-from views.clone import CloneViewer
-from views.heatmap import HeatmapViewer
-from views.sector import SectorViewer
-from views.gate import GateViewer
-from views.multiplier import MultiplierViewer
-from views.error import ErrorViewer
+from scgv.views.clone import CloneViewer
+from scgv.views.heatmap import HeatmapViewer
+from scgv.views.sector import SectorViewer
+from scgv.views.gate import GateViewer
+from scgv.views.multiplier import MultiplierViewer
+from scgv.views.error import ErrorViewer
 import traceback
-from views.dendrogram import DendrogramViewer
-from utils.observer import DataObserver, ProfilesObserver
-from models.subject import DataSubject, ProfilesSubject
-from commands.executor import CommandExecutor
-from commands.profiles import ShowProfilesCommand,\
+from scgv.views.dendrogram import DendrogramViewer
+from scgv.utils.observer import DataObserver, ProfilesObserver
+from scgv.models.subject import DataSubject, ProfilesSubject
+from scgv.commands.executor import CommandExecutor
+from scgv.commands.profiles import ShowProfilesCommand,\
     ClearProfilesCommand, AddProfilesCommand
+from scgv.utils.color_map import ColorMap
+from scgv.commands.command import Command
+
 from PIL import ImageTk, Image
-from utils.color_map import ColorMap
-from commands.command import Command
 
 
 class AddProfileDialog(simpledialog.Dialog):

@@ -3,15 +3,15 @@ Created on Mar 14, 2017
 
 @author: lubo
 '''
-from tkviews.tkimport import *  # @UnusedWildImport
-from models.featuremat_model import FeaturematModel
-from controllers.controller import FeaturematController, SectorsController
-from models.subject import DataSubject, ProfilesSubject
-from tkviews.base_window import BaseHeatmapWindow
-from commands.executor import CommandExecutor
-from commands.command import Command
-from models.sector_model import SectorsDataModel
-from tkviews.sectors_window import SectorsWindow
+from scgv.tkviews.tkimport import *  # @UnusedWildImport
+from scgv.models.featuremat_model import FeaturematModel
+from scgv.controllers.controller import FeaturematController, SectorsController
+from scgv.models.subject import DataSubject, ProfilesSubject
+from scgv.tkviews.base_window import BaseHeatmapWindow
+from scgv.commands.executor import CommandExecutor
+from scgv.commands.command import Command
+from scgv.models.sector_model import SectorsDataModel
+from scgv.tkviews.sectors_window import SectorsWindow
 
 
 class ShowFeaturesCommand(Command):

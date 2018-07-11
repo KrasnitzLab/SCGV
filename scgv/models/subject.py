@@ -4,7 +4,7 @@ Created on Mar 14, 2017
 @author: lubo
 '''
 import traceback
-from utils.observer import ProfilesObserver, DataObserver
+from scgv.utils.observer import ProfilesObserver, DataObserver
 
 
 class DataSubject(object):
