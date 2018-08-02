@@ -58,7 +58,7 @@ class BaseModel(object):
     def chrom_x_index(self):
         if self._chrom_x_index is None:
             self._chrom_x_index = \
-                np.where(self.data.seg_df[self.CHROM_COLUMN] == 23)[0][0]
+                np.where(self.data.seg_df[self.CHROM_COLUMN] == 20)[0][0]
         return self._chrom_x_index
 
     def calc_chrom_lines(self):
