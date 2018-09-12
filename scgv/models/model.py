@@ -33,6 +33,12 @@ class BaseModel(object):
 
         self.interval_length = None
 
+    def _get_first_nonautosomal_chromosome(self):
+        assert self.data.seg_df is not None
+        print(self.data.seg_df[self.CHROM_COLUMN].unique())
+        print(self.data.seg_df[self.CHROM_COLUMN].unique()[-2])
+        return self.data.seg_df[self.CHROM_COLUMN].unique()[-2]
+
     @property
     def pathology(self):
         if self.data is not None:
@@ -56,9 +62,11 @@ class BaseModel(object):
 
     @property
     def chrom_x_index(self):
+        x_index = self._get_first_nonautosomal_chromosome()
+
         if self._chrom_x_index is None:
             self._chrom_x_index = \
-                np.where(self.data.seg_df[self.CHROM_COLUMN] == 20)[0][0]
+                np.where(self.data.seg_df[self.CHROM_COLUMN] == x_index)[0][0]
         return self._chrom_x_index
 
     def calc_chrom_lines(self):
