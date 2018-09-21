@@ -9,7 +9,7 @@ setuptools.setup(
     version="1.0.1",
     author="Lubomir Chorbadjiev",
     author_email="lubomir.chorbadjiev@gmail.com",
-    description="SCGV is an interacive graphical tool for single-cell genomics data, with emphasis on single-cell genomics of cancer",
+    description="SCGV is an interactive graphical tool for single-cell genomics data, with emphasis on single-cell genomics of cancer",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/KrasnitzLab/SCGV",
