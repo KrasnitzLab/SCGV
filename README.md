@@ -38,6 +38,20 @@ version.
 instructions from 
 [https://docs.continuum.io/anaconda/install](https://docs.continuum.io/anaconda/install)
 
+### Conda installer for SCGV
+
+* To install SCGV you can use KrasnitzLab Anaconda channel:
+
+    ```
+    conda install -c krasnitzlab scgv
+    ```
+
+* To run the SCGV viewer run following command:
+
+    ```
+    scgview
+    ```
+
 ### Create SCGV anaconda environment from scratch
 
 * After installing Anaconda you need to create an environment to use with the viewer:
