@@ -4,13 +4,13 @@ Created on Dec 21, 2016
 @author: lubo
 '''
 import numpy as np
-from models.model import DataModel  # , gate_compare
-from models.featuremat_model import FeaturematModel
+from scgv.models.model import DataModel  # , gate_compare
+from scgv.models.featuremat_model import FeaturematModel
 # import pytest
 
 
-def test_data_model_make_01():
-    model = DataModel('../exampledata/example.archive.zip')
+def test_data_model_make_01(example_data):
+    model = DataModel(example_data)
     assert model is not None
     model.make()
 
@@ -18,8 +18,8 @@ def test_data_model_make_01():
     print(sectors_legend)
 
 
-def test_make_featuremat():
-    model = DataModel('../exampledata/example.archive.zip')
+def test_make_featuremat(example_data):
+    model = DataModel(example_data)
     assert model is not None
 
     model.make()

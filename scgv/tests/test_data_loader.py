@@ -3,7 +3,7 @@ Created on Dec 21, 2016
 
 @author: lubo
 '''
-from models.loader import DataLoader
+from scgv.models.loader import DataLoader
 import pytest
 
 
@@ -17,14 +17,14 @@ def test_data_loader_bad_zip():
         DataLoader("tests/data/tbguide.csv").load()
 
 
-def test_data_zip_loader_create_01():
-    loader = DataLoader('../exampledata/example.archive.zip')
+def test_data_zip_loader_create_01(example_dir):
+    loader = DataLoader(example_dir)
     loader.load()
 
     assert loader is not None
 
 
-def test_data_dir_loader_create_01():
-    loader = DataLoader('../exampledata/example.directory/')
+def test_data_dir_loader_create_01(example_dir):
+    loader = DataLoader(example_dir)
     loader.load()
     assert loader is not None

@@ -5,12 +5,12 @@ Created on Jan 18, 2017
 '''
 import numpy as np
 
-from models.sector_model import SectorsDataModel, SingleSectorDataModel
-from models.model import DataModel
+from scgv.models.sector_model import SectorsDataModel, SingleSectorDataModel
+from scgv.models.model import DataModel
 
 
-def test_data_model_make_01():
-    model = DataModel('../exampledata/example.archive.zip')
+def test_data_model_make_01(example_data):
+    model = DataModel(example_data)
     assert model is not None
     model.make()
 
@@ -54,8 +54,8 @@ def test_sector_order_experiments():
     assert np.all(elements[res] == np.array([1, 0, 3, 2]))
 
 
-def test_single_sector_subtree_experiments():
-    model = DataModel('../exampledata/example.archive.zip')
+def test_single_sector_subtree_experiments(example_data):
+    model = DataModel(example_data)
     assert model is not None
     model.make()
     print(model.sector_mapping)
@@ -68,8 +68,8 @@ def test_single_sector_subtree_experiments():
     print(lmat[:, 1])
 
 
-def test_single_sector_subtree_twice():
-    model = DataModel('../exampledata/example.archive.zip')
+def test_single_sector_subtree_twice(example_data):
+    model = DataModel(example_data)
     assert model is not None
     model.make()
     print(model.sector_mapping)

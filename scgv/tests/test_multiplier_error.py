@@ -6,7 +6,7 @@ Created on Jan 4, 2017
 import numpy as np
 
 import pytest
-from views.sample import SamplesViewer
+from scgv.views.sample import SamplesViewer
 
 
 def test_multiplier(model_fixture):
