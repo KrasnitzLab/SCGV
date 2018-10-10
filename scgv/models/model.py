@@ -190,7 +190,8 @@ class BaseModel(object):
         features[positive, :] = \
             +1 * self.data.featuremat_df.ix[positive.index, :].values
 
-        psi = int(self.bins / 600)
+        # psi = int(self.bins / 600)
+        psi = 2
         kernel = np.ones(2 * psi)
         return np.apply_along_axis(
             np.convolve,
