@@ -4,8 +4,6 @@ Created on Jan 18, 2017
 @author: lubo
 '''
 
-from scgv.tkviews.tkimport import *  # @UnusedWildImport
-
 from scgv.tkviews.canvas_window import CanvasWindow
 from scgv.views.sample import SamplesViewer
 

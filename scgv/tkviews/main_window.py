@@ -3,7 +3,10 @@ Created on Feb 21, 2017
 
 @author: lubo
 '''
-from scgv.tkviews.tkimport import *  # @UnusedWildImport
+import tkinter as tk
+from tkinter import ttk
+from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askdirectory
 
 from scgv.commands.command import MacroCommand, Command
 from scgv.commands.executor import CommandExecutor

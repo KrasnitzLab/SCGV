@@ -4,13 +4,8 @@ Created on Mar 14, 2017
 @author: lubo
 '''
 
-import sys  # @UnusedImport
-from scgv.commands import command
 from scgv.commands.command import Command
-if sys.version_info[0] < 3:
-    import Queue as queue  # @UnusedImport @UnresolvedImport
-else:
-    import queue  # @UnusedImport @UnresolvedImport @NoMove @Reimport
+import queue  # @UnusedImport @UnresolvedImport @NoMove @Reimport
 
 
 class CommandExecutor(object):

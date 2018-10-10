@@ -3,7 +3,7 @@ Created on Mar 14, 2017
 
 @author: lubo
 '''
-from scgv.tkviews.tkimport import *  # @UnusedWildImport
+import tkinter as tk
 from scgv.commands.command import Command
 
 

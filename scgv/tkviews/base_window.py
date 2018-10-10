@@ -3,8 +3,9 @@ Created on Feb 21, 2017
 
 @author: lubo
 '''
-from scgv.tkviews.tkimport import *  # @UnusedWildImport
-
+import tkinter as tk
+from tkinter import ttk
+from tkinter import simpledialog
 from scgv.tkviews.canvas_window import CanvasWindow
 from scgv.controllers.controller import SingleSectorController
 

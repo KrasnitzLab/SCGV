@@ -3,15 +3,15 @@ Created on Jan 18, 2017
 
 @author: lubo
 '''
-import matplotlib as mpl
 
-mpl.use('TkAgg')
+import tkinter as tk
+from tkinter import ttk
 
+import scgv.tkviews.mpl_backend
 
-from matplotlib.backends.backend_tkagg import * # @UnusedWildImport @IgnorePep8
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
+    NavigationToolbar2TkAgg
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
-
-from scgv.tkviews.tkimport import *  # @UnusedWildImport @IgnorePep8
 
 
 class CanvasWindow(object):

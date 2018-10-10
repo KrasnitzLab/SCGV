@@ -6,18 +6,16 @@ Created on Jan 16, 2017
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
-import matplotlib as mpl
+import sys
+import tkinter as tk
+import scgv.tkviews.mpl_backend
+from scgv.controllers.controller import MainController
+from scgv.tkviews.main_window import MainWindow
+
 from scgv.models.subject import DataSubject, ProfilesSubject
 from scgv.commands.executor import CommandExecutor
 import os
 import traceback
-mpl.use('TkAgg')
-
-from scgv.tkviews.tkimport import *  # @UnusedWildImport @NoMove @IgnorePep8
-
-# from models.sector_model import SingleSectorDataModel
-from scgv.controllers.controller import MainController  # @IgnorePep8
-from scgv.tkviews.main_window import MainWindow  # @IgnorePep8
 
 
 class CLIError(Exception):
