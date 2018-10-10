@@ -8,7 +8,7 @@ from argparse import RawDescriptionHelpFormatter
 
 import sys
 import tkinter as tk
-import scgv.tkviews.mpl_backend
+import scgv.tkviews.mpl_backend  # noqa
 from scgv.controllers.controller import MainController
 from scgv.tkviews.main_window import MainWindow
 

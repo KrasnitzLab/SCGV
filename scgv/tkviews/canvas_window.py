@@ -7,7 +7,7 @@ Created on Jan 18, 2017
 import tkinter as tk
 from tkinter import ttk
 
-import scgv.tkviews.mpl_backend
+import scgv.tkviews.mpl_backend  # noqa
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
     NavigationToolbar2TkAgg
