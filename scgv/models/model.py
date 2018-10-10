@@ -175,8 +175,10 @@ class BaseModel(object):
         assert self.data.features_df is not None
         assert self.data.featuremat_df is not None
 
-        self.data.featuremat_df = \
-            self.data.featuremat_df.ix[:, ordering].copy()
+        if not np.all(list(self.data.featuremat_df.columns) ==
+                      self.column_labels):
+            self.data.featuremat_df = \
+                self.data.featuremat_df.ix[:, ordering].copy()
         assert np.all(list(self.data.featuremat_df.columns) ==
                       self.column_labels)
 
