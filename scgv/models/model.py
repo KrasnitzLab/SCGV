@@ -35,8 +35,6 @@ class BaseModel(object):
 
     def _get_first_nonautosomal_chromosome(self):
         assert self.data.seg_df is not None
-        print(self.data.seg_df[self.CHROM_COLUMN].unique())
-        print(self.data.seg_df[self.CHROM_COLUMN].unique()[-2])
         return self.data.seg_df[self.CHROM_COLUMN].unique()[-2]
 
     @property
@@ -132,6 +130,9 @@ class BaseModel(object):
     def make_column_labels(self, ordering):
         return np.array(self.data.seg_df.columns[3:])[ordering]
 
+    def _original_column_labels(self):
+        return np.array(self.data.seg_df.columns[3:])
+
     def make_interval_length(self, Z):
         icoord = np.array(Z['icoord'])
         min_x = np.min(icoord)
@@ -212,7 +213,6 @@ class BaseModel(object):
 
         mapping = clone_mapping
         mapping.update(subclone_mapping)
-        # print("clone/subclone", mapping)
 
         return clone[ordering], subclone[ordering]
 
@@ -306,10 +306,11 @@ class BaseModel(object):
             else:
                 pathology = sector_df[self.PATHOLOGY_COLUMN].values[0]
                 if not np.all(sector_df[self.PATHOLOGY_COLUMN] == pathology):
-                    print(
-                        "single sector '{}'; different pathologies: {}".format(
-                            sector,
-                            sector_df[self.PATHOLOGY_COLUMN].unique()))
+                    print("single sector '{}'; "
+                          "multiple pathologies: {}"
+                          .format(
+                                sector,
+                                sector_df[self.PATHOLOGY_COLUMN].unique()))
             result.append((sector, str(pathology).strip()))
         return result
 

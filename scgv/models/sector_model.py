@@ -63,9 +63,10 @@ class SingleSectorDataModel(BaseModel):
         return index[res]
 
     def make_subtree(self):
+
         return self.get_subtree(
             self.model.lmat[:],
-            self.model.column_labels,
+            self.model._original_column_labels(),
             self.column_labels
         )
 
@@ -142,8 +143,6 @@ class SingleSectorDataModel(BaseModel):
                 pass
             else:
                 removeList.append(fulltreeLeafNames[i])
-
-        # print "get_subtree, removeList", removeList
 
         workLeafNames = list(fulltreeLeafNames)
         workLmat = []
