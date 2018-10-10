@@ -21,7 +21,6 @@ class SamplesController(ControllerBase):
         self.end_pos = None
 
     def event_handler(self, event):
-        print("event_handler called...")
         self.debug_event(event)
         if event.name == 'button_press_event' and event.button == 3:
             pos = self.translate_xcoord(event.xdata)

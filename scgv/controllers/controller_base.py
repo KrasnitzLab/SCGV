@@ -94,5 +94,4 @@ class HeatmapControllerBase(ControllerBase):
             return None
         xloc = int(event.xdata / self.model.interval_length)
         sample_name = self.model.column_labels[xloc]
-        print("xloc: {}; sample name: {}".format(xloc, sample_name))
         return sample_name

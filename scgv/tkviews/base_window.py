@@ -124,7 +124,6 @@ class ProfilesUi(DataObserver, ProfilesObserver):
         profiles = self.profile_ui.get(0, 'end')
 
     def _show_profiles(self):
-        print("show profiles called...")
         samples = self.profile_ui.get(0, 'end')
         if not samples:
             return
@@ -135,18 +134,15 @@ class ProfilesUi(DataObserver, ProfilesObserver):
         )
 
     def _clear_profiles(self):
-        print("clear profiles called...")
         CommandExecutor.execute(
             ClearProfilesCommand(self.profiles_subject),
             self.frame
         )
 
     def _add_profile_dialog(self):
-        print("add profile dialog added...")
         add_dialog = AddProfileDialog(self.frame)
         # self.master.wait_window(add_dialog.top)
         profiles = add_dialog.result
-        print("add profile result is: ", profiles)
         if profiles is None:
             return
         profiles = profiles.replace(',', ' ')
@@ -437,7 +433,6 @@ class SectorsLegend(LegendBase):
             return
         (_sector, pathology) = self.sectors[index]
         if self.model.pathology is None:
-            print("model.pathology is None; stopping...")
             return
         image, notes = self.model.pathology.get(
             pathology, (None, None))
@@ -564,7 +559,6 @@ class BaseHeatmapWindow(DataObserver, ProfilesObserver):
             return None
         xloc = int(event.xdata / self.model.interval_length)
         sample_name = self.model.column_labels[xloc]
-        print("xloc: {}; sample name: {}".format(xloc, sample_name))
         return sample_name
 
     def build_ui(self):
