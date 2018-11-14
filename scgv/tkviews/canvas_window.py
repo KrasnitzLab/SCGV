@@ -10,7 +10,7 @@ from tkinter import ttk
 import scgv.tkviews.mpl_backend  # noqa
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
-    NavigationToolbar2TkAgg
+    NavigationToolbar2Tk
 from matplotlib.figure import Figure  # @IgnorePep8 @Reimport
 
 
@@ -29,14 +29,14 @@ class CanvasWindow(object):
         self.content.pack(side="top", fill="both", expand=True)
 
         self.canvas = FigureCanvasTkAgg(self.fig, self.content)
-        self.canvas.show()
+        self.canvas.draw()
 
         toolbar_frame = ttk.Frame(
             self.content,
             # relief='sunken',
             borderwidth=5,
         )
-        self.toolbar = NavigationToolbar2TkAgg(self.canvas, toolbar_frame)
+        self.toolbar = NavigationToolbar2Tk(self.canvas, toolbar_frame)
         self.toolbar.update()
 
         self.toolbar_ext = ttk.Frame(
