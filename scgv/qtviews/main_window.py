@@ -3,8 +3,12 @@ import traceback
 
 import numpy as np
 
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QAction, \
-    QStatusBar, QFileDialog, QProgressBar
+from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, \
+    QStatusBar, QFileDialog, \
+    QHBoxLayout, QVBoxLayout, \
+    QListWidget, QListWidgetItem, \
+    QPushButton, QDialog
+
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, pyqtSlot, \
     QThreadPool
@@ -25,8 +29,8 @@ from scgv.views.sector import SectorViewer
 from scgv.views.gate import GateViewer
 from scgv.views.multiplier import MultiplierViewer
 from scgv.views.error import ErrorViewer
-import traceback
 from scgv.views.dendrogram import DendrogramViewer
+from scgv.views.sample import SamplesViewer
 
 
 class WorkerSignals(QObject):
@@ -140,7 +144,6 @@ class OpenButtons(object):
 
 
 class CanvasSignals(QObject):
-
     profile_selected = pyqtSignal(object)
 
 
@@ -154,6 +157,7 @@ class Canvas(FigureCanvas):
         self.model = None
         super(Canvas, self).__init__(self.fig)
         self.signals = CanvasSignals()
+        self.cid = None
 
     def draw_canvas(self):
         assert self.model is not None
@@ -215,7 +219,6 @@ class Canvas(FigureCanvas):
         if self.model is not None:
             self.draw_canvas()
             self.draw()
-            self.fig.canvas.mpl_connect("button_press_event", self.onclick)
 
     def onclick(self, event):
         print(
@@ -230,6 +233,9 @@ class Canvas(FigureCanvas):
     def set_model(self, model):
         print("Canvas: set model:", model)
         self.model = model
+        if self.model is not None and self.cid is None:
+            self.cid = self.fig.canvas.mpl_connect(
+                "button_press_event", self.onclick)
 
     def locate_sample_click(self, event):
         if event.xdata is None:
@@ -237,6 +243,87 @@ class Canvas(FigureCanvas):
         xloc = int(event.xdata / self.model.interval_length)
         sample_name = self.model.column_labels[xloc]
         return sample_name
+
+    def on_profile_selected(self, *args, **kwargs):
+        print("canvas.on_profile_selected():", args, kwargs)
+
+
+class ShowProfilesWindow(QDialog):
+
+    def __init__(self, model, profiles, parent, *args, **kwargs):
+        super(ShowProfilesWindow, self).__init__(parent, *args, **kwargs)
+        self.setWindowTitle("SCGV Show Profiles")
+
+        self._main = QWidget(self)
+        layout = QVBoxLayout(self)
+
+        self.fig = Figure(figsize=(12, 8))
+        self.canvas = FigureCanvas(self.fig)
+
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        layout.addWidget(self.toolbar)
+        layout.addWidget(self.canvas)
+
+        self.model = model
+        self.profiles = profiles
+
+        self.draw_canvas()
+        self.canvas.draw()
+        self.show()
+
+    def draw_canvas(self):
+        samples_viewer = SamplesViewer(self.model)
+        samples_viewer.draw_samples(self.fig, self.profiles)
+
+
+class CommandsWidget(QWidget):
+
+    def __init__(self, main, *args, **kwargs):
+        super(CommandsWidget, self).__init__(*args, **kwargs)
+        self.main = main
+
+        self.profiles = []
+        layout = QVBoxLayout(self)
+        self.profiles_list = QListWidget(self)
+        layout.addWidget(self.profiles_list)
+        self.profiles_show_button = QPushButton("Profiles Show")
+        self.profiles_show_button.clicked.connect(
+            self.on_profiles_show
+        )
+        layout.addWidget(self.profiles_show_button)
+
+        self.profiles_clear_button = QPushButton("Profiles Clear")
+        self.profiles_clear_button.clicked.connect(
+            self.on_profiles_clear
+        )
+        layout.addWidget(self.profiles_clear_button)
+
+        layout.addStretch(1)
+        self.model = None
+
+    def set_model(self, model):
+        self.model = model
+
+    def on_profile_selected(self, profile, *args, **kwargs):
+        if profile in self.profiles:
+            return
+        self.profiles_list.addItem(profile)
+        self.profiles.append(profile)
+
+    def on_profiles_clear(self, *args, **kwargs):
+        self.profiles_list.clear()
+        self.profiles = []
+
+    def on_profiles_show(self, *args, **kwargs):
+        if not self.profiles:
+            return
+        profiles = self.profiles[:]
+        self.profiles_list.clear()
+        self.profiles = []
+
+        self.show_profiles = ShowProfilesWindow(
+            self.model, profiles, self.main
+        )
 
 
 class MainWindow(QMainWindow):
@@ -248,10 +335,13 @@ class MainWindow(QMainWindow):
 
         self._main = QWidget()
         self.setCentralWidget(self._main)
-        layout = QVBoxLayout(self._main)
+        layout = QHBoxLayout(self._main)
 
         self.canvas = Canvas()
-        layout.addWidget(self.canvas)
+        layout.addWidget(self.canvas, stretch=1)
+
+        self.commands = CommandsWidget(self)
+        layout.addWidget(self.commands, stretch=0)
 
         self.toolbar = NavigationToolbar(self.canvas, self)
         self.addToolBar(self.toolbar)
@@ -259,10 +349,19 @@ class MainWindow(QMainWindow):
         self.setStatusBar(QStatusBar(self))
         self.open_buttons = OpenButtons(self, None)
 
+        self.connect_profile_actions()
+
+    def connect_profile_actions(self):
+        self.canvas.signals.profile_selected.connect(
+            self.commands.on_profile_selected)
+        self.canvas.signals.profile_selected.connect(
+            self.canvas.on_profile_selected)
+
     def set_model(self, model):
         print("set model:", model)
         self.model = model
         self.canvas.set_model(model)
+        self.commands.set_model(model)
 
     def update(self):
         if self.model is not None:
