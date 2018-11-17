@@ -126,6 +126,7 @@ class DataLoader(object):
         filenames = self._organize_filenames(all_filenames)
 
         for filetype, filename in filenames.items():
+            print("loading {}: {}".format(filetype, filename))
             infile = open(filename)
             if filetype == 'genome':
                 genome = self._load_genome_build(infile)
