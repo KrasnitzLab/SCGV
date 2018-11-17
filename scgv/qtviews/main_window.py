@@ -48,8 +48,6 @@ class Worker(QRunnable):
         self.args = args
         self.kwargs = kwargs
         self.signals = WorkerSignals()
-        print(self.args)
-        print(self.kwargs)
 
     @pyqtSlot()
     def run(self):
@@ -126,7 +124,6 @@ class OpenButtons(object):
         self.threadpool.start(worker)
 
     def _load_complete(self):
-        print("load complete")
         self.window.update()
         print("window updated called...")
 
@@ -142,45 +139,21 @@ class OpenButtons(object):
             return model
 
 
-class MainWindow(QMainWindow):
+class CanvasSignals(QObject):
+
+    profile_selected = pyqtSignal(object)
+
+
+class Canvas(FigureCanvas):
 
     W = 0.8875
     X = 0.075
 
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
-
-        self.setWindowTitle("SCGV Main")
-
-        self._main = QWidget()
-        self.setCentralWidget(self._main)
-        layout = QVBoxLayout(self._main)
-
+    def __init__(self):
         self.fig = Figure(figsize=(12, 8))
-        self.canvas = FigureCanvas(self.fig)
-        layout.addWidget(self.canvas)
-
-        self.toolbar = NavigationToolbar(self.canvas, self)
-        self.addToolBar(self.toolbar)
-
-        # self._static_ax = self.canvas.figure.subplots()
-        # t = np.linspace(0, 10, 501)
-        # self._static_ax.plot(t, np.tan(t), ".")
-
-        self.setStatusBar(QStatusBar(self))
-        self.open_buttons = OpenButtons(self, None)
-
-    def set_model(self, model):
-        print("set model:", model)
-        self.model = model
-
-    def update(self):
-        if self.model is None:
-            return
-        self.draw_canvas()
-        self.canvas.draw()
-        self.canvas.update()
-        super(MainWindow, self).update()
+        self.model = None
+        super(Canvas, self).__init__(self.fig)
+        self.signals = CanvasSignals()
 
     def draw_canvas(self):
         assert self.model is not None
@@ -237,3 +210,62 @@ class MainWindow(QMainWindow):
         plt.setp(ax_sector.get_xticklabels(), visible=False)
         plt.setp(ax_gate.get_xticklabels(), visible=False)
         plt.setp(ax_multiplier.get_xticklabels(), visible=False)
+
+    def redraw(self):
+        if self.model is not None:
+            self.draw_canvas()
+            self.draw()
+            self.fig.canvas.mpl_connect("button_press_event", self.onclick)
+
+    def onclick(self, event):
+        print(
+            '%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+            ('double' if event.dblclick else 'single', event.button,
+             event.x, event.y, event.xdata, event.ydata))
+        if event.button == 3:
+            sample_name = self.locate_sample_click(event)
+            print("Located sample:", sample_name)
+            self.signals.profile_selected.emit(sample_name)
+
+    def set_model(self, model):
+        print("Canvas: set model:", model)
+        self.model = model
+
+    def locate_sample_click(self, event):
+        if event.xdata is None:
+            return None
+        xloc = int(event.xdata / self.model.interval_length)
+        sample_name = self.model.column_labels[xloc]
+        return sample_name
+
+
+class MainWindow(QMainWindow):
+
+    def __init__(self, *args, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
+
+        self.setWindowTitle("SCGV Main")
+
+        self._main = QWidget()
+        self.setCentralWidget(self._main)
+        layout = QVBoxLayout(self._main)
+
+        self.canvas = Canvas()
+        layout.addWidget(self.canvas)
+
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        self.addToolBar(self.toolbar)
+
+        self.setStatusBar(QStatusBar(self))
+        self.open_buttons = OpenButtons(self, None)
+
+    def set_model(self, model):
+        print("set model:", model)
+        self.model = model
+        self.canvas.set_model(model)
+
+    def update(self):
+        if self.model is not None:
+            self.canvas.redraw()
+        super(MainWindow, self).update()
+
