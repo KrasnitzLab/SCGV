@@ -16,6 +16,18 @@ from matplotlib.figure import Figure
 from scgv.models.model import DataModel
 from scgv.utils.observer import DataObserver
 
+import matplotlib.pyplot as plt
+import matplotlib.colors as col
+
+from scgv.views.clone import CloneViewer
+from scgv.views.heatmap import HeatmapViewer
+from scgv.views.sector import SectorViewer
+from scgv.views.gate import GateViewer
+from scgv.views.multiplier import MultiplierViewer
+from scgv.views.error import ErrorViewer
+import traceback
+from scgv.views.dendrogram import DendrogramViewer
+
 
 class WorkerSignals(QObject):
 
@@ -115,6 +127,8 @@ class OpenButtons(object):
 
     def _load_complete(self):
         print("load complete")
+        self.window.update()
+        print("window updated called...")
 
     def _load_error(self, *args, **kwargs):
         print("_load_error: args=", args, "; kwargs=", kwargs)
@@ -130,6 +144,9 @@ class OpenButtons(object):
 
 class MainWindow(QMainWindow):
 
+    W = 0.8875
+    X = 0.075
+
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
@@ -139,18 +156,84 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self._main)
         layout = QVBoxLayout(self._main)
 
-        static_canvas = FigureCanvas(Figure(figsize=(5, 3)))
-        layout.addWidget(static_canvas)
+        self.fig = Figure(figsize=(12, 8))
+        self.canvas = FigureCanvas(self.fig)
+        layout.addWidget(self.canvas)
 
-        self.toolbar = NavigationToolbar(static_canvas, self)
+        self.toolbar = NavigationToolbar(self.canvas, self)
         self.addToolBar(self.toolbar)
 
-        self._static_ax = static_canvas.figure.subplots()
-        t = np.linspace(0, 10, 501)
-        self._static_ax.plot(t, np.tan(t), ".")
+        # self._static_ax = self.canvas.figure.subplots()
+        # t = np.linspace(0, 10, 501)
+        # self._static_ax.plot(t, np.tan(t), ".")
 
         self.setStatusBar(QStatusBar(self))
         self.open_buttons = OpenButtons(self, None)
 
     def set_model(self, model):
         print("set model:", model)
+        self.model = model
+
+    def update(self):
+        if self.model is None:
+            return
+        self.draw_canvas()
+        self.canvas.draw()
+        self.canvas.update()
+        super(MainWindow, self).update()
+
+    def draw_canvas(self):
+        assert self.model is not None
+
+        ax_dendro = self.fig.add_axes(
+            [self.X, 0.775, self.W, 0.175], frame_on=True)
+        dendro_viewer = DendrogramViewer(self.model)
+        dendro_viewer.draw_dendrogram(ax_dendro)
+
+        ax_clone = self.fig.add_axes(
+            [self.X, 0.7625, self.W, 0.0125], frame_on=True, sharex=ax_dendro)
+        clone_viewer = CloneViewer(self.model)
+        clone_viewer.draw_clone(ax_clone)
+        ax_subclone = self.fig.add_axes(
+            [self.X, 0.75, self.W, 0.0125], frame_on=True, sharex=ax_dendro)
+        clone_viewer.draw_subclone(ax_subclone)
+
+        ax_heat = self.fig.add_axes(
+            [self.X, 0.20, self.W, 0.55], frame_on=True, sharex=ax_dendro)
+
+        heatmap_viewer = HeatmapViewer(self.model)
+        heatmap_viewer.draw_heatmap(ax_heat)
+
+        ax_sector = self.fig.add_axes(
+            [self.X, 0.175, self.W, 0.025], frame_on=True, sharex=ax_dendro)
+        # draw sector bar
+        sector_viewer = SectorViewer(self.model)
+        sector_viewer.draw_sector(ax_sector)
+
+        ax_gate = self.fig.add_axes(
+            [self.X, 0.150, self.W, 0.025], frame_on=True, sharex=ax_dendro)
+        gate_viewer = GateViewer(self.model)
+        gate_viewer.draw_ploidy(ax_gate)
+
+        ax_multiplier = self.fig.add_axes(
+            [self.X, 0.125, self.W, 0.025], frame_on=True, sharex=ax_dendro)
+        multiplier_viewer = MultiplierViewer(self.model)
+        multiplier_viewer.draw_multiplier(ax_multiplier)
+
+        ax_error = self.fig.add_axes(
+            [self.X, 0.10, self.W, 0.025], frame_on=True, sharex=ax_dendro)
+        error_viewer = ErrorViewer(self.model)
+        error_viewer.draw_error(ax_error)
+        error_viewer.draw_xlabels(ax_error)
+
+        self.ax_label = ax_error
+
+        plt.setp(ax_dendro.get_xticklabels(), visible=False)
+        plt.setp(ax_clone.get_xticklabels(), visible=False)
+        plt.setp(ax_clone.get_xticklines(), visible=False)
+        plt.setp(ax_subclone.get_xticklabels(), visible=False)
+        plt.setp(ax_subclone.get_xticklines(), visible=False)
+        plt.setp(ax_heat.get_xticklabels(), visible=False)
+        plt.setp(ax_sector.get_xticklabels(), visible=False)
+        plt.setp(ax_gate.get_xticklabels(), visible=False)
+        plt.setp(ax_multiplier.get_xticklabels(), visible=False)
