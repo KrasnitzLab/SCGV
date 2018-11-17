@@ -12,7 +12,7 @@ class DataObserver(object):
         self.subject.register_observer(self)
 
     def update(self, subject):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def get_subject(self):
         return self.subject
@@ -28,7 +28,7 @@ class ProfilesObserver(object):
         self.profiles_subject.register_observer(self)
 
     def update(self, subject):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def get_profiles(self):
         return self.profiles_subject
