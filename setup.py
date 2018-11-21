@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="scgv",
-    version="1.0.1",
+    version="1.1.0",
     author="Lubomir Chorbadjiev",
     author_email="lubomir.chorbadjiev@gmail.com",
     description="SCGV is an interactive graphical tool for single-cell "
@@ -18,10 +18,14 @@ setuptools.setup(
         # 'scgv',
         exclude=['docs', 'tests']
     ),
+    package_data={
+        'scgv.qtviews': ['icons/*.png'],
+    },
+    include_package_data=True,
     # package_dir={'':'scgv'},
     entry_points={
         'console_scripts': [
-            'scgview=scgv.tkmain:main',
+            'scgview=scgv.qtmain:main',
         ]
     },
     classifiers=(

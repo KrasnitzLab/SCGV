@@ -1,6 +1,7 @@
 import sys
 import traceback
 
+import os
 import numpy as np
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, \
@@ -78,6 +79,15 @@ class Worker(QRunnable):
             self.signals.finished.emit()
 
 
+def icons_folder():
+    print(__file__)
+    modulename = os.path.abspath(__file__)
+    dirname = os.path.dirname(modulename)
+    iconsdir = os.path.join(dirname, 'icons')
+    print(iconsdir)
+    return iconsdir
+
+
 class OpenButtons(object):
 
     def __init__(self, window, subject):
@@ -85,15 +95,18 @@ class OpenButtons(object):
         self.window = window
 
         self.window.toolbar.addSeparator()
+        icons = icons_folder()
 
         self.open_dir_action = QAction(
-            QIcon("icons/folder.png"), "Open Directory", self.window)
+            QIcon(os.path.join(icons, "folder.png")), 
+            "Open Directory", self.window)
         self.open_dir_action.setStatusTip("Open Directory button")
         self.open_dir_action.triggered.connect(self.on_open_directory_click)
         self.window.toolbar.addAction(self.open_dir_action)
 
         self.open_archive_action = QAction(
-            QIcon("icons/archive.png"), "Open Archive", self.window)
+            QIcon(os.path.join(icons, "archive.png")), 
+            "Open Archive", self.window)
         self.open_archive_action.setStatusTip("Open Archive button")
         self.open_archive_action.triggered.connect(self.on_open_archive_click)
         self.window.toolbar.addAction(self.open_archive_action)
