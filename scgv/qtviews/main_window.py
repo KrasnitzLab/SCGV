@@ -38,6 +38,8 @@ from scgv.views.sample import SamplesViewer
 
 from scgv.utils.color_map import ColorMap
 
+from scgv.models.sector_model import SingleSectorDataModel
+
 
 class WorkerSignals(QObject):
 
@@ -314,6 +316,22 @@ class ShowPathologyWindow(QDialog):
         layout.addWidget(text)
 
 
+class SingleSectorWindow(QDialog):
+    def __init__(self, main, sector_model, *args, **kwargs):
+        super(SingleSectorWindow, self).__init__(main, *args, **kwargs)
+        self.main = main
+        layout = QVBoxLayout(self)
+
+        self.base = BaseHeatmapWidget(self, *args, **kwargs)
+        self.toolbar = self.base.toolbar
+        layout.addWidget(self.toolbar)
+        layout.addWidget(self.base)
+
+        self.base.set_model(sector_model)
+
+        self.base.update()
+
+
 class LegendWidget(QWidget):
     IMAGE_SIZE = 15
 
@@ -418,6 +436,13 @@ class SectorsLegend(LegendWidget):
     def show_sector_view(self):
         print("SectorsLegend.show_sector_view()")
         print(self.list.currentRow())
+        sector_index = self.list.currentRow() + 1
+
+        sector_model = SingleSectorDataModel(self.model, sector_index)
+        sector_model.make()
+
+        dialog = SingleSectorWindow(self.main, sector_model)
+        dialog.show()
 
     def show_pathology_view(self):
         print("SectorsLegend.show_pathology_view()")
