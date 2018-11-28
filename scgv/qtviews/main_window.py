@@ -39,6 +39,7 @@ from scgv.utils.color_map import ColorMap
 
 from scgv.models.sector_model import SingleSectorDataModel
 from scgv.models.sector_model import SectorsDataModel
+from scgv.models.featuremat_model import FeaturematModel
 
 
 class WorkerSignals(QObject):
@@ -384,20 +385,20 @@ class SingleSectorWindow(QDialog):
         self.base.update()
 
 
-class SectorsWindow(QDialog):
+class HeatmapWindow(QDialog):
 
-    def __init__(self, main, sectors_model, *args, **kwargs):
-        super(SectorsWindow, self).__init__(main, *args, **kwargs)
+    def __init__(self, main, model, new_canvas=Canvas,  *args, **kwargs):
+        super(HeatmapWindow, self).__init__(main, *args, **kwargs)
         self.main = main
         layout = QVBoxLayout(self)
 
         self.base = BaseHeatmapWidget(
-            self, new_canvas=SectorsCanvas, *args, **kwargs)
+            self, new_canvas=new_canvas, *args, **kwargs)
         self.toolbar = self.base.toolbar
         layout.addWidget(self.toolbar)
         layout.addWidget(self.base)
 
-        self.base.set_model(sectors_model)
+        self.base.set_model(model)
 
         self.base.update()
 
@@ -657,6 +658,14 @@ class ActionButtons(object):
 
     def on_feature_view_action(self, *args, **kwargs):
         print("ActionButtons.on_feature_view_action()", args, kwargs)
+        if self.model is None:
+            return
+        features_model = FeaturematModel(self.model)
+        features_model.make()
+
+        dialog = HeatmapWindow(
+            self.window, features_model, new_canvas=Canvas)
+        dialog.show()
 
     def on_order_by_sector_action(self, *args, **kwargs):
         print("ActionButtons.on_order_by_sector_action()", args, kwargs)
@@ -666,7 +675,8 @@ class ActionButtons(object):
         sectors_model = SectorsDataModel(self.model)
         sectors_model.make()
 
-        dialog = SectorsWindow(self.window, sectors_model)
+        dialog = HeatmapWindow(
+            self.window, sectors_model, new_canvas=SectorsCanvas)
         dialog.show()
 
     def set_model(self, model):
