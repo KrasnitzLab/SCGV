@@ -411,7 +411,8 @@ class SectorsLegend(LegendWidget):
 
         context = QMenu(self)
         context.addAction(show_sector_view)
-        context.addAction(show_pathology_view)
+        if self.model.pathology:
+            context.addAction(show_pathology_view)
         context.exec_(self.mapToGlobal(pos))
 
     def show_sector_view(self):
@@ -423,6 +424,9 @@ class SectorsLegend(LegendWidget):
         print(self.list.currentRow())
         print(self.list.currentItem().text())
         print(self.model.pathology)
+
+        if self.model.pathology is None:
+            return
 
         pathology = self.list.currentItem().text()
         image, notes = self.model.pathology.get(pathology, (None, None))
