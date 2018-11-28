@@ -352,6 +352,28 @@ class HeatmapLegend(LegendWidget):
             self.add_entry(label, color)
 
 
+class SectorsLegend(LegendWidget):
+
+    def __init__(self, main, *args, **kwargs):
+        super(SectorsLegend, self).__init__(main, *args, **kwargs)
+        self.sectors = None
+
+    def show(self):
+        assert self.model is not None
+
+        if self.sectors is None:
+            self.sectors = self.model.make_sectors_legend()
+        if self.sectors is None:
+            return
+
+        self.cmap = ColorMap.make_qualitative12()
+
+        for (index, (sector, pathology)) in enumerate(self.sectors):
+            color = self.cmap.colors(index)
+            self.add_entry(
+                text='{}: {}'.format(sector, pathology),
+                color=color)
+
 
 class ProfilesWidget(QWidget):
 
@@ -425,6 +447,9 @@ class MainWindow(QMainWindow):
         self.heatmap_legend = HeatmapLegend(self)
         self.commands_pane.addWidget(self.heatmap_legend)
 
+        self.sectors_legend = SectorsLegend(self)
+        self.commands_pane.addWidget(self.sectors_legend)
+
         self.commands_pane.addStretch(1)
 
         self.toolbar = NavigationToolbar(self.canvas, self)
@@ -447,6 +472,7 @@ class MainWindow(QMainWindow):
         self.canvas.set_model(model)
         self.profiles.set_model(model)
         self.heatmap_legend.set_model(model)
+        self.sectors_legend.set_model(model)
 
     def update(self):
         if self.model is not None:
