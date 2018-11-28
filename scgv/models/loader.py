@@ -103,6 +103,7 @@ class DataLoader(object):
                 filename = os.path.join('pathology', str(row['notes']))
                 if filename in zipdata.namelist():
                     notes = zipdata.open(filename).readlines()
+                    notes = [n.decode('utf-8') for n in notes]
                     # image.load()
                 else:
                     print("image not found: ", filename)

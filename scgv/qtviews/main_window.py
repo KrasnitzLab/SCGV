@@ -8,11 +8,12 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, \
     QStatusBar, QFileDialog, \
     QHBoxLayout, QVBoxLayout, \
     QListWidget, QListWidgetItem, \
-    QPushButton, QDialog
+    QPushButton, QDialog, QMenu, QLabel, \
+    QTextEdit
 
-from PyQt5.QtGui import QIcon, QPixmap, QImage
+from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextDocument
 from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, pyqtSlot, \
-    QThreadPool
+    QThreadPool, Qt
 
 from matplotlib.backends.backend_qt5agg import FigureCanvas, \
     NavigationToolbar2QT as NavigationToolbar
@@ -284,11 +285,33 @@ class ShowProfilesWindow(QDialog):
 
         self.draw_canvas()
         self.canvas.draw()
-        self.show()
 
     def draw_canvas(self):
         samples_viewer = SamplesViewer(self.model)
         samples_viewer.draw_samples(self.fig, self.profiles)
+
+
+class ShowPathologyWindow(QDialog):
+
+    def __init__(self, image, notes, parent, *args, **kwargs):
+        super(ShowPathologyWindow, self).__init__(parent, *args, **kwargs)
+        self.image = QImage(ImageQt.ImageQt(image))
+        self.notes = notes
+
+        label = QLabel(self)
+        pixmap = QPixmap(self.image)
+        label.setPixmap(pixmap)
+
+        text = QTextEdit(self)
+        text.setReadOnly(True)
+
+        doc = QTextDocument()
+        doc.setPlainText("".join(notes))
+        text.setDocument(doc)
+
+        layout = QHBoxLayout(self)
+        layout.addWidget(label)
+        layout.addWidget(text)
 
 
 class LegendWidget(QWidget):
@@ -303,7 +326,7 @@ class LegendWidget(QWidget):
         layout.addWidget(self.list)
 
     @staticmethod
-    def tkcolor(color):
+    def color255(color):
         c = col.to_rgba(color)
         if len(c) == 3:
             r, g, b = color
@@ -318,7 +341,7 @@ class LegendWidget(QWidget):
         image = Image.new(
             'RGBA',
             size=(self.IMAGE_SIZE, self.IMAGE_SIZE),
-            color=self.tkcolor(color))
+            color=self.color255(color))
         qimage = QImage(ImageQt.ImageQt(image))
         return QIcon(QPixmap(qimage))
 
@@ -371,8 +394,41 @@ class SectorsLegend(LegendWidget):
         for (index, (sector, pathology)) in enumerate(self.sectors):
             color = self.cmap.colors(index)
             self.add_entry(
-                text='{}: {}'.format(sector, pathology),
+                text=pathology,
                 color=color)
+
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_context_menu)
+
+    def on_context_menu(self, pos, *args, **kwargs):
+        print("SectorsLegend.on_context_menu()", args, kwargs)
+        print(self.list.currentRow())
+
+        show_sector_view = QAction("Show sector view", self)
+        show_sector_view.triggered.connect(self.show_sector_view)
+        show_pathology_view = QAction("Show sector pathology", self)
+        show_pathology_view.triggered.connect(self.show_pathology_view)
+
+        context = QMenu(self)
+        context.addAction(show_sector_view)
+        context.addAction(show_pathology_view)
+        context.exec_(self.mapToGlobal(pos))
+
+    def show_sector_view(self):
+        print("SectorsLegend.show_sector_view()")
+        print(self.list.currentRow())
+
+    def show_pathology_view(self):
+        print("SectorsLegend.show_pathology_view()")
+        print(self.list.currentRow())
+        print(self.list.currentItem().text())
+        print(self.model.pathology)
+
+        pathology = self.list.currentItem().text()
+        image, notes = self.model.pathology.get(pathology, (None, None))
+
+        dialog = ShowPathologyWindow(image, notes, self.main)
+        dialog.show()
 
 
 class ProfilesWidget(QWidget):
@@ -419,9 +475,10 @@ class ProfilesWidget(QWidget):
         self.profiles_list.clear()
         self.profiles = []
 
-        self.show_profiles = ShowProfilesWindow(
+        show_profiles = ShowProfilesWindow(
             self.model, profiles, self.main
         )
+        show_profiles.show()
 
 
 class MainWindow(QMainWindow):
