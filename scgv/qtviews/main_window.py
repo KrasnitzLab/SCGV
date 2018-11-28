@@ -22,7 +22,6 @@ from matplotlib.figure import Figure
 from PIL import ImageQt, Image
 
 from scgv.models.model import DataModel
-from scgv.utils.observer import DataObserver
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as col
@@ -39,6 +38,7 @@ from scgv.views.sample import SamplesViewer
 from scgv.utils.color_map import ColorMap
 
 from scgv.models.sector_model import SingleSectorDataModel
+from scgv.models.sector_model import SectorsDataModel
 
 
 class WorkerSignals(QObject):
@@ -95,8 +95,7 @@ def icons_folder():
 
 class OpenButtons(object):
 
-    def __init__(self, window, subject):
-        # super(OpenButtons, self).__init__(subject)
+    def __init__(self, window):
         self.window = window
 
         self.window.toolbar.addSeparator()
@@ -155,10 +154,10 @@ class OpenButtons(object):
         self.open_dir_action.setEnabled(True)
 
     def _build_model(self, filename, *args, **kwargs):
-            print("_build_model: args=", args, "; kwargs=", kwargs)
-            model = DataModel(filename)
-            model.make()
-            return model
+        print("_build_model: args=", args, "; kwargs=", kwargs)
+        model = DataModel(filename)
+        model.make()
+        return model
 
 
 class CanvasSignals(QObject):
@@ -266,6 +265,59 @@ class Canvas(FigureCanvas):
         print("canvas.on_profile_selected():", args, kwargs)
 
 
+class SectorsCanvas(Canvas):
+
+    def __init__(self):
+        super(SectorsCanvas, self).__init__()
+
+    def draw_canvas(self):
+        assert self.model is not None
+
+        ax_clone = self.fig.add_axes(
+            [self.X, 0.9375, self.W, 0.0125], frame_on=True)
+        clone_viewer = CloneViewer(self.model)
+        clone_viewer.draw_clone(ax_clone)
+        ax_subclone = self.fig.add_axes(
+            [self.X, 0.925, self.W, 0.0125], frame_on=True, sharex=ax_clone)
+        clone_viewer.draw_subclone(ax_subclone)
+
+        ax_heat = self.fig.add_axes(
+            [self.X, 0.20, self.W, 0.725], frame_on=True, sharex=ax_clone)
+        featuremat_viewer = HeatmapViewer(self.model)
+        featuremat_viewer.draw_heatmap(ax_heat)
+
+        ax_sector = self.fig.add_axes(
+            [self.X, 0.175, self.W, 0.025], frame_on=True, sharex=ax_clone)
+        # draw sector bar
+        sector_viewer = SectorViewer(self.model)
+        sector_viewer.draw_sector(ax_sector)
+
+        ax_gate = self.fig.add_axes(
+            [self.X, 0.150, self.W, 0.025], frame_on=True, sharex=ax_clone)
+        gate_viewer = GateViewer(self.model)
+        gate_viewer.draw_ploidy(ax_gate)
+
+        ax_multiplier = self.fig.add_axes(
+            [self.X, 0.125, self.W, 0.025], frame_on=True, sharex=ax_clone)
+        multiplier_viewer = MultiplierViewer(self.model)
+        multiplier_viewer.draw_multiplier(ax_multiplier)
+
+        ax_error = self.fig.add_axes(
+            [self.X, 0.10, self.W, 0.025], frame_on=True, sharex=ax_clone)
+        error_viewer = ErrorViewer(self.model)
+        error_viewer.draw_error(ax_error)
+        error_viewer.draw_xlabels(ax_error)
+        self.ax_label = ax_error
+
+        plt.setp(ax_clone.get_xticklabels(), visible=False)
+        plt.setp(ax_subclone.get_xticklabels(), visible=False)
+
+        plt.setp(ax_heat.get_xticklabels(), visible=False)
+        plt.setp(ax_sector.get_xticklabels(), visible=False)
+        plt.setp(ax_gate.get_xticklabels(), visible=False)
+        plt.setp(ax_multiplier.get_xticklabels(), visible=False)
+
+
 class ShowProfilesWindow(QDialog):
 
     def __init__(self, model, profiles, parent, *args, **kwargs):
@@ -328,6 +380,24 @@ class SingleSectorWindow(QDialog):
         layout.addWidget(self.base)
 
         self.base.set_model(sector_model)
+
+        self.base.update()
+
+
+class SectorsWindow(QDialog):
+
+    def __init__(self, main, sectors_model, *args, **kwargs):
+        super(SectorsWindow, self).__init__(main, *args, **kwargs)
+        self.main = main
+        layout = QVBoxLayout(self)
+
+        self.base = BaseHeatmapWidget(
+            self, new_canvas=SectorsCanvas, *args, **kwargs)
+        self.toolbar = self.base.toolbar
+        layout.addWidget(self.toolbar)
+        layout.addWidget(self.base)
+
+        self.base.set_model(sectors_model)
 
         self.base.update()
 
@@ -512,13 +582,13 @@ class ProfilesWidget(QWidget):
 
 class BaseHeatmapWidget(QWidget):
 
-    def __init__(self, main, *args, **kwargs):
+    def __init__(self, main, new_canvas=Canvas, *args, **kwargs):
         super(BaseHeatmapWidget, self).__init__(*args, **kwargs)
         self.main = main
 
         layout = QHBoxLayout(self)
 
-        self.canvas = Canvas()
+        self.canvas = new_canvas()
         layout.addWidget(self.canvas, stretch=1)
 
         self.commands_pane = QVBoxLayout(self)
@@ -558,6 +628,51 @@ class BaseHeatmapWidget(QWidget):
         super(BaseHeatmapWidget, self).update()
 
 
+class ActionButtons(object):
+
+    def __init__(self, window):
+        self.window = window
+        self.model = None
+
+        self.window.toolbar.addSeparator()
+        icons = icons_folder()
+
+        self.feature_view_action = QAction(
+            QIcon(os.path.join(icons, "format-justify-fill.png")),
+            "Feature View", self.window
+        )
+        self.feature_view_action.setStatusTip("Open Feature View")
+        self.feature_view_action.triggered.connect(
+            self.on_feature_view_action)
+        self.window.toolbar.addAction(self.feature_view_action)
+
+        self.order_by_sector_action = QAction(
+            QIcon(os.path.join(icons, "go-next.png")),
+            "Order by Sector", self.window
+        )
+        self.order_by_sector_action.setStatusTip("Order by Sector View")
+        self.order_by_sector_action.triggered.connect(
+            self.on_order_by_sector_action)
+        self.window.toolbar.addAction(self.order_by_sector_action)
+
+    def on_feature_view_action(self, *args, **kwargs):
+        print("ActionButtons.on_feature_view_action()", args, kwargs)
+
+    def on_order_by_sector_action(self, *args, **kwargs):
+        print("ActionButtons.on_order_by_sector_action()", args, kwargs)
+        if self.model is None:
+            return
+
+        sectors_model = SectorsDataModel(self.model)
+        sectors_model.make()
+
+        dialog = SectorsWindow(self.window, sectors_model)
+        dialog.show()
+
+    def set_model(self, model):
+        self.model = model
+
+
 class MainWindow(QMainWindow):
 
     def __init__(self, *args, **kwargs):
@@ -572,10 +687,12 @@ class MainWindow(QMainWindow):
         self.addToolBar(self._main.toolbar)
 
         self.setStatusBar(QStatusBar(self))
-        self.open_buttons = OpenButtons(self, None)
+        self.open_buttons = OpenButtons(self)
+        self.action_buttons = ActionButtons(self)
 
     def set_model(self, model):
         self._main.set_model(model)
+        self.action_buttons.set_model(model)
 
     def update(self):
         self._main.update()
