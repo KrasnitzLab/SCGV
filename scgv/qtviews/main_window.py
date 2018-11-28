@@ -10,13 +10,15 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, \
     QListWidget, QListWidgetItem, \
     QPushButton, QDialog
 
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, pyqtSlot, \
     QThreadPool
 
 from matplotlib.backends.backend_qt5agg import FigureCanvas, \
     NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+
+from PIL import ImageQt, Image
 
 from scgv.models.model import DataModel
 from scgv.utils.observer import DataObserver
@@ -32,6 +34,8 @@ from scgv.views.multiplier import MultiplierViewer
 from scgv.views.error import ErrorViewer
 from scgv.views.dendrogram import DendrogramViewer
 from scgv.views.sample import SamplesViewer
+
+from scgv.utils.color_map import ColorMap
 
 
 class WorkerSignals(QObject):
@@ -80,11 +84,9 @@ class Worker(QRunnable):
 
 
 def icons_folder():
-    print(__file__)
     modulename = os.path.abspath(__file__)
     dirname = os.path.dirname(modulename)
     iconsdir = os.path.join(dirname, 'icons')
-    print(iconsdir)
     return iconsdir
 
 
@@ -289,10 +291,72 @@ class ShowProfilesWindow(QDialog):
         samples_viewer.draw_samples(self.fig, self.profiles)
 
 
-class CommandsWidget(QWidget):
+class LegendWidget(QWidget):
+    IMAGE_SIZE = 15
 
     def __init__(self, main, *args, **kwargs):
-        super(CommandsWidget, self).__init__(*args, **kwargs)
+        super(LegendWidget, self).__init__(*args, **kwargs)
+        self.main = main
+
+        layout = QVBoxLayout(self)
+        self.list = QListWidget(self)
+        layout.addWidget(self.list)
+
+    @staticmethod
+    def tkcolor(color):
+        c = col.to_rgba(color)
+        if len(c) == 3:
+            r, g, b = color
+            a = 1
+        elif len(c) == 4:
+            r, g, b, a = color
+        else:
+            raise ValueError("strange color: {}".format(str(color)))
+        return (int(255 * r), int(255 * g), int(255 * b), int(255 * a))
+
+    def color_icon(self, color):
+        image = Image.new(
+            'RGBA',
+            size=(self.IMAGE_SIZE, self.IMAGE_SIZE),
+            color=self.tkcolor(color))
+        qimage = QImage(ImageQt.ImageQt(image))
+        return QIcon(QPixmap(qimage))
+
+    def add_entry(self, text, color):
+        icon = self.color_icon(color)
+
+        item = QListWidgetItem(icon, text, self.list)
+        self.list.addItem(item)
+
+    def show(self):
+        raise NotImplementedError()
+
+    def set_model(self, model):
+        self.model = model
+        self.show()
+
+
+class HeatmapLegend(LegendWidget):
+
+    COPYNUM_LABELS = [
+        "    0", "    1", "    2", "    3", "    4+"
+    ]
+
+    def __init__(self, main, *args, **kwargs):
+        super(HeatmapLegend, self).__init__(main, *args, **kwargs)
+
+    def show(self):
+        cmap = ColorMap.make_diverging05()
+        for index, label in enumerate(self.COPYNUM_LABELS):
+            color = cmap.colors(index)
+            self.add_entry(label, color)
+
+
+
+class ProfilesWidget(QWidget):
+
+    def __init__(self, main, *args, **kwargs):
+        super(ProfilesWidget, self).__init__(*args, **kwargs)
         self.main = main
 
         self.profiles = []
@@ -311,7 +375,6 @@ class CommandsWidget(QWidget):
         )
         layout.addWidget(self.profiles_clear_button)
 
-        layout.addStretch(1)
         self.model = None
 
     def set_model(self, model):
@@ -353,8 +416,16 @@ class MainWindow(QMainWindow):
         self.canvas = Canvas()
         layout.addWidget(self.canvas, stretch=1)
 
-        self.commands = CommandsWidget(self)
-        layout.addWidget(self.commands, stretch=0)
+        self.commands_pane = QVBoxLayout(self._main)
+        layout.addLayout(self.commands_pane)
+
+        self.profiles = ProfilesWidget(self)
+        self.commands_pane.addWidget(self.profiles, stretch=0)
+
+        self.heatmap_legend = HeatmapLegend(self)
+        self.commands_pane.addWidget(self.heatmap_legend)
+
+        self.commands_pane.addStretch(1)
 
         self.toolbar = NavigationToolbar(self.canvas, self)
         self.addToolBar(self.toolbar)
@@ -366,15 +437,16 @@ class MainWindow(QMainWindow):
 
     def connect_profile_actions(self):
         self.canvas.signals.profile_selected.connect(
-            self.commands.on_profile_selected)
+            self.profiles.on_profile_selected)
         self.canvas.signals.profile_selected.connect(
-            self.canvas.on_profile_selected)
+            self.profiles.on_profile_selected)
 
     def set_model(self, model):
         print("set model:", model)
         self.model = model
         self.canvas.set_model(model)
-        self.commands.set_model(model)
+        self.profiles.set_model(model)
+        self.heatmap_legend.set_model(model)
 
     def update(self):
         if self.model is not None:
