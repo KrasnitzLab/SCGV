@@ -485,21 +485,18 @@ class ProfilesWidget(QWidget):
         show_profiles.show()
 
 
-class MainWindow(QMainWindow):
+class BaseHeatmapWidget(QWidget):
 
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+    def __init__(self, main, *args, **kwargs):
+        super(BaseHeatmapWidget, self).__init__(*args, **kwargs)
+        self.main = main
 
-        self.setWindowTitle("SCGV Main")
-
-        self._main = QWidget()
-        self.setCentralWidget(self._main)
-        layout = QHBoxLayout(self._main)
+        layout = QHBoxLayout(self)
 
         self.canvas = Canvas()
         layout.addWidget(self.canvas, stretch=1)
 
-        self.commands_pane = QVBoxLayout(self._main)
+        self.commands_pane = QVBoxLayout(self)
         layout.addLayout(self.commands_pane)
 
         self.profiles = ProfilesWidget(self)
@@ -514,11 +511,6 @@ class MainWindow(QMainWindow):
         self.commands_pane.addStretch(1)
 
         self.toolbar = NavigationToolbar(self.canvas, self)
-        self.addToolBar(self.toolbar)
-
-        self.setStatusBar(QStatusBar(self))
-        self.open_buttons = OpenButtons(self, None)
-
         self.connect_profile_actions()
 
     def connect_profile_actions(self):
@@ -538,5 +530,28 @@ class MainWindow(QMainWindow):
     def update(self):
         if self.model is not None:
             self.canvas.redraw()
-        super(MainWindow, self).update()
+        super(BaseHeatmapWidget, self).update()
 
+
+class MainWindow(QMainWindow):
+
+    def __init__(self, *args, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
+
+        self.setWindowTitle("SCGV Main")
+
+        self._main = BaseHeatmapWidget(self)
+        self.setCentralWidget(self._main)
+
+        self.toolbar = self._main.toolbar
+        self.addToolBar(self._main.toolbar)
+
+        self.setStatusBar(QStatusBar(self))
+        self.open_buttons = OpenButtons(self, None)
+
+    def set_model(self, model):
+        self._main.set_model(model)
+
+    def update(self):
+        self._main.update()
+        super(MainWindow, self).update()
