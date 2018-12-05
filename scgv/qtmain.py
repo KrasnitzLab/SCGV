@@ -7,11 +7,8 @@ import scgv.qtviews.mpl_backend  # noqa
 
 from PyQt5.QtWidgets import QApplication
 
-from scgv.controllers.controller import MainController
 from scgv.qtviews.main_window import MainWindow
 
-from scgv.models.subject import DataSubject, ProfilesSubject
-from scgv.commands.executor import CommandExecutor
 import os
 import traceback
 
