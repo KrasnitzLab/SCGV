@@ -119,19 +119,15 @@ class OpenButtons(object):
         self.threadpool = QThreadPool()
 
     def on_open_directory_click(self, s):
-        print("click open directory", s)
         dirname = QFileDialog.getExistingDirectory(
             self.window, "Open Directory")
-        print(dirname)
         self._load_model(dirname)
 
     def on_open_archive_click(self, s):
-        print("click open archive", s)
         filter = "Zip File (*.zip)"
         filename, _ = QFileDialog.getOpenFileName(
             self.window, "Open Zip File",
             ".", filter)
-        print(filename)
         self._load_model(filename)
 
     def _load_model(self, filename):
@@ -147,15 +143,12 @@ class OpenButtons(object):
 
     def _load_complete(self):
         self.window.update()
-        print("window updated called...")
 
     def _load_error(self, *args, **kwargs):
-        print("_load_error: args=", args, "; kwargs=", kwargs)
         self.open_archive_action.setEnabled(True)
         self.open_dir_action.setEnabled(True)
 
     def _build_model(self, filename, *args, **kwargs):
-        print("_build_model: args=", args, "; kwargs=", kwargs)
         model = DataModel(filename)
         model.make()
         return model
@@ -239,17 +232,17 @@ class Canvas(FigureCanvas):
             self.draw()
 
     def onclick(self, event):
-        print(
-            '%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-            ('double' if event.dblclick else 'single', event.button,
-             event.x, event.y, event.xdata, event.ydata))
+        # print(
+        #     '%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+        #     ('double' if event.dblclick else 'single', event.button,
+        #      event.x, event.y, event.xdata, event.ydata))
         if event.button == 3:
             sample_name = self.locate_sample_click(event)
-            print("Located sample:", sample_name)
+            # print("Located sample:", sample_name)
             self.signals.profile_selected.emit(sample_name)
 
     def set_model(self, model):
-        print("Canvas: set model:", model)
+        # print("Canvas: set model:", model)
         self.model = model
         if self.model is not None and self.cid is None:
             self.cid = self.fig.canvas.mpl_connect(
@@ -263,7 +256,8 @@ class Canvas(FigureCanvas):
         return sample_name
 
     def on_profile_selected(self, *args, **kwargs):
-        print("canvas.on_profile_selected():", args, kwargs)
+        # print("canvas.on_profile_selected():", args, kwargs)
+        pass
 
 
 class SectorsCanvas(Canvas):
@@ -352,11 +346,10 @@ class ShowPathologyWindow(QDialog):
         super(ShowPathologyWindow, self).__init__(parent, *args, **kwargs)
         qimage = QImage()
         qimage.loadFromData(image)
-        self.image = QPixmap.fromImage(qimage)  # .fromImage(ImageQt.ImageQt(image))
+        self.image = QPixmap.fromImage(qimage)
         self.notes = notes
 
         label = QLabel(self)
-        # pixmap = QPixmap(self.image)
         label.setPixmap(self.image)
 
         text = QTextEdit(self)
@@ -417,7 +410,7 @@ class LegendWidget(QWidget):
         layout.addWidget(self.list)
 
     @staticmethod
-    def qcolor255(color):
+    def qcolor(color):
         c = col.to_rgba(color)
         if len(c) == 3:
             r, g, b = color
@@ -429,7 +422,7 @@ class LegendWidget(QWidget):
         return QColor(int(255 * r), int(255 * g), int(255 * b), int(255 * a))
 
     def color_icon(self, color):
-        color = self.qcolor255(color)
+        color = self.qcolor(color)
         image = QPixmap(self.IMAGE_SIZE, self.IMAGE_SIZE)
         painter = QPainter(image)
         painter.fillRect(image.rect(), color)
@@ -492,9 +485,6 @@ class SectorsLegend(LegendWidget):
         self.customContextMenuRequested.connect(self.on_context_menu)
 
     def on_context_menu(self, pos, *args, **kwargs):
-        print("SectorsLegend.on_context_menu()", args, kwargs)
-        print(self.list.currentRow())
-
         show_sector_view = QAction("Show sector view", self)
         show_sector_view.triggered.connect(self.show_sector_view)
         show_pathology_view = QAction("Show sector pathology", self)
@@ -507,8 +497,6 @@ class SectorsLegend(LegendWidget):
         context.exec_(self.mapToGlobal(pos))
 
     def show_sector_view(self):
-        print("SectorsLegend.show_sector_view()")
-        print(self.list.currentRow())
         sector_index = self.list.currentRow() + 1
 
         sector_model = SingleSectorDataModel(self.model, sector_index)
@@ -523,7 +511,6 @@ class SectorsLegend(LegendWidget):
 
         pathology = self.list.currentItem().text()
         image, notes = self.model.pathology.get(pathology, (None, None))
-        print(notes, type(image))
         dialog = ShowPathologyWindow(image, notes, self.main)
         dialog.show()
 
@@ -613,7 +600,6 @@ class BaseHeatmapWidget(QWidget):
             self.profiles.on_profile_selected)
 
     def set_model(self, model):
-        print("set model:", model)
         self.model = model
         self.canvas.set_model(model)
         self.profiles.set_model(model)
@@ -654,7 +640,6 @@ class ActionButtons(object):
         self.window.toolbar.addAction(self.order_by_sector_action)
 
     def on_feature_view_action(self, *args, **kwargs):
-        print("ActionButtons.on_feature_view_action()", args, kwargs)
         if self.model is None:
             return
         features_model = FeaturematModel(self.model)
@@ -665,7 +650,6 @@ class ActionButtons(object):
         dialog.show()
 
     def on_order_by_sector_action(self, *args, **kwargs):
-        print("ActionButtons.on_order_by_sector_action()", args, kwargs)
         if self.model is None:
             return
 
