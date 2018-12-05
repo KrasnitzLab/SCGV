@@ -8,8 +8,6 @@ import pandas as pd
 import os
 import zipfile
 
-from PIL import Image  # @UnresolvedImport
-
 
 def load_df(filename):
     df = pd.read_csv(filename, sep='\t')
@@ -93,8 +91,8 @@ class DataLoader(object):
             if 'image' in row:
                 filename = os.path.join('pathology', str(row['image']))
                 if filename in zipdata.namelist():
-                    image = Image.open(zipdata.open(filename))
-                    # image.load()
+                    with zipdata.open(filename, 'r') as infile:
+                        image = infile.read()
             else:
                 print("image not found: ", filename)
 
@@ -104,7 +102,6 @@ class DataLoader(object):
                 if filename in zipdata.namelist():
                     notes = zipdata.open(filename).readlines()
                     notes = [n.decode('utf-8') for n in notes]
-                    # image.load()
                 else:
                     print("image not found: ", filename)
             result[row['pathology']] = image, notes
@@ -156,7 +153,8 @@ class DataLoader(object):
             if 'image' in row:
                 filename = os.path.join(pathology_dirname, str(row['image']))
                 if os.path.exists(filename):
-                    image = Image.open(filename)
+                    with open(filename, 'rb') as infile:
+                        image = infile.read()
 
             notes = None
             if 'notes' in row:

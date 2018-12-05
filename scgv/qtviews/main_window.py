@@ -2,7 +2,6 @@ import sys
 import traceback
 
 import os
-import numpy as np
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, \
     QStatusBar, QFileDialog, \
@@ -11,7 +10,8 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, \
     QPushButton, QDialog, QMenu, QLabel, \
     QTextEdit
 
-from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextDocument
+from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextDocument, \
+    QPainter, QColor
 from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, pyqtSlot, \
     QThreadPool, Qt
 
@@ -19,7 +19,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvas, \
     NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
-from PIL import ImageQt, Image
+# from PIL import ImageQt, Image
 
 from scgv.models.model import DataModel
 
@@ -350,12 +350,14 @@ class ShowPathologyWindow(QDialog):
 
     def __init__(self, image, notes, parent, *args, **kwargs):
         super(ShowPathologyWindow, self).__init__(parent, *args, **kwargs)
-        self.image = QImage(ImageQt.ImageQt(image))
+        qimage = QImage()
+        qimage.loadFromData(image)
+        self.image = QPixmap.fromImage(qimage)  # .fromImage(ImageQt.ImageQt(image))
         self.notes = notes
 
         label = QLabel(self)
-        pixmap = QPixmap(self.image)
-        label.setPixmap(pixmap)
+        # pixmap = QPixmap(self.image)
+        label.setPixmap(self.image)
 
         text = QTextEdit(self)
         text.setReadOnly(True)
@@ -415,7 +417,7 @@ class LegendWidget(QWidget):
         layout.addWidget(self.list)
 
     @staticmethod
-    def color255(color):
+    def qcolor255(color):
         c = col.to_rgba(color)
         if len(c) == 3:
             r, g, b = color
@@ -424,15 +426,15 @@ class LegendWidget(QWidget):
             r, g, b, a = color
         else:
             raise ValueError("strange color: {}".format(str(color)))
-        return (int(255 * r), int(255 * g), int(255 * b), int(255 * a))
+        return QColor(int(255 * r), int(255 * g), int(255 * b), int(255 * a))
 
     def color_icon(self, color):
-        image = Image.new(
-            'RGBA',
-            size=(self.IMAGE_SIZE, self.IMAGE_SIZE),
-            color=self.color255(color))
-        qimage = QImage(ImageQt.ImageQt(image))
-        return QIcon(QPixmap(qimage))
+        color = self.qcolor255(color)
+        image = QPixmap(self.IMAGE_SIZE, self.IMAGE_SIZE)
+        painter = QPainter(image)
+        painter.fillRect(image.rect(), color)
+        painter.end()
+        return QIcon(image)
 
     def add_entry(self, text, color):
         icon = self.color_icon(color)
@@ -516,17 +518,12 @@ class SectorsLegend(LegendWidget):
         dialog.show()
 
     def show_pathology_view(self):
-        print("SectorsLegend.show_pathology_view()")
-        print(self.list.currentRow())
-        print(self.list.currentItem().text())
-        print(self.model.pathology)
-
         if self.model.pathology is None:
             return
 
         pathology = self.list.currentItem().text()
         image, notes = self.model.pathology.get(pathology, (None, None))
-
+        print(notes, type(image))
         dialog = ShowPathologyWindow(image, notes, self.main)
         dialog.show()
 
