@@ -137,10 +137,10 @@ class ActionButtons(object):
         self.model = None
 
         self.window.toolbar.addSeparator()
-        icons = icons_folder()
+        # icons = icons_folder()
 
         self.feature_view_action = QAction(
-            QIcon(os.path.join(icons, "format-justify-fill.png")),
+            # QIcon(os.path.join(icons, "format-justify-fill.png")),
             "Feature View", self.window
         )
         self.feature_view_action.setStatusTip("Open Feature View")
@@ -149,8 +149,8 @@ class ActionButtons(object):
         self.window.toolbar.addAction(self.feature_view_action)
 
         self.order_by_sector_action = QAction(
-            QIcon(os.path.join(icons, "go-next.png")),
-            "Order by Sector", self.window
+            # QIcon(os.path.join(icons, "go-next.png")),
+            "Order by Sector View", self.window
         )
         self.order_by_sector_action.setStatusTip("Order by Sector View")
         self.order_by_sector_action.triggered.connect(
@@ -160,23 +160,36 @@ class ActionButtons(object):
     def on_feature_view_action(self, *args, **kwargs):
         if self.model is None:
             return
+        self.feature_view_action.setEnabled(False)
+
         features_model = FeaturematModel(self.model)
         features_model.make()
 
         dialog = HeatmapWindow(
             self.window, features_model, new_canvas=Canvas)
+        dialog.signals.closing.connect(self.on_feature_view_closing)
+
         dialog.show()
+
+    def on_feature_view_closing(self):
+        self.feature_view_action.setEnabled(True)
 
     def on_order_by_sector_action(self, *args, **kwargs):
         if self.model is None:
             return
+
+        self.order_by_sector_action.setEnabled(False)
 
         sectors_model = SectorsDataModel(self.model)
         sectors_model.make()
 
         dialog = HeatmapWindow(
             self.window, sectors_model, new_canvas=SectorsCanvas)
+        dialog.signals.closing.connect(self.on_order_by_sector_closing)
         dialog.show()
+
+    def on_order_by_sector_closing(self):
+        self.order_by_sector_action.setEnabled(True)
 
     def set_model(self, model):
         self.model = model

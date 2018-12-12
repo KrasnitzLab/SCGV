@@ -5,6 +5,7 @@ from PyQt5.QtGui import QIcon, QPixmap, \
     QPainter, QColor
 from PyQt5.QtCore import Qt
 
+from PyQt5.QtCore import QObject, pyqtSignal
 
 import matplotlib.colors as col
 
@@ -18,6 +19,10 @@ from scgv.qtviews.profiles import ProfilesActions
 from scgv.utils.color_map import ColorMap
 from scgv.models.sector_model import SingleSectorDataModel
 from scgv.qtviews.pathology_window import ShowPathologyWindow
+
+
+class CloseSignals(QObject):
+    closing = pyqtSignal()
 
 
 class LegendWidget(QWidget):
@@ -184,7 +189,18 @@ class BaseHeatmapWidget(QWidget):
         super(BaseHeatmapWidget, self).update()
 
 
-class HeatmapWindow(QDialog):
+class BaseDialog(QDialog):
+
+    def __init__(self, *args, **kwargs):
+        super(BaseDialog, self).__init__(*args, **kwargs)
+        self.signals = CloseSignals()
+
+    def closeEvent(self, event):
+        print("closing window...")
+        self.signals.closing.emit()
+
+
+class HeatmapWindow(BaseDialog):
 
     def __init__(self, main, model, new_canvas=Canvas,  *args, **kwargs):
         super(HeatmapWindow, self).__init__(main, *args, **kwargs)
@@ -198,11 +214,10 @@ class HeatmapWindow(QDialog):
         layout.addWidget(self.base)
 
         self.base.set_model(model)
-
         self.base.update()
 
 
-class SingleSectorWindow(QDialog):
+class SingleSectorWindow(BaseDialog):
     def __init__(self, main, sector_model, *args, **kwargs):
         super(SingleSectorWindow, self).__init__(main, *args, **kwargs)
         self.main = main
