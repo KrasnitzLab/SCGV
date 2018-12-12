@@ -5,10 +5,9 @@ Created on Dec 14, 2016
 '''
 import numpy as np
 from scgv.views.base import ViewerBase
-from scgv.controllers.controller_base import ControllerBase
 
 
-class SamplesViewer(ViewerBase, ControllerBase):
+class SamplesViewer(ViewerBase):
 
     def __init__(self, model):
         super(SamplesViewer, self).__init__(model)
@@ -88,7 +87,3 @@ class SamplesViewer(ViewerBase, ControllerBase):
             ax.set_xticks(chrom_labels_pos)
             ax.set_xticklabels(self.CHROM_LABELS, rotation='vertical')
         fig.tight_layout()
-
-#         fig.canvas.mpl_connect('button_press_event', self.event_handler)
-#         fig.canvas.mpl_connect('key_press_event', self.event_handler)
-#         print("canvas events connected")
