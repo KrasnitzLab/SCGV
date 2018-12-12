@@ -8,8 +8,6 @@ import pandas as pd
 import os
 import zipfile
 
-from PIL import Image  # @UnresolvedImport
-
 
 def load_df(filename):
     df = pd.read_csv(filename, sep='\t')
@@ -93,8 +91,8 @@ class DataLoader(object):
             if 'image' in row:
                 filename = os.path.join('pathology', str(row['image']))
                 if filename in zipdata.namelist():
-                    image = Image.open(zipdata.open(filename))
-                    # image.load()
+                    with zipdata.open(filename, 'r') as infile:
+                        image = infile.read()
             else:
                 print("image not found: ", filename)
 
@@ -103,7 +101,7 @@ class DataLoader(object):
                 filename = os.path.join('pathology', str(row['notes']))
                 if filename in zipdata.namelist():
                     notes = zipdata.open(filename).readlines()
-                    # image.load()
+                    notes = [n.decode('utf-8') for n in notes]
                 else:
                     print("image not found: ", filename)
             result[row['pathology']] = image, notes
@@ -126,6 +124,7 @@ class DataLoader(object):
         filenames = self._organize_filenames(all_filenames)
 
         for filetype, filename in filenames.items():
+            print("loading {}: {}".format(filetype, filename))
             infile = open(filename)
             if filetype == 'genome':
                 genome = self._load_genome_build(infile)
@@ -154,7 +153,8 @@ class DataLoader(object):
             if 'image' in row:
                 filename = os.path.join(pathology_dirname, str(row['image']))
                 if os.path.exists(filename):
-                    image = Image.open(filename)
+                    with open(filename, 'rb') as infile:
+                        image = infile.read()
 
             notes = None
             if 'notes' in row:
