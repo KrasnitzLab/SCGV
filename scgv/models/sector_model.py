@@ -41,8 +41,16 @@ class SingleSectorDataModel(BaseModel):
         assert self.model.sector is not None
         assert self.model.sector_mapping is not None
 
-        self.sector_id = sector_id
         self.sector_mapping = self.model.sector_mapping
+        self.sector_id = None
+
+        if sector_id in self.sector_mapping:
+            self.sector_id = sector_id
+        else:
+            for key, value in self.sector_mapping.items():
+                if sector_id == value:
+                    self.sector_id = key
+
         assert self.sector_id in self.sector_mapping
 
         self.bins, self.samples = self.model.seg_data.shape
