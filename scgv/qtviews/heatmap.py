@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QDialog
-from PyQt5.QtWidgets import QAction, QListWidget, QListWidgetItem, QMenu
+from PyQt5.QtWidgets import QAction, QListWidget, QListWidgetItem, QMenu, \
+    QTableWidget, QTableWidgetItem, QCheckBox
 
 from PyQt5.QtGui import QIcon, QPixmap, \
     QPainter, QColor
@@ -215,6 +216,47 @@ class HeatmapWindow(BaseDialog):
 
         self.base.set_model(model)
         self.base.update()
+
+
+class GuideWindow(BaseDialog):
+
+    def __init__(self, main, model, *args, **kwargs):
+        super(GuideWindow, self).__init__(main, *args, **kwargs)
+        assert model.data.guide_df is not None
+        self.width = 600
+        self.height = 500
+
+        self.main = main
+        layout = QVBoxLayout(self)
+        self.guide_df = model.data.guide_df
+        
+        self.table = QTableWidget()
+        self.table.setRowCount(len(self.guide_df.columns))
+        self.table.setColumnCount(5)
+        
+        dtypes = self.guide_df.dtypes
+        print(type(dtypes))
+
+        for index, (name, row) in enumerate(dtypes.iteritems()):
+            print(index, name, row)
+
+            self.table.setItem(index, 0, QTableWidgetItem(str(index)))
+            self.table.setItem(index, 1, QTableWidgetItem(name))
+            self.table.setItem(index, 2, QTableWidgetItem(str(row)))
+            self.table.setItem(
+                index, 3, QTableWidgetItem(
+                    str(len(self.guide_df[name].unique()))))
+            checkbox = QCheckBox()
+            self.table.setCellWidget(
+                index, 4, checkbox
+            )
+            # self.table.item(index, 4).setTextAlignment(Qt.AlignHCenter)
+
+        self.table.move(0, 0)
+        self.table.setHorizontalHeaderLabels([
+            "No.", "Name", "Type", "Unique Values", "Selected"])
+
+        layout.addWidget(self.table)
 
 
 class SingleSectorWindow(BaseDialog):

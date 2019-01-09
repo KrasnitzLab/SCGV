@@ -14,7 +14,7 @@ from scgv.models.model import DataModel
 
 from scgv.models.sector_model import SectorsDataModel
 from scgv.models.featuremat_model import FeaturematModel
-from scgv.qtviews.heatmap import BaseHeatmapWidget, HeatmapWindow
+from scgv.qtviews.heatmap import BaseHeatmapWidget, HeatmapWindow, GuideWindow
 from scgv.qtviews.canvas import Canvas, SectorsCanvas
 
 
@@ -156,6 +156,27 @@ class ActionButtons(object):
         self.order_by_sector_action.triggered.connect(
             self.on_order_by_sector_action)
         self.window.toolbar.addAction(self.order_by_sector_action)
+
+        self.configure_tracks_action = QAction(
+            "Configure Tracks", self.window
+        )
+        self.configure_tracks_action.setStatusTip("Configure Tracks")
+        self.configure_tracks_action.triggered.connect(
+            self.on_configure_tracks_action_action)
+        self.window.toolbar.addAction(self.configure_tracks_action)
+
+    def on_configure_tracks_action_action(self, *args, **kwargs):
+        if self.model is None:
+            return
+        if self.model.data.guide_df is None:
+            return
+        guide_df = self.model.data.guide_df
+
+        print(guide_df.columns, guide_df.dtypes)
+
+        dialog = GuideWindow(
+            self.window, self.model,)
+        dialog.show()
 
     def on_feature_view_action(self, *args, **kwargs):
         if self.model is None:
