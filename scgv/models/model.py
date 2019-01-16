@@ -20,6 +20,8 @@ class BaseModel(object):
     SECTOR_COLUMN = 'sector'
     PATHOLOGY_COLUMN = 'Pathology'
 
+    SELECTED_TRACKS = {'gate'}
+
     def __init__(self, data):
         self.data = data
         self.seg_data = self.data.seg_df.ix[:, 3:].values
@@ -32,6 +34,7 @@ class BaseModel(object):
         self._heat_extent = None
 
         self.interval_length = None
+        self.selected_tracks = set(self.SELECTED_TRACKS)
 
     def _get_first_nonautosomal_chromosome(self):
         assert self.data.seg_df is not None
@@ -95,10 +98,11 @@ class BaseModel(object):
 
         self.clone, self.subclone = self.make_clone(
             ordering=self.ordering)
-        self.gate = self.make_gate(
-            ordering=self.ordering)
-        self.sector, self.sector_mapping = self.make_sector(
-            ordering=self.ordering)
+
+        self.gate, self.gate_mapping = \
+            self.make_gate(ordering=self.ordering)
+        self.sector, self.sector_mapping = \
+            self.make_sector(ordering=self.ordering)
         self.multiplier = self.make_multiplier(
             ordering=self.ordering)
         self.error = self.make_error(
@@ -219,68 +223,31 @@ class BaseModel(object):
 
         return clone[ordering], subclone[ordering]
 
-    EPCAM = {
-        '2C EpCAM Neg': 2,
-        '<2C EpCAM Pos': 1.5,
-        '>2C-4C EpCAM Pos': 3,
-        '4C EpCAM Pos': 4,
-        '2C Rt EpCAM Pos': 2.25,
-        '2C Lt EpCAM Pos': 1.75,
-        '>4C EpCAM Pos': 5,
-        '2C EpCAM Pos': 2,
-        '>2C EpCAM Pos': 2.5,
-    }
-    GATE_MAPPING = {
-        '4C': 4,
-        '2C': 2,
-        '2C Rt': 2.25,
-        '2C EpCAM Neg': 1.95,
-        '>2C': 2.5,
-        '<2C EpCAM Pos': 1.5,
-        '>2C-4C EpCAM Pos': 2.5,
-        '4C EpCAM Pos': 4,
-        '2C EpCAM Pos': 2,
-        '>2C EpCAM Pos': 2.5,
-        '2C Lt': 1.75,
-        '<2C': 1.5,
-        '>2C-4C': 3,
-        '>2C-4C Lt': 2.75,
-        '>2C-4C Rt': 3.25,
-        '>4C': 5,
-
-        '<2C EpCAM Pos': 1.5,
-        '4C EpCAM Pos': 4,
-        '2C Rt EpCAM Pos': 2.25,
-        '2C Lt EpCAM Pos': 1.75,
-        '>4C EpCAM Pos': 5,
-        '2C EpCAM Pos': 2,
-        '>2C EpCAM Pos': 2.5,
-    }
-
     def make_gate(self, ordering):
-        if self.data.guide_df is None:
-            return None
-
-        if self.GATE_COLUMN not in self.data.guide_df.columns:
-            return None
-
-        gate_column_df = self.data.guide_df.iloc[ordering, :]
-        res = list(map(
-            lambda g: self.GATE_MAPPING.get(g, 2),
-            gate_column_df[self.GATE_COLUMN].values
-        ))
-        return np.array(res)
+        return self.make_track('gate', ordering)
 
     def make_sector(self, ordering):
         if self.data.guide_df is None:
             return None, None
-        if(self.SECTOR_COLUMN not in self.data.guide_df.columns):
+        if self.SECTOR_COLUMN not in self.data.guide_df.columns:
             return None, None
         sector_df = self.data.guide_df[self.SECTOR_COLUMN]
         self._reset_heatmap_color()
         sector, sector_mapping = self._make_heatmap_array(sector_df)
 
         return sector[ordering], sector_mapping
+
+    def make_track(self, track_name, ordering):
+
+        if self.data.guide_df is None:
+            return None, None
+        if track_name not in self.data.guide_df.columns:
+            return None, None
+
+        track_df = self.data.guide_df[track_name]
+        self._reset_heatmap_color()
+        track, track_mapping = self._make_heatmap_array(track_df)
+        return track, track_mapping
 
     def make_multiplier(self, ordering):
         data = self.data.seg_df.iloc[:self.chrom_x_index, 3:]

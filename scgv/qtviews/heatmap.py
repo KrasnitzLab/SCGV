@@ -152,6 +152,8 @@ class BaseHeatmapWidget(QWidget):
 
     def __init__(self, main, new_canvas=Canvas, *args, **kwargs):
         super(BaseHeatmapWidget, self).__init__(*args, **kwargs)
+        self.model = None
+
         self.main = main
 
         layout = QHBoxLayout(self)

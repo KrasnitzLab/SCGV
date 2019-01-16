@@ -12,6 +12,7 @@ from scgv.views.gate import GateViewer
 from scgv.views.multiplier import MultiplierViewer
 from scgv.views.error import ErrorViewer
 from scgv.views.dendrogram import DendrogramViewer
+from scgv.views.track import TrackViewer
 
 
 class CanvasSignals(QObject):
@@ -52,29 +53,38 @@ class Canvas(FigureCanvas):
         heatmap_viewer = HeatmapViewer(self.model)
         heatmap_viewer.draw_heatmap(ax_heat)
 
-        ax_sector = self.fig.add_axes(
-            [self.X, 0.175, self.W, 0.025], frame_on=True, sharex=ax_dendro)
-        # draw sector bar
-        sector_viewer = SectorViewer(self.model)
-        sector_viewer.draw_sector(ax_sector)
-
-        ax_gate = self.fig.add_axes(
-            [self.X, 0.150, self.W, 0.025], frame_on=True, sharex=ax_dendro)
-        gate_viewer = GateViewer(self.model)
-        gate_viewer.draw_ploidy(ax_gate)
-
         ax_multiplier = self.fig.add_axes(
-            [self.X, 0.125, self.W, 0.025], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.175, self.W, 0.02], frame_on=True, sharex=ax_dendro)
         multiplier_viewer = MultiplierViewer(self.model)
         multiplier_viewer.draw_multiplier(ax_multiplier)
 
         ax_error = self.fig.add_axes(
-            [self.X, 0.10, self.W, 0.025], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.150, self.W, 0.02], frame_on=True, sharex=ax_dendro)
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
-        error_viewer.draw_xlabels(ax_error)
 
-        self.ax_label = ax_error
+        ax_sector = self.fig.add_axes(
+            [self.X, 0.125, self.W, 0.02], frame_on=True, sharex=ax_dendro)
+        sector_viewer = SectorViewer(self.model)
+        sector_viewer.draw_sector(ax_sector)
+
+        ax_tracks = []
+        rel_y_coords = [
+            (0.100, 0.02),
+        ]
+        ax_track = ax_error
+        track_viewer = error_viewer
+        for index, track_name in enumerate(self.model.selected_tracks):
+            y_start, y_height = rel_y_coords[index]
+            ax_track = self.fig.add_axes(
+                [self.X, y_start, self.W, y_height],
+                frame_on=True, sharex=ax_dendro)
+            track_viewer = TrackViewer(self.model, track_name)
+            track_viewer.draw_track(ax_track)
+            ax_tracks.append(ax_track)
+
+        track_viewer.draw_xlabels(ax_track)
+        self.ax_label = ax_track
 
         plt.setp(ax_dendro.get_xticklabels(), visible=False)
         plt.setp(ax_clone.get_xticklabels(), visible=False)
@@ -82,9 +92,13 @@ class Canvas(FigureCanvas):
         plt.setp(ax_subclone.get_xticklabels(), visible=False)
         plt.setp(ax_subclone.get_xticklines(), visible=False)
         plt.setp(ax_heat.get_xticklabels(), visible=False)
-        plt.setp(ax_sector.get_xticklabels(), visible=False)
-        plt.setp(ax_gate.get_xticklabels(), visible=False)
         plt.setp(ax_multiplier.get_xticklabels(), visible=False)
+        plt.setp(ax_error.get_xticklabels(), visible=False)
+        plt.setp(ax_sector.get_xticklabels(), visible=False)
+
+        if ax_tracks:
+            for ax in ax_tracks[:-1]:
+                plt.setp(ax.get_xticklabels(), visible=False)
 
     def redraw(self):
         if self.model is not None:

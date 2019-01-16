@@ -170,6 +170,7 @@ class SingleSectorDataModel(BaseModel):
 
         sector_val = self.sector_mapping[self.sector_id]
         sector_index = self.sector == sector_val
+        print(sector_val, sector_index)
 
         self.column_labels = self.make_column_labels(ordering=self.ordering)
         self.column_labels = self.column_labels[sector_index]
@@ -193,10 +194,10 @@ class SingleSectorDataModel(BaseModel):
             ordering=self.ordering)
         self.heatmap = self.heatmap[:, sector_index]
 
-        self.gate = self.model.make_gate(
-            ordering=self.ordering)
-        if self.gate is not None:
-            self.gate = self.gate[sector_index]
+        # self.gate = self.model.make_gate(
+        #     ordering=self.ordering)
+        # if self.gate is not None:
+        #     self.gate = self.gate[sector_index]
 
         if self.sector is not None:
             self.sector = self.sector[sector_index]
