@@ -170,12 +170,9 @@ class ActionButtons(object):
             return
         if self.model.data.guide_df is None:
             return
-        guide_df = self.model.data.guide_df
-
-        print(guide_df.columns, guide_df.dtypes)
 
         dialog = GuideWindow(
-            self.window, self.model,)
+            self.window, self.model, {'gate', 'sector'})
         dialog.show()
 
     def on_feature_view_action(self, *args, **kwargs):
