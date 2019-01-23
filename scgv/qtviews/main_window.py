@@ -172,8 +172,19 @@ class ActionButtons(object):
             return
 
         dialog = GuideWindow(
-            self.window, self.model, {'gate', 'sector'})
+            self.window, self.model)
+        dialog.signals.selected_tracks_change.connect(
+            self.on_selected_tracks_change)
+
         dialog.show()
+
+    def on_selected_tracks_change(
+            self, selected_tracks, *args, **kwargs):
+        print('on_selected_tracks_change:', selected_tracks, args, kwargs)
+        if selected_tracks == self.model.selected_tracks:
+            return
+        self.model.selected_tracks = selected_tracks
+        self.window.update()
 
     def on_feature_view_action(self, *args, **kwargs):
         if self.model is None:

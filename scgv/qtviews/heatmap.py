@@ -231,12 +231,12 @@ class GuideWindowSignals(CloseSignals):
 
 class GuideWindow(BaseDialog):
 
-    def __init__(self, main, model, selected_tracks, *args, **kwargs):
+    def __init__(self, main, model, *args, **kwargs):
         super(GuideWindow, self).__init__(main, *args, **kwargs)
         assert model.data.guide_df is not None
         self.width = 1000
         self.height = 500
-        self.selected_tracks = set(selected_tracks)
+        self.selected_tracks = set(model.selected_tracks)
         self.main = main
         layout = QVBoxLayout(self)
         self.guide_df = model.data.guide_df

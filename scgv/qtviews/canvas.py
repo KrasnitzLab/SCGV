@@ -24,6 +24,21 @@ class Canvas(FigureCanvas):
     W = 0.8875
     X = 0.075
 
+    TRACKS_Y_COORDS = [
+        (0.1875, 0.0125),
+        (0.175, 0.0125),
+        (0.1625, 0.0125),
+        (0.15, 0.0125),
+        (0.1375, 0.0125),
+        (0.125, 0.0125),
+        (0.1125, 0.0125),
+        (0.1, 0.0125),
+        (0.0875, 0.0125),
+        (0.075, 0.0125),
+        (0.0625, 0.0125),
+        (0.05, 0.0125),
+    ]
+
     def __init__(self):
         self.fig = Figure(figsize=(12, 8))
         self.model = None
@@ -53,25 +68,29 @@ class Canvas(FigureCanvas):
         heatmap_viewer = HeatmapViewer(self.model)
         heatmap_viewer.draw_heatmap(ax_heat)
 
-        ax_multiplier = self.fig.add_axes(
-            [self.X, 0.175, self.W, 0.02], frame_on=True, sharex=ax_dendro)
-        multiplier_viewer = MultiplierViewer(self.model)
-        multiplier_viewer.draw_multiplier(ax_multiplier)
-
+        y_start, y_height = self.TRACKS_Y_COORDS[0]
         ax_error = self.fig.add_axes(
-            [self.X, 0.150, self.W, 0.02], frame_on=True, sharex=ax_dendro)
+            [self.X, y_start, self.W, y_height],
+            frame_on=True, sharex=ax_dendro)
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
 
+        y_start, y_height = self.TRACKS_Y_COORDS[1]
+        ax_multiplier = self.fig.add_axes(
+            [self.X, y_start, self.W, y_height],
+            frame_on=True, sharex=ax_dendro)
+        multiplier_viewer = MultiplierViewer(self.model)
+        multiplier_viewer.draw_multiplier(ax_multiplier)
+
+        y_start, y_height = self.TRACKS_Y_COORDS[2]
         ax_sector = self.fig.add_axes(
-            [self.X, 0.125, self.W, 0.02], frame_on=True, sharex=ax_dendro)
+            [self.X, y_start, self.W, y_height],
+            frame_on=True, sharex=ax_dendro)
         sector_viewer = SectorViewer(self.model)
         sector_viewer.draw_sector(ax_sector)
 
         ax_tracks = []
-        rel_y_coords = [
-            (0.100, 0.02),
-        ]
+        rel_y_coords = self.TRACKS_Y_COORDS[3:]
         ax_track = ax_error
         track_viewer = error_viewer
         for index, track_name in enumerate(self.model.selected_tracks):
