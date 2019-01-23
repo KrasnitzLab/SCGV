@@ -15,7 +15,7 @@ from scgv.models.loader import DataLoader
 class BaseModel(object):
     CLONE_COLUMN = 'clone'
     SUBCLONE_COLUMN = 'subclone'
-    GATE_COLUMN = 'gate'
+
     CHROM_COLUMN = 'chrom'
     SECTOR_COLUMN = 'sector'
     PATHOLOGY_COLUMN = 'Pathology'
@@ -35,6 +35,7 @@ class BaseModel(object):
 
         self.interval_length = None
         self.selected_tracks = set(self.SELECTED_TRACKS)
+        self.tracks = []
 
     def _get_first_nonautosomal_chromosome(self):
         assert self.data.seg_df is not None
@@ -99,14 +100,24 @@ class BaseModel(object):
         self.clone, self.subclone = self.make_clone(
             ordering=self.ordering)
 
-        self.gate, self.gate_mapping = \
-            self.make_gate(ordering=self.ordering)
+        # self.gate, self.gate_mapping = \
+        #     self.make_gate(ordering=self.ordering)
+
         self.sector, self.sector_mapping = \
             self.make_sector(ordering=self.ordering)
         self.multiplier = self.make_multiplier(
             ordering=self.ordering)
         self.error = self.make_error(
             ordering=self.ordering)
+
+        self.update_selected_tracks()
+
+    def update_selected_tracks(self):
+        self.tracks = []
+        for index, track_name in enumerate(self.selected_tracks):
+            track, mapping = self.make_track(
+                track_name, ordering=self.ordering)
+            self.tracks.append((index, track_name, track, mapping))
 
     def make_linkage(self):
         if self.data.tree_df is None:
@@ -153,6 +164,7 @@ class BaseModel(object):
     def _make_heatmap_array(cls, df):
         unique = df.unique()
         unique.sort()
+        print(unique)
         mapping = {}
 
         result = pd.Series(index=df.index)
@@ -164,6 +176,7 @@ class BaseModel(object):
                 result[df == val] = cls.heatmap_color_counter
                 cls.heatmap_color_counter += 1
 
+        print(result.values, mapping)
         return result.values, mapping
 
     def make_heatmap(self, ordering):
@@ -223,8 +236,8 @@ class BaseModel(object):
 
         return clone[ordering], subclone[ordering]
 
-    def make_gate(self, ordering):
-        return self.make_track('gate', ordering)
+    # def make_gate(self, ordering):
+    #     return self.make_track('gate', ordering)
 
     def make_sector(self, ordering):
         if self.data.guide_df is None:
@@ -247,7 +260,7 @@ class BaseModel(object):
         track_df = self.data.guide_df[track_name]
         self._reset_heatmap_color()
         track, track_mapping = self._make_heatmap_array(track_df)
-        return track, track_mapping
+        return track[ordering], track_mapping
 
     def make_multiplier(self, ordering):
         data = self.data.seg_df.iloc[:self.chrom_x_index, 3:]

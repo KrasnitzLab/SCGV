@@ -184,6 +184,7 @@ class ActionButtons(object):
         if selected_tracks == self.model.selected_tracks:
             return
         self.model.selected_tracks = selected_tracks
+        self.model.update_selected_tracks()
         self.window.update()
 
     def on_feature_view_action(self, *args, **kwargs):

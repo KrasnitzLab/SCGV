@@ -93,12 +93,12 @@ class Canvas(FigureCanvas):
         rel_y_coords = self.TRACKS_Y_COORDS[3:]
         ax_track = ax_error
         track_viewer = error_viewer
-        for index, track_name in enumerate(self.model.selected_tracks):
+        for index, track_name, track, mapping in self.model.tracks:
             y_start, y_height = rel_y_coords[index]
             ax_track = self.fig.add_axes(
                 [self.X, y_start, self.W, y_height],
                 frame_on=True, sharex=ax_dendro)
-            track_viewer = TrackViewer(self.model, track_name)
+            track_viewer = TrackViewer(self.model, track_name, track, mapping)
             track_viewer.draw_track(ax_track)
             ax_tracks.append(ax_track)
 
@@ -180,10 +180,10 @@ class SectorsCanvas(Canvas):
         sector_viewer = SectorViewer(self.model)
         sector_viewer.draw_sector(ax_sector)
 
-        ax_gate = self.fig.add_axes(
-            [self.X, 0.150, self.W, 0.025], frame_on=True, sharex=ax_clone)
-        gate_viewer = GateViewer(self.model)
-        gate_viewer.draw_ploidy(ax_gate)
+        # ax_gate = self.fig.add_axes(
+        #     [self.X, 0.150, self.W, 0.025], frame_on=True, sharex=ax_clone)
+        # gate_viewer = GateViewer(self.model)
+        # gate_viewer.draw_ploidy(ax_gate)
 
         ax_multiplier = self.fig.add_axes(
             [self.X, 0.125, self.W, 0.025], frame_on=True, sharex=ax_clone)
@@ -202,5 +202,5 @@ class SectorsCanvas(Canvas):
 
         plt.setp(ax_heat.get_xticklabels(), visible=False)
         plt.setp(ax_sector.get_xticklabels(), visible=False)
-        plt.setp(ax_gate.get_xticklabels(), visible=False)
+        # plt.setp(ax_gate.get_xticklabels(), visible=False)
         plt.setp(ax_multiplier.get_xticklabels(), visible=False)
