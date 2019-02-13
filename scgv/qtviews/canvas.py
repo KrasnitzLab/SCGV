@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from scgv.views.clone import CloneViewer
 from scgv.views.heatmap import HeatmapViewer
 from scgv.views.sector import SectorViewer
-from scgv.views.gate import GateViewer
 from scgv.views.multiplier import MultiplierViewer
 from scgv.views.error import ErrorViewer
 from scgv.views.dendrogram import DendrogramViewer
@@ -93,6 +92,10 @@ class Canvas(FigureCanvas):
         rel_y_coords = self.TRACKS_Y_COORDS[3:]
         ax_track = ax_error
         track_viewer = error_viewer
+        print(
+            "Tracks:",
+            len(ax_tracks),
+            [tn for _, tn, _, _ in self.model.tracks])
         for index, track_name, track, mapping in self.model.tracks:
             y_start, y_height = rel_y_coords[index]
             ax_track = self.fig.add_axes(
@@ -101,6 +104,11 @@ class Canvas(FigureCanvas):
             track_viewer = TrackViewer(self.model, track_name, track, mapping)
             track_viewer.draw_track(ax_track)
             ax_tracks.append(ax_track)
+
+        print(
+            "Tracks:",
+            len(ax_tracks),
+            [tn for _, tn, _, _ in self.model.tracks])
 
         track_viewer.draw_xlabels(ax_track)
         self.ax_label = ax_track

@@ -1,6 +1,9 @@
+# import traceback
+
 import numpy as np
 
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QAction, QMenu
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QAction, \
+    QMenu, QComboBox
 
 from PyQt5.QtCore import Qt
 
@@ -67,12 +70,12 @@ class BaseHeatmapWidget(QWidget):
         self.profiles.set_model(model)
         self.heatmap_legend.set_model(model)
         self.sectors_legend.set_model(model)
-        self.tracks_legend.set_model(model)
+        # self.tracks_legend.set_model(model)
 
     def update(self):
         if self.model is not None:
             self.canvas.redraw()
-        self.tracks_legend.update(self.model)
+        self.tracks_legend.set_model(self.model)
 
         super(BaseHeatmapWidget, self).update()
 
@@ -116,10 +119,6 @@ class SectorsLegend(LegendWidget):
         super(SectorsLegend, self).__init__(main, *args, **kwargs)
         self.sectors = None
 
-    def set_model(self, model):
-        self.model = model
-        self.show()
-
     def show(self):
         assert self.model is not None
 
@@ -140,6 +139,10 @@ class SectorsLegend(LegendWidget):
         self.customContextMenuRequested.connect(self.on_context_menu)
 
     def on_context_menu(self, pos, *args, **kwargs):
+        current_row = self.list.currentRow()
+        if current_row < 0:
+            return
+
         show_sector_view = QAction("Show sector view", self)
         show_sector_view.triggered.connect(self.show_sector_view)
         show_pathology_view = QAction("Show sector pathology", self)
@@ -152,7 +155,11 @@ class SectorsLegend(LegendWidget):
         context.exec_(self.mapToGlobal(pos))
 
     def show_sector_view(self):
-        sector_index = self.list.currentRow() + 1
+        current_row = self.list.currentRow()
+        if current_row < 0:
+            return
+
+        sector_index = current_row + 1
 
         sector_model = SingleSectorDataModel(self.model, sector_index)
         sector_model.make()
@@ -177,41 +184,45 @@ class TracksLegend(QWidget):
 
         self.main = main
         layout = QVBoxLayout(self)
+        self.combo = QComboBox(main)
+        layout.addWidget(self.combo)
         self.legend = LegendWidget(main, *args, **kwargs)
         layout.addWidget(self.legend)
+
+        self.combo.currentIndexChanged.connect(self.current_track_changed)
 
         self.model = None
         self.tracks = None
         self.selected_track = None
 
     def set_model(self, model):
-        self.legend.set_model(model)
-        self.update(model)
-
-    def update(self, model):
-        self.model = model
-        self.tracks = None
-        self.selected_track = None
-
         self.legend.clear()
+        self.combo.clear()
+
+        self.legend.set_model(model)
+        self.model = model
+        self.tracks = self.model.tracks
+        self.selected_track = None
+        if self.tracks:
+            self.selected_track = self.tracks[0]
+
+        for index, track_name, track, mapping in self.tracks:
+            self.combo.addItem(track_name)
+
         self.show()
 
     def show(self):
-        assert self.model is not None
+        # traceback.print_stack()
 
-        if self.tracks is None:
-            self.tracks = self.model.tracks
-        if not self.tracks:
-            print("no tracks!!!!")
-            return
+        assert self.model is not None
         if self.selected_track is None:
-            self.selected_track = self.tracks[0]
+            return
+
+        self.legend.clear()
 
         index, track_name, track, mapping = self.selected_track
         self.cmap = TrackViewer.select_colormap(mapping)
         print("TracksLegend:", index, track_name, mapping)
-        print(dir(self.cmap))
-        print(self.cmap.colors)
         vmin = np.min(track)
 
         for key, value in mapping.items():
@@ -222,6 +233,14 @@ class TracksLegend(QWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.on_context_menu)
 
+    def current_track_changed(self, index):
+        print("current_track_changed", index)
+        if index == -1:
+            return
+
+        self.selected_track = self.tracks[index]
+        self.show()
+
         # for (index, (sector, pathology)) in enumerate(self.sectors):
         #     color = self.cmap.colors(index)
         #     self.add_entry(
@@ -229,14 +248,22 @@ class TracksLegend(QWidget):
         #         color=color)
 
     def on_context_menu(self, pos, *args, **kwargs):
+        current_row = self.legend.list.currentRow()
+        if current_row < 0:
+            return
+
         show_track_view = QAction("Show track view", self)
         show_track_view.triggered.connect(self.show_track_view)
 
         context = QMenu(self.legend)
         context.addAction(show_track_view)
-        context.exec_(self.legend.mapToGlobal(pos))
+        context.exec_(self.mapToGlobal(pos))
 
     def show_track_view(self):
+        current_row = self.legend.list.currentRow()
+        if current_row < 0:
+            return
+
         print("show_track_view")
         # sector_index = self.list.currentRow() + 1
 
