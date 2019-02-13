@@ -1,3 +1,4 @@
+import numpy as np
 
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QAction, QMenu
 
@@ -18,6 +19,7 @@ from scgv.models.sector_model import SingleSectorDataModel
 from scgv.qtviews.pathology_window import ShowPathologyWindow
 
 from scgv.utils.color_map import ColorMap
+from scgv.views.track import TrackViewer
 
 
 class BaseHeatmapWidget(QWidget):
@@ -45,6 +47,9 @@ class BaseHeatmapWidget(QWidget):
         self.sectors_legend = SectorsLegend(self)
         self.commands_pane.addWidget(self.sectors_legend)
 
+        self.tracks_legend = TracksLegend(self)
+        self.commands_pane.addWidget(self.tracks_legend)
+
         self.commands_pane.addStretch(1)
 
         self.toolbar = NavigationToolbar(self.canvas, self)
@@ -62,10 +67,13 @@ class BaseHeatmapWidget(QWidget):
         self.profiles.set_model(model)
         self.heatmap_legend.set_model(model)
         self.sectors_legend.set_model(model)
+        self.tracks_legend.set_model(model)
 
     def update(self):
         if self.model is not None:
             self.canvas.redraw()
+        self.tracks_legend.update(self.model)
+
         super(BaseHeatmapWidget, self).update()
 
 
@@ -156,3 +164,71 @@ class SectorsLegend(LegendWidget):
         image, notes = self.model.pathology.get(pathology, (None, None))
         dialog = ShowPathologyWindow(image, notes, self.main)
         dialog.show()
+
+
+class TracksLegend(LegendWidget):
+
+    def __init__(self, main, *args, **kwargs):
+        super(TracksLegend, self).__init__(main, *args, **kwargs)
+        self.tracks = None
+        self.selected_track = None
+
+    def update(self, model):
+        self.model = model
+        self.tracks = None
+        self.selected_track = None
+
+        self.clear()
+        self.show()
+
+    def show(self):
+        assert self.model is not None
+
+        if self.tracks is None:
+            self.tracks = self.model.tracks
+        if not self.tracks:
+            print("no tracks!!!!")
+            return
+        if self.selected_track is None:
+            self.selected_track = self.tracks[0]
+
+        index, track_name, track, mapping = self.selected_track
+        self.cmap = TrackViewer.select_colormap(mapping)
+        print("TracksLegend:", index, track_name, mapping)
+        print(dir(self.cmap))
+        print(self.cmap.colors)
+        vmin = np.min(track)
+
+        for key, value in mapping.items():
+            color = self.cmap.colors[int(value-vmin)]
+            print(color, type(color))
+
+            self.add_entry(
+                text=str(key),
+                color=color)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_context_menu)
+
+        # for (index, (sector, pathology)) in enumerate(self.sectors):
+        #     color = self.cmap.colors(index)
+        #     self.add_entry(
+        #         text=pathology,
+        #         color=color)
+
+    def on_context_menu(self, pos, *args, **kwargs):
+        show_track_view = QAction("Show track view", self)
+        show_track_view.triggered.connect(self.show_track_view)
+
+        context = QMenu(self)
+        context.addAction(show_track_view)
+        context.exec_(self.mapToGlobal(pos))
+
+    def show_track_view(self):
+        print("show_track_view")
+        # sector_index = self.list.currentRow() + 1
+
+        # sector_model = SingleSectorDataModel(self.model, sector_index)
+        # sector_model.make()
+
+        # dialog = SingleSectorWindow(self.main, sector_model)
+        # dialog.show()

@@ -73,7 +73,6 @@ class GuideWindow(BaseDialog):
         layout.addLayout(button_box)
 
     def on_apply_action(self):
-        print("on_apply_action!!!", self.selected_tracks)
         self.signals.selected_tracks_change.emit(self.selected_tracks)
         self.close()
 
@@ -99,4 +98,3 @@ class GuideWindow(BaseDialog):
             self.selected_tracks.add(name)
         else:
             self.selected_tracks.remove(name)
-        print(self.selected_tracks)

@@ -59,13 +59,6 @@ USAGE
         app = QApplication(sys.argv)
         window = MainWindow()
         window.show()
-        # CommandExecutor.start(root)
-
-        # data_subject = DataSubject()
-        # profiles_subject = ProfilesSubject()
-
-        # controller = MainController()
-
         app.exec_()
 
         return 0

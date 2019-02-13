@@ -1,4 +1,7 @@
+import numpy as np
+
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 
 from scgv.views.base import ViewerBase
 # from scgv.utils.color_map import ColorMap
@@ -6,16 +9,22 @@ from scgv.views.base import ViewerBase
 
 class TrackViewer(ViewerBase):
 
-    def select_colormap(self):
-        size = len(self.track_mapping)
+    @classmethod
+    def select_colormap(self, track_mapping):
+        size = len(track_mapping)
 
         assert size <= 20
         if size > 12:
-            return plt.get_cmap('tab20')
-        elif size > 10:
-            return plt.get_cmap('Paired')
+            print("select_colormap: tab20")
+            cmap = plt.get_cmap('tab20')
+        elif size > 7:
+            print("select_colormap: Paired")
+            cmap = plt.get_cmap('Paired')
         else:
-            return plt.get_cmap('tab10')
+            print("select_colormap: tab10")
+            cmap = plt.get_cmap('tab10')
+
+        return ListedColormap(cmap.colors[:size])
 
     def __init__(self, model, track_name, track, mapping):
         super(TrackViewer, self).__init__(model)
@@ -27,14 +36,19 @@ class TrackViewer(ViewerBase):
     def draw_track(self, ax):
         if self.track is not None:
 
-            cmap = self.select_colormap()
+            cmap = self.select_colormap(self.track_mapping)
+            vmin = np.min(self.track)
+            track = self.track - vmin
+            vmin = np.min(track)
+            vmax = np.max(track)
+
             ax.imshow(
-                [self.track],
+                [track],
                 aspect='auto',
                 interpolation='nearest',
                 cmap=cmap,
-                vmin=1,
-                vmax=12,
+                vmin=vmin,
+                vmax=vmax,
                 extent=self.model.bar_extent)
 
         ax.set_xticks([])

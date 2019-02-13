@@ -21,7 +21,11 @@ class LegendWidget(QWidget):
 
     @staticmethod
     def qcolor(color):
-        c = col.to_rgba(color)
+        if isinstance(color, tuple):
+            c = color
+        else:
+            c = col.to_rgba(color)
+
         if len(c) == 3:
             r, g, b = color
             a = 1
@@ -41,12 +45,14 @@ class LegendWidget(QWidget):
 
     def add_entry(self, text, color):
         icon = self.color_icon(color)
-
         item = QListWidgetItem(icon, text, self.list)
         self.list.addItem(item)
 
     def show(self):
         raise NotImplementedError()
+
+    def clear(self):
+        self.list.clear()
 
     def set_model(self, model):
         self.model = model
