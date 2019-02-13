@@ -17,7 +17,8 @@ from scgv.qtviews.profiles import ProfilesActions
 from scgv.qtviews.legend import HeatmapLegend, LegendWidget
 
 
-from scgv.models.sector_model import SingleSectorDataModel
+from scgv.models.sector_model import SingleSectorDataModel, \
+    SingleTrackDataModel
 
 from scgv.qtviews.pathology_window import ShowPathologyWindow
 
@@ -265,10 +266,14 @@ class TracksLegend(QWidget):
             return
 
         print("show_track_view")
-        # sector_index = self.list.currentRow() + 1
+        track_value_index = current_row
 
-        # sector_model = SingleSectorDataModel(self.model, sector_index)
-        # sector_model.make()
+        track_index, _, _, mapping = self.selected_track
+        track_value = list(mapping.values())[track_value_index]
 
-        # dialog = SingleSectorWindow(self.main, sector_model)
-        # dialog.show()
+        track_model = SingleTrackDataModel(
+            self.model, track_index, track_value)
+        track_model.make()
+
+        dialog = SingleSectorWindow(self.main, track_model)
+        dialog.show()
