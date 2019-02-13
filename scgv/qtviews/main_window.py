@@ -14,7 +14,9 @@ from scgv.models.model import DataModel
 
 from scgv.models.sector_model import SectorsDataModel
 from scgv.models.featuremat_model import FeaturematModel
-from scgv.qtviews.heatmap import BaseHeatmapWidget, HeatmapWindow, GuideWindow
+
+from scgv.qtviews.heatmap import BaseHeatmapWidget, HeatmapWindow
+from scgv.qtviews.guide import GuideWindow
 from scgv.qtviews.canvas import Canvas, SectorsCanvas
 
 
