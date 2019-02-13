@@ -49,7 +49,7 @@ class LegendWidget(QWidget):
         self.list.addItem(item)
 
     def show(self):
-        raise NotImplementedError()
+        pass
 
     def clear(self):
         self.list.clear()

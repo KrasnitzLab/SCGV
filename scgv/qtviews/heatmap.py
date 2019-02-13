@@ -116,6 +116,10 @@ class SectorsLegend(LegendWidget):
         super(SectorsLegend, self).__init__(main, *args, **kwargs)
         self.sectors = None
 
+    def set_model(self, model):
+        self.model = model
+        self.show()
+
     def show(self):
         assert self.model is not None
 
@@ -166,19 +170,30 @@ class SectorsLegend(LegendWidget):
         dialog.show()
 
 
-class TracksLegend(LegendWidget):
+class TracksLegend(QWidget):
 
     def __init__(self, main, *args, **kwargs):
         super(TracksLegend, self).__init__(main, *args, **kwargs)
+
+        self.main = main
+        layout = QVBoxLayout(self)
+        self.legend = LegendWidget(main, *args, **kwargs)
+        layout.addWidget(self.legend)
+
+        self.model = None
         self.tracks = None
         self.selected_track = None
+
+    def set_model(self, model):
+        self.legend.set_model(model)
+        self.update(model)
 
     def update(self, model):
         self.model = model
         self.tracks = None
         self.selected_track = None
 
-        self.clear()
+        self.legend.clear()
         self.show()
 
     def show(self):
@@ -201,9 +216,7 @@ class TracksLegend(LegendWidget):
 
         for key, value in mapping.items():
             color = self.cmap.colors[int(value-vmin)]
-            print(color, type(color))
-
-            self.add_entry(
+            self.legend.add_entry(
                 text=str(key),
                 color=color)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -219,9 +232,9 @@ class TracksLegend(LegendWidget):
         show_track_view = QAction("Show track view", self)
         show_track_view.triggered.connect(self.show_track_view)
 
-        context = QMenu(self)
+        context = QMenu(self.legend)
         context.addAction(show_track_view)
-        context.exec_(self.mapToGlobal(pos))
+        context.exec_(self.legend.mapToGlobal(pos))
 
     def show_track_view(self):
         print("show_track_view")
