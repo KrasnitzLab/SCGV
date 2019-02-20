@@ -3,9 +3,7 @@
 import numpy as np
 
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QAction, \
-    QMenu, QComboBox, QPushButton, QFrame, QLabel
-
-from PyQt5.QtCore import Qt
+    QComboBox, QPushButton, QFrame, QLabel
 
 from matplotlib.backends.backend_qt5agg import \
     NavigationToolbar2QT as NavigationToolbar
@@ -150,8 +148,8 @@ class TrackLegendBase(QFrame):
                 text=str(key),
                 color=color)
 
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.on_context_menu)
+    def set_context_menu_actions(self, context_menu_actions):
+        self.legend.set_context_menu_actions(context_menu_actions)
 
 
 class SectorsLegend(TrackLegendBase):
@@ -174,23 +172,21 @@ class SectorsLegend(TrackLegendBase):
             self.track, self.mapping = \
                 self.model.make_sectors_legend()
 
-        self.show()
-
-    def on_context_menu(self, pos, *args, **kwargs):
-        current_row = self.legend.list.currentRow()
-        if current_row < 0:
-            return
-
         show_sector_view = QAction("Show sector view", self)
         show_sector_view.triggered.connect(self.show_sector_view)
-        show_pathology_view = QAction("Show sector pathology", self)
-        show_pathology_view.triggered.connect(self.show_pathology_view)
-
-        context = QMenu(self)
-        context.addAction(show_sector_view)
         if self.model.pathology:
-            context.addAction(show_pathology_view)
-        context.exec_(self.mapToGlobal(pos))
+            show_pathology_view = QAction("Show sector pathology", self)
+            show_pathology_view.triggered.connect(self.show_pathology_view)
+            self.set_context_menu_actions([
+                show_sector_view,
+                show_pathology_view,
+            ])
+        else:
+            self.set_context_menu_actions([
+                show_sector_view,
+            ])
+
+        self.show()
 
     def show_sector_view(self):
         current_row = self.legend.list.currentRow()
@@ -266,6 +262,12 @@ class TracksLegend(TrackLegendBase):
         for index, track_name, track, mapping in self.tracks:
             self.combo.addItem(track_name)
 
+        show_track_view = QAction("Show track view", self)
+        show_track_view.triggered.connect(self.show_track_view)
+        self.set_context_menu_actions([
+            show_track_view,
+        ])
+
         self.show()
 
     def current_track_changed(self, index):
@@ -275,18 +277,6 @@ class TracksLegend(TrackLegendBase):
         self.selected_track = self.tracks[index]
         _, _, self.track, self.mapping = self.selected_track
         self.show()
-
-    def on_context_menu(self, pos, *args, **kwargs):
-        current_row = self.legend.list.currentRow()
-        if current_row < 0:
-            return
-
-        show_track_view = QAction("Show track view", self)
-        show_track_view.triggered.connect(self.show_track_view)
-
-        context = QMenu(self.legend)
-        context.addAction(show_track_view)
-        context.exec_(self.mapToGlobal(pos))
 
     def show_track_view(self):
         current_row = self.legend.list.currentRow()

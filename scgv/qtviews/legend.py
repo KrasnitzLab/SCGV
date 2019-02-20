@@ -1,7 +1,9 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QListWidget, QListWidgetItem
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, \
+    QListWidget, QListWidgetItem, QMenu
 
 from PyQt5.QtGui import QIcon, QPixmap, \
     QPainter, QColor
+from PyQt5.QtCore import Qt
 
 import matplotlib.colors as col
 
@@ -14,10 +16,29 @@ class LegendWidget(QWidget):
     def __init__(self, main, *args, **kwargs):
         super(LegendWidget, self).__init__(*args, **kwargs)
         self.main = main
+        self.context_menu_actions = None
 
         layout = QVBoxLayout(self)
         self.list = QListWidget(self)
         layout.addWidget(self.list)
+
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_context_menu)
+
+    def set_context_menu_actions(self, context_menu_actions):
+        self.context_menu_actions = context_menu_actions
+
+    def on_context_menu(self, pos, *args, **kwargs):
+        if not self.context_menu_actions:
+            return
+        current_row = self.list.currentRow()
+        if current_row < 0:
+            return
+
+        context = QMenu(self.list)
+        for action in self.context_menu_actions:
+            context.addAction(action)
+        context.exec_(self.mapToGlobal(pos))
 
     @staticmethod
     def qcolor(color):

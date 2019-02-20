@@ -382,7 +382,6 @@ class SingleTrackDataModel(BaseModel):
 
         track_val = self.track_mapping[self.track_value_key]
         track_index = self.track == track_val
-        print(track_val, track_index)
 
         self.column_labels = self.make_column_labels(ordering=self.ordering)
         self.column_labels = self.column_labels[track_index]
@@ -413,7 +412,9 @@ class SingleTrackDataModel(BaseModel):
 
         # if self.sector is not None:
         #     self.sector = self.sector[track_index]
-        self.sector = None
+        self.sector, self.sector_mapping = \
+            self.make_sector(ordering=self.ordering)
+        self.sector = self.sector[track_index]
 
         self.multiplier = self.model.make_multiplier(
             ordering=self.ordering)
