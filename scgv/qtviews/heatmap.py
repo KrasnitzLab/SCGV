@@ -139,8 +139,10 @@ class TrackLegendBase(QFrame):
         vmin = min(self.mapping.values())
 
         self.legend.clear()
+        print(self.mapping)
+
         for key, value in self.mapping.items():
-            color = self.cmap.colors[int(value-vmin)]
+            color = self.cmap.colors[int(value) - vmin]
             self.legend.add_entry(
                 text=str(key),
                 color=color)

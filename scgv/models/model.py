@@ -272,22 +272,23 @@ class BaseModel(object):
             return None
 
         sectors, sector_mapping = self.make_sector(self.ordering)
+        print(sector_mapping)
 
         pathology_mapping = {}
-        for sector in sector_mapping.keys():
+        for sector_key, sector_value in sector_mapping.items():
             sector_df = self.data.guide_df[
-                self.data.guide_df[self.SECTOR_COLUMN] == sector]
+                self.data.guide_df[self.SECTOR_COLUMN] == sector_key]
             if self.PATHOLOGY_COLUMN not in sector_df.columns:
-                pathology = sector_df[self.SECTOR_COLUMN].values[0]
+                pathology = sector_key
             else:
                 pathology = sector_df[self.PATHOLOGY_COLUMN].values[0]
                 if not np.all(sector_df[self.PATHOLOGY_COLUMN] == pathology):
                     print("single sector '{}'; "
                           "multiple pathologies: {}"
                           .format(
-                                sector,
+                                sector_key,
                                 sector_df[self.PATHOLOGY_COLUMN].unique()))
-            pathology_mapping[str(pathology).strip()] = sector
+            pathology_mapping[str(pathology).strip()] = sector_value
         return sectors, pathology_mapping
 
 
