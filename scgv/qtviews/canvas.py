@@ -39,8 +39,8 @@ class Canvas(FigureCanvas):
     ]
 
     def __init__(self, has_dendro=True):
-        self.fig = Figure(figsize=(12, 8))
         self.model = None
+        self.fig = Figure(figsize=(12, 8))
         super(Canvas, self).__init__(self.fig)
         self.has_dendro = has_dendro
         self.signals = CanvasSignals()
@@ -48,6 +48,7 @@ class Canvas(FigureCanvas):
 
     def draw_canvas(self):
         assert self.model is not None
+        self.fig.clear(True)
 
         ax_shared = None
         if self.has_dendro:
@@ -98,12 +99,12 @@ class Canvas(FigureCanvas):
 
         ax_tracks = []
         rel_y_coords = self.TRACKS_Y_COORDS[3:]
-        ax_track = ax_error
-        track_viewer = error_viewer
+        last_track = ax_error
+        last_viewer = error_viewer
         print(
             "Tracks:",
-            len(ax_tracks),
-            [tn for _, tn, _, _ in self.model.tracks])
+            "len=", len(ax_tracks),
+            "names=", [tn for _, tn, _, _ in self.model.tracks])
         for index, track_name, track, mapping in self.model.tracks:
             y_start, y_height = rel_y_coords[index]
             ax_track = self.fig.add_axes(
@@ -112,14 +113,16 @@ class Canvas(FigureCanvas):
             track_viewer = TrackViewer(self.model, track_name, track, mapping)
             track_viewer.draw(ax_track)
             ax_tracks.append(ax_track)
+            last_viewer = track_viewer
+            last_track = ax_track
 
         print(
             "Tracks:",
-            len(ax_tracks),
-            [tn for _, tn, _, _ in self.model.tracks])
+            "len=", len(ax_tracks),
+            "names=", [tn for _, tn, _, _ in self.model.tracks])
 
-        track_viewer.draw_xlabels(ax_track)
-        self.ax_label = ax_track
+        last_viewer.draw_xlabels(last_track)
+        self.ax_label = last_track
 
         plt.setp(ax_clone.get_xticklabels(), visible=False)
         plt.setp(ax_clone.get_xticklines(), visible=False)
