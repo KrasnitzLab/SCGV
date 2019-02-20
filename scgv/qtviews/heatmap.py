@@ -167,6 +167,9 @@ class SectorsLegend(TrackLegendBase):
 
         self.legend.set_model(model)
         self.model = model
+        if self.model.sector is None:
+            return
+
         if self.mapping is None or self.track is None:
             self.track, self.mapping = \
                 self.model.make_sectors_legend()
@@ -212,6 +215,8 @@ class SectorsLegend(TrackLegendBase):
     def on_order_by_sector_action(self, *args, **kwargs):
         if self.model is None:
             return
+        if self.model.sector is None:
+            return
 
         self.order_by_sector_button.setEnabled(False)
 
@@ -252,11 +257,13 @@ class TracksLegend(TrackLegendBase):
 
         self.legend.set_model(model)
         self.model = model
-        self.tracks = self.model.tracks
+        self.tracks = self.model.tracks        
         self.selected_track = None
-        if self.tracks:
-            self.selected_track = self.tracks[0]
-            _, _, self.track, self.mapping = self.selected_track
+        if not self.tracks:
+            return
+
+        self.selected_track = self.tracks[0]
+        _, _, self.track, self.mapping = self.selected_track
 
         for index, track_name, track, mapping in self.tracks:
             self.combo.addItem(track_name)
@@ -296,6 +303,10 @@ class TracksLegend(TrackLegendBase):
 
     def on_order_by_track(self, *args, **kwargs):
         if self.model is None:
+            return
+        print(self.model.tracks)
+
+        if not self.model.tracks:
             return
 
         self.order_by_track_button.setEnabled(False)

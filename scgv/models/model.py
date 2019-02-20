@@ -114,6 +114,8 @@ class BaseModel(object):
         for index, track_name in enumerate(self.selected_tracks):
             track, mapping = self.make_track(
                 track_name, ordering=self.ordering)
+            if track is None or mapping is None:
+                continue
             if track_index is not None:
                 track = track[track_index]
             self.tracks.append((index, track_name, track, mapping))
