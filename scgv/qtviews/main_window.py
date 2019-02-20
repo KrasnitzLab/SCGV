@@ -12,12 +12,11 @@ from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, pyqtSlot, \
 
 from scgv.models.model import DataModel
 
-from scgv.models.sector_model import SectorsDataModel
 from scgv.models.featuremat_model import FeaturematModel
 
 from scgv.qtviews.heatmap import BaseHeatmapWidget, HeatmapWindow
 from scgv.qtviews.guide import GuideWindow
-from scgv.qtviews.canvas import Canvas, SectorsCanvas
+from scgv.qtviews.canvas import Canvas
 
 
 class WorkerSignals(QObject):
@@ -150,15 +149,6 @@ class ActionButtons(object):
             self.on_feature_view_action)
         self.window.toolbar.addAction(self.feature_view_action)
 
-        self.order_by_sector_action = QAction(
-            # QIcon(os.path.join(icons, "go-next.png")),
-            "Order by Sector View", self.window
-        )
-        self.order_by_sector_action.setStatusTip("Order by Sector View")
-        self.order_by_sector_action.triggered.connect(
-            self.on_order_by_sector_action)
-        self.window.toolbar.addAction(self.order_by_sector_action)
-
         self.configure_tracks_action = QAction(
             "Configure Tracks", self.window
         )
@@ -205,23 +195,6 @@ class ActionButtons(object):
 
     def on_feature_view_closing(self):
         self.feature_view_action.setEnabled(True)
-
-    def on_order_by_sector_action(self, *args, **kwargs):
-        if self.model is None:
-            return
-
-        self.order_by_sector_action.setEnabled(False)
-
-        sectors_model = SectorsDataModel(self.model)
-        sectors_model.make()
-
-        dialog = HeatmapWindow(
-            self.window, sectors_model, new_canvas=SectorsCanvas)
-        dialog.signals.closing.connect(self.on_order_by_sector_closing)
-        dialog.show()
-
-    def on_order_by_sector_closing(self):
-        self.order_by_sector_action.setEnabled(True)
 
     def set_model(self, model):
         self.model = model

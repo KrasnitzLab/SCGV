@@ -3,14 +3,14 @@
 import numpy as np
 
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QAction, \
-    QMenu, QComboBox
+    QMenu, QComboBox, QPushButton, QFrame, QLabel
 
 from PyQt5.QtCore import Qt
 
 from matplotlib.backends.backend_qt5agg import \
     NavigationToolbar2QT as NavigationToolbar
 
-from scgv.qtviews.canvas import Canvas
+from scgv.qtviews.canvas import Canvas, SectorsCanvas
 from scgv.qtviews.base import BaseDialog
 
 from scgv.qtviews.profiles import ProfilesActions
@@ -18,7 +18,7 @@ from scgv.qtviews.legend import HeatmapLegend, LegendWidget
 
 
 from scgv.models.sector_model import SingleSectorDataModel, \
-    SingleTrackDataModel
+    SingleTrackDataModel, SectorsDataModel, TrackDataModel
 
 from scgv.qtviews.pathology_window import ShowPathologyWindow
 
@@ -114,17 +114,45 @@ class SingleSectorWindow(BaseDialog):
         self.base.update()
 
 
-class SectorsLegend(LegendWidget):
+class SectorsLegend(QFrame):
 
     def __init__(self, main, *args, **kwargs):
         super(SectorsLegend, self).__init__(main, *args, **kwargs)
+        self.main = main
+
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
+        layout = QVBoxLayout(self)
+
+        label = QLabel(self)
+        label.setText("Sectors:")
+        layout.addWidget(label)
+
+        self.legend = LegendWidget(main, *args, **kwargs)
+        layout.addWidget(self.legend)
+
+        self.order_by_sector_button = \
+            QPushButton("Order by Sector View", self)
+        self.order_by_sector_button.pressed.connect(
+            self.on_order_by_sector_action)
+        layout.addWidget(self.order_by_sector_button)
+
+        self.model = None
         self.sectors = None
+
+    def set_model(self, model):
+        self.legend.clear()
+
+        self.legend.set_model(model)
+        self.model = model
+        if self.sectors is None:
+            self.sectors = self.model.make_sectors_legend()
+
+        self.show()
 
     def show(self):
         assert self.model is not None
 
-        if self.sectors is None:
-            self.sectors = self.model.make_sectors_legend()
         if self.sectors is None:
             return
 
@@ -132,7 +160,7 @@ class SectorsLegend(LegendWidget):
 
         for (index, (sector, pathology)) in enumerate(self.sectors):
             color = self.cmap.colors(index)
-            self.add_entry(
+            self.legend.add_entry(
                 text=pathology,
                 color=color)
 
@@ -140,7 +168,7 @@ class SectorsLegend(LegendWidget):
         self.customContextMenuRequested.connect(self.on_context_menu)
 
     def on_context_menu(self, pos, *args, **kwargs):
-        current_row = self.list.currentRow()
+        current_row = self.legend.list.currentRow()
         if current_row < 0:
             return
 
@@ -156,7 +184,7 @@ class SectorsLegend(LegendWidget):
         context.exec_(self.mapToGlobal(pos))
 
     def show_sector_view(self):
-        current_row = self.list.currentRow()
+        current_row = self.legend.list.currentRow()
         if current_row < 0:
             return
 
@@ -172,25 +200,56 @@ class SectorsLegend(LegendWidget):
         if self.model.pathology is None:
             return
 
-        pathology = self.list.currentItem().text()
+        pathology = self.legend.list.currentItem().text()
         image, notes = self.model.pathology.get(pathology, (None, None))
         dialog = ShowPathologyWindow(image, notes, self.main)
         dialog.show()
 
+    def on_order_by_sector_action(self, *args, **kwargs):
+        if self.model is None:
+            return
 
-class TracksLegend(QWidget):
+        self.order_by_sector_button.setEnabled(False)
+
+        sectors_model = SectorsDataModel(self.model)
+        sectors_model.make()
+
+        dialog = HeatmapWindow(
+            self.main, sectors_model, new_canvas=SectorsCanvas)
+        dialog.signals.closing.connect(self.on_order_by_sector_closing)
+        dialog.show()
+
+    def on_order_by_sector_closing(self):
+        self.order_by_sector_button.setEnabled(True)
+
+
+class TracksLegend(QFrame):
 
     def __init__(self, main, *args, **kwargs):
         super(TracksLegend, self).__init__(main, *args, **kwargs)
 
         self.main = main
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFrameShadow(QFrame.Raised)
+
         layout = QVBoxLayout(self)
+
+        label = QLabel(self)
+        label.setText("Tracks:")
+        layout.addWidget(label)
+
         self.combo = QComboBox(main)
         layout.addWidget(self.combo)
         self.legend = LegendWidget(main, *args, **kwargs)
         layout.addWidget(self.legend)
 
         self.combo.currentIndexChanged.connect(self.current_track_changed)
+
+        self.order_by_track_button = \
+            QPushButton("Order by Track View", self)
+        self.order_by_track_button.pressed.connect(
+            self.on_order_by_track)
+        layout.addWidget(self.order_by_track_button)
 
         self.model = None
         self.tracks = None
@@ -223,7 +282,6 @@ class TracksLegend(QWidget):
 
         index, track_name, track, mapping = self.selected_track
         self.cmap = TrackViewer.select_colormap(mapping)
-        print("TracksLegend:", index, track_name, mapping)
         vmin = np.min(track)
 
         for key, value in mapping.items():
@@ -235,18 +293,11 @@ class TracksLegend(QWidget):
         self.customContextMenuRequested.connect(self.on_context_menu)
 
     def current_track_changed(self, index):
-        print("current_track_changed", index)
         if index == -1:
             return
 
         self.selected_track = self.tracks[index]
         self.show()
-
-        # for (index, (sector, pathology)) in enumerate(self.sectors):
-        #     color = self.cmap.colors(index)
-        #     self.add_entry(
-        #         text=pathology,
-        #         color=color)
 
     def on_context_menu(self, pos, *args, **kwargs):
         current_row = self.legend.list.currentRow()
@@ -265,7 +316,6 @@ class TracksLegend(QWidget):
         if current_row < 0:
             return
 
-        print("show_track_view")
         track_value_index = current_row
 
         track_index, _, _, mapping = self.selected_track
@@ -277,3 +327,20 @@ class TracksLegend(QWidget):
 
         dialog = SingleSectorWindow(self.main, track_model)
         dialog.show()
+
+    def on_order_by_track(self, *args, **kwargs):
+        if self.model is None:
+            return
+
+        self.order_by_track_button.setEnabled(False)
+        track_index, _, _, _ = self.selected_track
+        track_model = TrackDataModel(self.model, track_index)
+        track_model.make()
+
+        dialog = HeatmapWindow(
+            self.main, track_model, new_canvas=SectorsCanvas)
+        dialog.signals.closing.connect(self.on_order_by_track_closing)
+        dialog.show()
+
+    def on_order_by_track_closing(self):
+        self.order_by_track_button.setEnabled(True)

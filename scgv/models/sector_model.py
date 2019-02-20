@@ -30,6 +30,34 @@ class SectorsDataModel(BaseModel):
         return index[res]
 
 
+class TrackDataModel(BaseModel):
+
+    def __init__(self, model, track_index):
+        super(TrackDataModel, self).__init__(model.data)
+        self.model = model
+        assert self.model.tracks is not None
+        assert track_index < len(self.model.tracks) and track_index >= 0
+
+        self.tracks = self.model.tracks
+        self.track_index, self.track_name, self.track, self.track_mapping = \
+            self.model.tracks[track_index]
+        assert self.track_index == track_index
+
+    def make_ordering(self):
+        index = np.array(self.model.Z['leaves'])
+        order = np.arange(len(index))
+
+        track = self.track
+
+        res = np.lexsort(
+            (
+                order,
+                track,
+            ))
+
+        return index[res]
+
+
 class SingleSectorDataModel(BaseModel):
 
     def __init__(self, model, sector_id):
