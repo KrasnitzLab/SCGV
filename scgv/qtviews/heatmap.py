@@ -113,54 +113,38 @@ class SingleSectorWindow(BaseDialog):
         self.base.update()
 
 
-class SectorsLegend(QFrame):
-
-    def __init__(self, main, *args, **kwargs):
-        super(SectorsLegend, self).__init__(main, *args, **kwargs)
+class TrackLegendBase(QFrame):
+    def __init__(self, main, title, *args, **kwargs):
+        super(TrackLegendBase, self).__init__(main, *args, **kwargs)
         self.main = main
 
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
-        layout = QVBoxLayout(self)
+
+        self.layout = QVBoxLayout(self)
 
         label = QLabel(self)
-        label.setText("Sectors:")
-        layout.addWidget(label)
+        label.setText(title)
+        self.layout.addWidget(label)
 
         self.legend = LegendWidget(main, *args, **kwargs)
-        layout.addWidget(self.legend)
-
-        self.order_by_sector_button = \
-            QPushButton("Order by Sector View", self)
-        self.order_by_sector_button.pressed.connect(
-            self.on_order_by_sector_action)
-        layout.addWidget(self.order_by_sector_button)
+        self.layout.addWidget(self.legend)
 
         self.model = None
-        self.sectors_mapping = None
-        self.sectors = None
-
-    def set_model(self, model):
-        self.legend.clear()
-
-        self.legend.set_model(model)
-        self.model = model
-        if self.sectors_mapping is None or self.sectors is None:
-            self.sectors, self.sectors_mapping = \
-                self.model.make_sectors_legend()
-
-        self.show()
+        self.mapping = None
+        self.track = None
 
     def show(self):
         assert self.model is not None
 
-        if self.sectors_mapping is None or self.sectors is None:
+        if self.mapping is None or self.track is None:
             return
 
-        self.cmap = TrackViewer.select_colormap(self.sectors_mapping)
-        vmin = np.min(self.sectors)
+        self.cmap = TrackViewer.select_colormap(self.mapping)
+        vmin = np.min(self.track)
 
-        for key, value in self.sectors_mapping.items():
+        self.legend.clear()
+        for key, value in self.mapping.items():
             color = self.cmap.colors[int(value-vmin)]
             self.legend.add_entry(
                 text=str(key),
@@ -168,6 +152,29 @@ class SectorsLegend(QFrame):
 
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.on_context_menu)
+
+
+class SectorsLegend(TrackLegendBase):
+
+    def __init__(self, main, *args, **kwargs):
+        super(SectorsLegend, self).__init__(main, "Sector:", *args, **kwargs)
+
+        self.order_by_sector_button = \
+            QPushButton("Order by Sector View", self)
+        self.order_by_sector_button.pressed.connect(
+            self.on_order_by_sector_action)
+        self.layout.addWidget(self.order_by_sector_button)
+
+    def set_model(self, model):
+        self.legend.clear()
+
+        self.legend.set_model(model)
+        self.model = model
+        if self.mapping is None or self.track is None:
+            self.track, self.mapping = \
+                self.model.make_sectors_legend()
+
+        self.show()
 
     def on_context_menu(self, pos, *args, **kwargs):
         current_row = self.legend.list.currentRow()
@@ -225,25 +232,13 @@ class SectorsLegend(QFrame):
         self.order_by_sector_button.setEnabled(True)
 
 
-class TracksLegend(QFrame):
+class TracksLegend(TrackLegendBase):
 
     def __init__(self, main, *args, **kwargs):
-        super(TracksLegend, self).__init__(main, *args, **kwargs)
-
-        self.main = main
-        self.setFrameShape(QFrame.StyledPanel)
-        self.setFrameShadow(QFrame.Raised)
-
-        layout = QVBoxLayout(self)
-
-        label = QLabel(self)
-        label.setText("Tracks:")
-        layout.addWidget(label)
+        super(TracksLegend, self).__init__(main, "Tracks:", *args, **kwargs)
 
         self.combo = QComboBox(main)
-        layout.addWidget(self.combo)
-        self.legend = LegendWidget(main, *args, **kwargs)
-        layout.addWidget(self.legend)
+        self.layout.insertWidget(1, self.combo)
 
         self.combo.currentIndexChanged.connect(self.current_track_changed)
 
@@ -251,9 +246,8 @@ class TracksLegend(QFrame):
             QPushButton("Order by Track View", self)
         self.order_by_track_button.pressed.connect(
             self.on_order_by_track)
-        layout.addWidget(self.order_by_track_button)
+        self.layout.addWidget(self.order_by_track_button)
 
-        self.model = None
         self.tracks = None
         self.selected_track = None
 
@@ -267,38 +261,19 @@ class TracksLegend(QFrame):
         self.selected_track = None
         if self.tracks:
             self.selected_track = self.tracks[0]
+            _, _, self.track, self.mapping = self.selected_track
 
         for index, track_name, track, mapping in self.tracks:
             self.combo.addItem(track_name)
 
         self.show()
 
-    def show(self):
-        # traceback.print_stack()
-
-        assert self.model is not None
-        if self.selected_track is None:
-            return
-
-        self.legend.clear()
-
-        index, track_name, track, mapping = self.selected_track
-        self.cmap = TrackViewer.select_colormap(mapping)
-        vmin = np.min(track)
-
-        for key, value in mapping.items():
-            color = self.cmap.colors[int(value-vmin)]
-            self.legend.add_entry(
-                text=str(key),
-                color=color)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.on_context_menu)
-
     def current_track_changed(self, index):
         if index == -1:
             return
 
         self.selected_track = self.tracks[index]
+        _, _, self.track, self.mapping = self.selected_track
         self.show()
 
     def on_context_menu(self, pos, *args, **kwargs):
