@@ -1,5 +1,3 @@
-import numpy as np
-
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
@@ -37,18 +35,17 @@ class TrackViewer(ViewerBase):
         if self.track is not None:
 
             cmap = self.select_colormap(self.track_mapping)
-            vmin = np.min(self.track)
+            vmin = min(self.track_mapping.values())
+            vmax = max(self.track_mapping.values())
             track = self.track - vmin
-            vmin = np.min(track)
-            vmax = np.max(track)
 
             ax.imshow(
                 [track],
                 aspect='auto',
                 interpolation='nearest',
                 cmap=cmap,
-                vmin=vmin,
-                vmax=vmax,
+                vmin=0,
+                vmax=vmax - vmin,
                 extent=self.model.bar_extent)
 
         ax.set_xticks([])

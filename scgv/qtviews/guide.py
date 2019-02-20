@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+
 from collections import defaultdict
 from functools import partial
 
@@ -14,6 +16,8 @@ class GuideWindowSignals(CloseSignals):
 
 
 class GuideWindow(BaseDialog):
+    MIN_RANK = 2
+    MAX_RANK = 20
 
     def __init__(self, main, model, *args, **kwargs):
         super(GuideWindow, self).__init__(main, *args, **kwargs)
@@ -23,8 +27,7 @@ class GuideWindow(BaseDialog):
         self.selected_tracks = set(model.selected_tracks)
         self.main = main
         layout = QVBoxLayout(self)
-        self.guide_df = model.data.guide_df
-        self.build_model()
+        self.build_model(model.data.guide_df)
 
         self.selected_tracks = set([
             s for s in self.selected_tracks if s in self.model_df.name.values
@@ -33,7 +36,7 @@ class GuideWindow(BaseDialog):
         self.signals = GuideWindowSignals()
 
         self.table = QTableWidget()
-        self.table.setRowCount(len(self.guide_df.columns))
+        self.table.setRowCount(len(self.model_df))
         self.table.setColumnCount(5)
 
         for index, row in self.model_df.iterrows():
@@ -79,11 +82,17 @@ class GuideWindow(BaseDialog):
     def on_cancel_action(self):
         self.close()
 
-    def build_model(self):
-        dtypes = self.guide_df.dtypes
+    def build_model(self, guide_df):
+        dtypes = guide_df.dtypes
         data = defaultdict(list)
         for index, (name, dtype) in enumerate(dtypes.iteritems()):
-            rank = len(self.guide_df[name].unique())
+            has_nan = guide_df[name].isna()
+            if np.any(has_nan):
+                continue
+
+            rank = len(guide_df[name].unique())
+            if rank < self.MIN_RANK or rank > self.MAX_RANK:
+                continue
             data['index'].append(index)
             data['name'].append(name)
             data['dtype'].append(dtype)

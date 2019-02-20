@@ -1,7 +1,4 @@
 # import traceback
-
-import numpy as np
-
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QAction, \
     QComboBox, QPushButton, QFrame, QLabel
 
@@ -139,7 +136,7 @@ class TrackLegendBase(QFrame):
             return
 
         self.cmap = TrackViewer.select_colormap(self.mapping)
-        vmin = np.min(self.track)
+        vmin = min(self.mapping.values())
 
         self.legend.clear()
         for key, value in self.mapping.items():
