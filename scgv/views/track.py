@@ -33,7 +33,7 @@ class TrackViewer(ViewerBase):
         self.track = track
         self.track_mapping = mapping
 
-    def draw_track(self, ax):
+    def draw(self, ax):
         if self.track is not None:
 
             cmap = self.select_colormap(self.track_mapping)

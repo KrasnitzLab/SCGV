@@ -3,29 +3,11 @@ Created on Dec 15, 2016
 
 @author: lubo
 '''
-from scgv.views.base import ViewerBase
-from scgv.utils.color_map import ColorMap
+from scgv.views.track import TrackViewer
 
 
-class SectorViewer(ViewerBase):
+class SectorViewer(TrackViewer):
 
     def __init__(self, model):
-        super(SectorViewer, self).__init__(model)
-        self.cmap = ColorMap.make_qualitative12()
-
-    def draw_sector(self, ax):
-        if self.model.sector is not None:
-            ax.imshow(
-                [self.model.sector],
-                aspect='auto',
-                interpolation='nearest',
-                cmap=self.cmap.colors,
-                vmin=1,
-                vmax=12,
-                # norm=self.cmap.norm,
-                extent=self.model.bar_extent)
-
-        ax.set_xticks([])
-        ax.set_xticklabels([])
-        ax.set_yticks([0.5])
-        ax.set_yticklabels(["Sector"])
+        super(SectorViewer, self).__init__(
+            model, "Sectors", model.sector, model.sector_mapping)

@@ -22,7 +22,6 @@ from scgv.models.sector_model import SingleSectorDataModel, \
 
 from scgv.qtviews.pathology_window import ShowPathologyWindow
 
-from scgv.utils.color_map import ColorMap
 from scgv.views.track import TrackViewer
 
 
@@ -138,6 +137,7 @@ class SectorsLegend(QFrame):
         layout.addWidget(self.order_by_sector_button)
 
         self.model = None
+        self.sectors_mapping = None
         self.sectors = None
 
     def set_model(self, model):
@@ -145,23 +145,25 @@ class SectorsLegend(QFrame):
 
         self.legend.set_model(model)
         self.model = model
-        if self.sectors is None:
-            self.sectors = self.model.make_sectors_legend()
+        if self.sectors_mapping is None or self.sectors is None:
+            self.sectors, self.sectors_mapping = \
+                self.model.make_sectors_legend()
 
         self.show()
 
     def show(self):
         assert self.model is not None
 
-        if self.sectors is None:
+        if self.sectors_mapping is None or self.sectors is None:
             return
 
-        self.cmap = ColorMap.make_qualitative12()
+        self.cmap = TrackViewer.select_colormap(self.sectors_mapping)
+        vmin = np.min(self.sectors)
 
-        for (index, (sector, pathology)) in enumerate(self.sectors):
-            color = self.cmap.colors(index)
+        for key, value in self.sectors_mapping.items():
+            color = self.cmap.colors[int(value-vmin)]
             self.legend.add_entry(
-                text=pathology,
+                text=str(key),
                 color=color)
 
         self.setContextMenuPolicy(Qt.CustomContextMenu)

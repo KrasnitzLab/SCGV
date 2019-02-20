@@ -164,7 +164,6 @@ class BaseModel(object):
     def _make_heatmap_array(cls, df):
         unique = df.unique()
         unique.sort()
-        print(unique)
         mapping = {}
 
         result = pd.Series(index=df.index)
@@ -175,8 +174,6 @@ class BaseModel(object):
                 mapping[val] = cls.heatmap_color_counter
                 result[df == val] = cls.heatmap_color_counter
                 cls.heatmap_color_counter += 1
-
-        print(result.values, mapping)
         return result.values, mapping
 
     def make_heatmap(self, ordering):
@@ -236,19 +233,17 @@ class BaseModel(object):
 
         return clone[ordering], subclone[ordering]
 
-    # def make_gate(self, ordering):
-    #     return self.make_track('gate', ordering)
+    def make_multiplier(self, ordering):
+        data = self.data.seg_df.iloc[:self.chrom_x_index, 3:]
+        multiplier = data.mean().ix[ordering]
+        return multiplier.values
 
-    def make_sector(self, ordering):
-        if self.data.guide_df is None:
-            return None, None
-        if self.SECTOR_COLUMN not in self.data.guide_df.columns:
-            return None, None
-        sector_df = self.data.guide_df[self.SECTOR_COLUMN]
-        self._reset_heatmap_color()
-        sector, sector_mapping = self._make_heatmap_array(sector_df)
-
-        return sector[ordering], sector_mapping
+    def make_error(self, ordering):
+        if self.data.ratio_df is None:
+            return None
+        df_s = self.data.seg_df.iloc[:self.chrom_x_index, 3:].values
+        df_r = self.data.ratio_df.iloc[:self.chrom_x_index, 3:].values
+        return np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=0))[ordering]
 
     def make_track(self, track_name, ordering):
 
@@ -262,26 +257,25 @@ class BaseModel(object):
         track, track_mapping = self._make_heatmap_array(track_df)
         return track[ordering], track_mapping
 
-    def make_multiplier(self, ordering):
-        data = self.data.seg_df.iloc[:self.chrom_x_index, 3:]
-        multiplier = data.mean().ix[ordering]
-        return multiplier.values
+    def make_sector(self, ordering):
+        if self.data.guide_df is None:
+            return None, None
+        if self.SECTOR_COLUMN not in self.data.guide_df.columns:
+            return None, None
+        sector_df = self.data.guide_df[self.SECTOR_COLUMN]
+        self._reset_heatmap_color()
+        sector, sector_mapping = self._make_heatmap_array(sector_df)
 
-    def make_error(self, ordering):
-        if self.data.ratio_df is None:
-            return None
-        df_s = self.data.seg_df.iloc[:self.chrom_x_index, 3:].values
-        df_r = self.data.ratio_df.iloc[:self.chrom_x_index, 3:].values
-        return np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=0))[ordering]
+        return sector[ordering], sector_mapping
 
     def make_sectors_legend(self):
         if self.data.guide_df is None:
             return None
-        sectors = self.data.guide_df[self.SECTOR_COLUMN].unique()
-        sectors.sort()
 
-        result = []
-        for sector in sectors:
+        sectors, sector_mapping = self.make_sector(self.ordering)
+
+        pathology_mapping = {}
+        for sector in sector_mapping.keys():
             sector_df = self.data.guide_df[
                 self.data.guide_df[self.SECTOR_COLUMN] == sector]
             if self.PATHOLOGY_COLUMN not in sector_df.columns:
@@ -294,8 +288,8 @@ class BaseModel(object):
                           .format(
                                 sector,
                                 sector_df[self.PATHOLOGY_COLUMN].unique()))
-            result.append((sector, str(pathology).strip()))
-        return result
+            pathology_mapping[str(pathology).strip()] = sector
+        return sectors, pathology_mapping
 
 
 class DataModel(BaseModel):
