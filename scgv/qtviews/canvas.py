@@ -38,31 +38,39 @@ class Canvas(FigureCanvas):
         (0.05, 0.0125),
     ]
 
-    def __init__(self):
+    def __init__(self, has_dendro=True):
         self.fig = Figure(figsize=(12, 8))
         self.model = None
         super(Canvas, self).__init__(self.fig)
+        self.has_dendro = has_dendro
         self.signals = CanvasSignals()
         self.cid = None
 
     def draw_canvas(self):
         assert self.model is not None
 
-        ax_dendro = self.fig.add_axes(
-            [self.X, 0.775, self.W, 0.175], frame_on=True)
-        dendro_viewer = DendrogramViewer(self.model)
-        dendro_viewer.draw_dendrogram(ax_dendro)
+        ax_shared = None
+        if self.has_dendro:
+            ax_dendro = self.fig.add_axes(
+                [self.X, 0.775, self.W, 0.175], frame_on=True)
+            dendro_viewer = DendrogramViewer(self.model)
+            dendro_viewer.draw_dendrogram(ax_dendro)
+            plt.setp(ax_dendro.get_xticklabels(), visible=False)
+            ax_shared = ax_dendro
 
         ax_clone = self.fig.add_axes(
-            [self.X, 0.7625, self.W, 0.0125], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.7625, self.W, 0.0125], frame_on=True, sharex=ax_shared)
         clone_viewer = CloneViewer(self.model)
         clone_viewer.draw_clone(ax_clone)
+        if not self.has_dendro:
+            ax_shared = ax_clone
+
         ax_subclone = self.fig.add_axes(
-            [self.X, 0.75, self.W, 0.0125], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.75, self.W, 0.0125], frame_on=True, sharex=ax_shared)
         clone_viewer.draw_subclone(ax_subclone)
 
         ax_heat = self.fig.add_axes(
-            [self.X, 0.20, self.W, 0.55], frame_on=True, sharex=ax_dendro)
+            [self.X, 0.20, self.W, 0.55], frame_on=True, sharex=ax_shared)
 
         heatmap_viewer = HeatmapViewer(self.model)
         heatmap_viewer.draw_heatmap(ax_heat)
@@ -70,21 +78,21 @@ class Canvas(FigureCanvas):
         y_start, y_height = self.TRACKS_Y_COORDS[0]
         ax_error = self.fig.add_axes(
             [self.X, y_start, self.W, y_height],
-            frame_on=True, sharex=ax_dendro)
+            frame_on=True, sharex=ax_shared)
         error_viewer = ErrorViewer(self.model)
         error_viewer.draw_error(ax_error)
 
         y_start, y_height = self.TRACKS_Y_COORDS[1]
         ax_multiplier = self.fig.add_axes(
             [self.X, y_start, self.W, y_height],
-            frame_on=True, sharex=ax_dendro)
+            frame_on=True, sharex=ax_shared)
         multiplier_viewer = MultiplierViewer(self.model)
         multiplier_viewer.draw_multiplier(ax_multiplier)
 
         y_start, y_height = self.TRACKS_Y_COORDS[2]
         ax_sector = self.fig.add_axes(
             [self.X, y_start, self.W, y_height],
-            frame_on=True, sharex=ax_dendro)
+            frame_on=True, sharex=ax_shared)
         sector_viewer = SectorViewer(self.model)
         sector_viewer.draw(ax_sector)
 
@@ -100,7 +108,7 @@ class Canvas(FigureCanvas):
             y_start, y_height = rel_y_coords[index]
             ax_track = self.fig.add_axes(
                 [self.X, y_start, self.W, y_height],
-                frame_on=True, sharex=ax_dendro)
+                frame_on=True, sharex=ax_shared)
             track_viewer = TrackViewer(self.model, track_name, track, mapping)
             track_viewer.draw(ax_track)
             ax_tracks.append(ax_track)
@@ -113,7 +121,6 @@ class Canvas(FigureCanvas):
         track_viewer.draw_xlabels(ax_track)
         self.ax_label = ax_track
 
-        plt.setp(ax_dendro.get_xticklabels(), visible=False)
         plt.setp(ax_clone.get_xticklabels(), visible=False)
         plt.setp(ax_clone.get_xticklines(), visible=False)
         plt.setp(ax_subclone.get_xticklabels(), visible=False)
@@ -164,46 +171,46 @@ class Canvas(FigureCanvas):
 class SectorsCanvas(Canvas):
 
     def __init__(self):
-        super(SectorsCanvas, self).__init__()
+        super(SectorsCanvas, self).__init__(has_dendro=False)
 
-    def draw_canvas(self):
-        assert self.model is not None
+    # def draw_canvas(self):
+    #     assert self.model is not None
 
-        ax_clone = self.fig.add_axes(
-            [self.X, 0.9375, self.W, 0.0125], frame_on=True)
-        clone_viewer = CloneViewer(self.model)
-        clone_viewer.draw_clone(ax_clone)
-        ax_subclone = self.fig.add_axes(
-            [self.X, 0.925, self.W, 0.0125], frame_on=True, sharex=ax_clone)
-        clone_viewer.draw_subclone(ax_subclone)
+    #     ax_clone = self.fig.add_axes(
+    #         [self.X, 0.9375, self.W, 0.0125], frame_on=True)
+    #     clone_viewer = CloneViewer(self.model)
+    #     clone_viewer.draw_clone(ax_clone)
+    #     ax_subclone = self.fig.add_axes(
+    #         [self.X, 0.925, self.W, 0.0125], frame_on=True, sharex=ax_clone)
+    #     clone_viewer.draw_subclone(ax_subclone)
 
-        ax_heat = self.fig.add_axes(
-            [self.X, 0.20, self.W, 0.725], frame_on=True, sharex=ax_clone)
-        featuremat_viewer = HeatmapViewer(self.model)
-        featuremat_viewer.draw_heatmap(ax_heat)
+    #     ax_heat = self.fig.add_axes(
+    #         [self.X, 0.20, self.W, 0.725], frame_on=True, sharex=ax_clone)
+    #     featuremat_viewer = HeatmapViewer(self.model)
+    #     featuremat_viewer.draw_heatmap(ax_heat)
 
-        ax_sector = self.fig.add_axes(
-            [self.X, 0.175, self.W, 0.025], frame_on=True, sharex=ax_clone)
-        # draw sector bar
-        sector_viewer = SectorViewer(self.model)
-        sector_viewer.draw_sector(ax_sector)
+    #     ax_sector = self.fig.add_axes(
+    #         [self.X, 0.175, self.W, 0.025], frame_on=True, sharex=ax_clone)
+    #     # draw sector bar
+    #     sector_viewer = SectorViewer(self.model)
+    #     sector_viewer.draw(ax_sector)
 
-        ax_multiplier = self.fig.add_axes(
-            [self.X, 0.125, self.W, 0.025], frame_on=True, sharex=ax_clone)
-        multiplier_viewer = MultiplierViewer(self.model)
-        multiplier_viewer.draw_multiplier(ax_multiplier)
+    #     ax_multiplier = self.fig.add_axes(
+    #         [self.X, 0.125, self.W, 0.025], frame_on=True, sharex=ax_clone)
+    #     multiplier_viewer = MultiplierViewer(self.model)
+    #     multiplier_viewer.draw_multiplier(ax_multiplier)
 
-        ax_error = self.fig.add_axes(
-            [self.X, 0.10, self.W, 0.025], frame_on=True, sharex=ax_clone)
-        error_viewer = ErrorViewer(self.model)
-        error_viewer.draw_error(ax_error)
-        error_viewer.draw_xlabels(ax_error)
-        self.ax_label = ax_error
+    #     ax_error = self.fig.add_axes(
+    #         [self.X, 0.10, self.W, 0.025], frame_on=True, sharex=ax_clone)
+    #     error_viewer = ErrorViewer(self.model)
+    #     error_viewer.draw_error(ax_error)
+    #     error_viewer.draw_xlabels(ax_error)
+    #     self.ax_label = ax_error
 
-        plt.setp(ax_clone.get_xticklabels(), visible=False)
-        plt.setp(ax_subclone.get_xticklabels(), visible=False)
+    #     plt.setp(ax_clone.get_xticklabels(), visible=False)
+    #     plt.setp(ax_subclone.get_xticklabels(), visible=False)
 
-        plt.setp(ax_heat.get_xticklabels(), visible=False)
-        plt.setp(ax_sector.get_xticklabels(), visible=False)
-        # plt.setp(ax_gate.get_xticklabels(), visible=False)
-        plt.setp(ax_multiplier.get_xticklabels(), visible=False)
+    #     plt.setp(ax_heat.get_xticklabels(), visible=False)
+    #     plt.setp(ax_sector.get_xticklabels(), visible=False)
+    #     # plt.setp(ax_gate.get_xticklabels(), visible=False)
+    #     plt.setp(ax_multiplier.get_xticklabels(), visible=False)

@@ -100,9 +100,6 @@ class BaseModel(object):
         self.clone, self.subclone = self.make_clone(
             ordering=self.ordering)
 
-        # self.gate, self.gate_mapping = \
-        #     self.make_gate(ordering=self.ordering)
-
         self.sector, self.sector_mapping = \
             self.make_sector(ordering=self.ordering)
         self.multiplier = self.make_multiplier(
@@ -112,11 +109,13 @@ class BaseModel(object):
 
         self.update_selected_tracks()
 
-    def update_selected_tracks(self):
+    def update_selected_tracks(self, track_index=None):
         self.tracks = []
         for index, track_name in enumerate(self.selected_tracks):
             track, mapping = self.make_track(
                 track_name, ordering=self.ordering)
+            if track_index is not None:
+                track = track[track_index]
             self.tracks.append((index, track_name, track, mapping))
 
     def make_linkage(self):
