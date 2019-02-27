@@ -33,8 +33,11 @@ class ProfilesActions(QWidget):
         self.model = model
 
     def on_profile_selected(self, profile, *args, **kwargs):
-        if profile in self.profiles:
+        if profile is None or profile in self.profiles:
             return
+        print(profile)
+        assert profile is not None
+
         self.profiles_list.addItem(profile)
         self.profiles.append(profile)
 
