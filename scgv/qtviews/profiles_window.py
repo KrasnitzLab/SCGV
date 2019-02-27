@@ -1,7 +1,7 @@
 import webbrowser
 import numpy as np
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QDialog, QApplication
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
 from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtCore import Qt
@@ -11,14 +11,11 @@ from matplotlib.backends.backend_qt5agg import FigureCanvas, \
     NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
+from scgv.qtviews.base import BaseDialog
 from scgv.views.sample import SamplesViewer
 
 
-class Signals(QObject):
-    position_selected = pyqtSignal(object)
-
-
-class ShowProfilesWindow(QDialog):
+class ShowProfilesWindow(BaseDialog):
 
     def __init__(self, model, profiles, parent, *args, **kwargs):
         super(ShowProfilesWindow, self).__init__(parent, *args, **kwargs)
@@ -26,6 +23,7 @@ class ShowProfilesWindow(QDialog):
 
         self._main = QWidget(self)
         layout = QVBoxLayout(self)
+        self.setLayout(layout)
 
         self.fig = Figure(figsize=(12, 8))
         self.canvas = FigureCanvas(self.fig)
@@ -40,7 +38,6 @@ class ShowProfilesWindow(QDialog):
         self.draw_canvas()
         self.canvas.draw()
 
-        self.signals = Signals()
         self.cid = None
 
         self.cid = self.fig.canvas.mpl_connect(

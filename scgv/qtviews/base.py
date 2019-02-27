@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 
 class CloseSignals(QObject):
@@ -10,7 +10,14 @@ class BaseDialog(QDialog):
 
     def __init__(self, *args, **kwargs):
         super(BaseDialog, self).__init__(*args, **kwargs)
+        self.setWindowFlags(
+            self.windowFlags() |
+            Qt.CustomizeWindowHint |
+            Qt.WindowMaximizeButtonHint |
+            Qt.WindowType_Mask)
         self.signals = CloseSignals()
+        print(self.sizeHint())
+        # self.resize(self.sizeHint())
 
     def closeEvent(self, event):
         print("closing window...")
