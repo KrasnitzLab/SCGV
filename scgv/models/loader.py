@@ -48,14 +48,21 @@ class DataLoader(object):
 
     @classmethod
     def _organize_filenames(cls, namelist):
+        print(namelist)
+
         result = {}
         for filename in namelist:
+            basename = os.path.basename(filename)
+            if basename.startswith('.'):
+                continue
+
             parts = filename.split('.')
             if len(parts) < 3:
                 continue
             filetype = parts[-2]
             if filetype not in cls.TYPES:
                 continue
+
             result[filetype] = filename
         return result
 
