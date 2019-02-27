@@ -10,11 +10,11 @@ class BaseDialog(QDialog):
 
     def __init__(self, *args, **kwargs):
         super(BaseDialog, self).__init__(*args, **kwargs)
-        self.setWindowFlags(
-            self.windowFlags() |
-            Qt.CustomizeWindowHint |
-            Qt.WindowMaximizeButtonHint |
-            Qt.WindowType_Mask)
+        # self.setWindowFlags(
+        #     self.windowFlags() |
+        #     Qt.CustomizeWindowHint |
+        #     Qt.WindowMaximizeButtonHint |
+        #     Qt.WindowType_Mask)
         self.signals = CloseSignals()
         print(self.sizeHint())
         # self.resize(self.sizeHint())
