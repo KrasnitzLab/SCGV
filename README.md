@@ -1,22 +1,21 @@
-# Single Cell Genome Viewer (SCGV) 
-
+# Single Cell Genome Viewer (SCGV)
 
 [![DOI](https://zenodo.org/badge/76399432.svg)](https://zenodo.org/badge/latestdoi/76399432)
 
-SCGV is an interactive graphical tool for single-cell genomics data, with 
+SCGV is an interactive graphical tool for single-cell genomics data, with
 emphasis on single-cell genomics of cancer. It facilitates examination, jointly
-or individually, of DNA copy number profiles of cells harvested from 
+or individually, of DNA copy number profiles of cells harvested from
 multiple anatomic locations (sectors). In the opening view the copy-number
 data matrix, with columns corresponding to cells and rows to genomic locations,
-is represented as a heat map with color-encoded integer DNA copy number. If a 
+is represented as a heat map with color-encoded integer DNA copy number. If a
 phylogenetic tree is available for the cells comprising the dataset, it can be
-used to order the columns of the data matrix, and clones formed by closely 
-related cells may be identified. Alternatively, the columns 
+used to order the columns of the data matrix, and clones formed by closely
+related cells may be identified. Alternatively, the columns
 can be ordered by the sector of origin of the cells. Cyto-pathological
 information may be displayed in a separate view, including sector-specific
 slide images and pathology reports. Genomic sub-regions and
 random subsets of cells can be selected and zoomed into. Individual or multiple
-copy-number profiles may be plotted as copy number against the genomic 
+copy-number profiles may be plotted as copy number against the genomic
 coordinate, and these plots may again be zoomed into. Chromosomal regions
 selected within the profiles may be followed to UCSC genome browser to
 examine the genomic context.
@@ -27,59 +26,44 @@ Short video introduction to SCGV can be found here:
 
 ## Anaconda Environment Setup
 
-### Install Anaconda 
+### Install Anaconda
+
 * Go to anaconda web site 
 [https://www.continuum.io/downloads](https://www.continuum.io/downloads)
-and download the latest anaconda installer for your operating system. Both 
-*Python 2.7* and *Python 3.6* are supported so you can choose your preferred Python
-version. 
+and download the latest anaconda installer for your operating system. SCGV uses
+*Python 3.6* or later so you need to choose the appropriate Anaconda installer.
 
 * Install anaconda into suitable place on your local machine following
-instructions from 
+instructions from
 [https://docs.continuum.io/anaconda/install](https://docs.continuum.io/anaconda/install)
+
+### Create Anaconda `scgv` environment
+
+* To create `scgv` environment use:
+
+    ```bash
+    conda create -n scgv
+    ```
+
+* Activate the newly created environment with:
+
+    ```bash
+    conda activate scgv
+    ```
 
 ### Conda installer for SCGV
 
 * To install SCGV you can use KrasnitzLab Anaconda channel:
 
-    ```
+    ```bash
     conda install -c krasnitzlab scgv
     ```
 
 * To run the SCGV viewer run following command:
 
-    ```
+    ```bash
     scgview
     ```
-
-### Create SCGV anaconda environment from scratch
-
-* After installing Anaconda you need to create an environment to use with the viewer:
-
-    ```
-    conda create -n aviewer
-    source activate aviewer
-    conda install numpy scipy matplotlib pillow pandas
-    ```
-
-### Activate the viewer environment
-
-* If you have existing Anaconda environment, you need to activate it in order to use it.
-To activate the anaconda environment `aviewer` you need to use the appropriate 
-[Anaconda instructions](http://conda.pydata.org/docs/using/envs.html#change-environments-activate-deactivate). 
-For `Linux` and `OS X` you should
-use:
-
-    ```bash
-    source activate aviewer
-    ```
-    On `Windows` you need to use:
-
-    ```bash
-    activate aviewer
-    ```
-* Full instructions on how to use and manage Anaconda environments can be found
-here: [http://conda.pydata.org/docs/using/envs.html](http://conda.pydata.org/docs/using/envs.html)
 
 ## Dataset Directory Structure
 
@@ -87,15 +71,17 @@ here: [http://conda.pydata.org/docs/using/envs.html](http://conda.pydata.org/doc
 should end with two dot-separated words. The last word is the usual file extension
 and second to last is the file type. For example:
 
-    ```
+    ```bash
     example.featuremat.txt
     ```
+
     is a `txt` file, that contains `featuremat` used by the viewer.
 
-* Example dataset directory is located in subdirectory 
+* Example dataset directory is located in subdirectory
 `exampledata/example.directory` of the project main directory. The content of the
 example dataset directory is as follows:
-    ```
+
+    ```bash
     .
     ├── example.cells.csv
     ├── example.clone.txt
@@ -125,7 +111,7 @@ example dataset directory is as follows:
 contains pathology images and notes. This subdirectory should contain a file called
 `description.csv` with the following structure:
 
-    ```
+    ```csv
     sector,pathology,image,notes
     1,Benign prostatic tissue,Area1.Benign.jpg,Area1.Benign.txt
     2,Pin and benign prostate,Area2.PIN.with.Benign.jpg,Area2.PIN.with.Benign.txt
@@ -133,18 +119,22 @@ contains pathology images and notes. This subdirectory should contain a file cal
     4,Gleason 9 near urethra,Area4.GS9.near.Urethra.jpg,Area4.GS9.near.Urethra.txt
     5,Gleason 9 at capsule,Area5.GS9.at.Capsule.jpg,Area5.GS9.at.Capsule.txt
     ```
-First column in `description.csv` contains the name/id of the sector as in `guide` file, 
-the second column is a description of the sector and the last two columns contain
-file names of pathology image and notes.
+
+First column in `description.csv` contains the name/id of the sector as
+specified in the `guide` file,
+the second column is a description of the sector and the last two columns
+contain file names of pathology image and notes.
 
 ## Dataset Archive Structure
-* Viewer supports datasets stored as a `ZIP` archives. Files from the
-archive dataset should follow the same naming convention as for dataset directories.
 
-* Example dataset ZIP archive is found in `exampledata/example.archive.zip` 
+* Viewer supports datasets stored as a `ZIP` archives. Files from the
+archive dataset should follow the same naming convention as for dataset
+directories.
+
+* Example dataset ZIP archive is found in `exampledata/example.archive.zip`
 into project main directory. The structure of the example dataset is as follows:
 
-    ```
+    ```bash
     unzip -t example.archive.zip 
     Archive:  example.archive.zip
         testing: pathology/               OK
@@ -168,26 +158,32 @@ into project main directory. The structure of the example dataset is as follows:
         testing: example.ratio.txt        OK
         testing: example.seg.txt          OK
         testing: example.tree.txt         OK
-    No errors detected in compressed data of example.archive.zip.    ```
-    
+    No errors detected in compressed data of example.archive.zip.
+    ```
 
 ## Start the Viewer
-* Before starting the viewer you need to activate viewer's Anaconda environment
-    ```
-    source activate aviewer
-    ```
 
-* To start the viewer from project main directory enter into `scgv` 
-subdirectory and start `tkmain.py`
+* Before starting the viewer you need to activate viewer's Anaconda environment
 
     ```bash
-    cd scgv
-    python tkmain.py
+    conda activate scgv
     ```
+
+* To start the viewer use:
+
+    ```bash
+    scgview
+    ```
+
+* The startup window of SCGV should appear:
+
+|![SCGV start window](docs/figs/01-start-window-dec.png)|
+|:--:|
+|*1-open directory; 2-open archive; 3-opens feature view; 4-additional tracks confguration; 5-list of selected profiles; 6-show selected profiles; 7-clears list of selected profiles; 8-heatmap legend; 9-sectors legend; 10-order view by sectors; 11-track legend selector; 12-selected track legend; 13-order view by selected track*|
 
 ## Select Dataset
 
-* Use `Open Archive` and `Open Directory` buttons to open a data set 
+* Use `Open Directory` (1) and `Open Archive` (2) buttons to open a data set
 for visualization
 
 * `Open Directory` button allows you to select a directory where a dataset is located.
@@ -198,15 +194,15 @@ One directory may contain only one dataset.
 ## Viewer Main Window
 
 * After dataset is loaded it will displayed into the main window.
-![SCGV main window](docs/figs/main-window.png)
+![SCGV main window](docs/figs/02-main-window.png)
 
 * From profiles instruments you can select individual cells to display their CN profile
 into single profile viewer.
 
-* Buttons 'Feature View' and 'Reorder by Sector' will display different views of the whole
+* Buttons 'Feature View' and 'Order by Sector View' will display different views of the whole
 dataset
 
-* From 'Sectors Legend' you can visualize single sector view and pathology view for
+* From 'Sectors' legend you can visualize single sector view and pathology view for
 any given sector.
 
 ## Copy-number Profile Tools
@@ -214,24 +210,29 @@ any given sector.
 * If you right click on a single cell it will be added to list of profiles to visualize
 from 'Show Profiles' button.
 
-* Profiles could be added to this list using 'Add Profiles' dialog window that is shown
-by clicking on 'Add profile' button.
-
-* To show the selected profiles you need to click on 'Show Profiles' button. Selected 
+* To show the selected profiles you need to click on 'Profiles Show' button.
+Selected
 profiles will be visualized as stacked plot of copy number against the genomic
 coordinate:
-![Sample view window](docs/figs/sample-window.png)
+![Sample view window](docs/figs/03-profiles-window.png)
 
-* To examine the genomic content of an intra-chromosomal region, right-click the left, then the right boundary of the desired region in the stacked copy-number 
-profile view. This will invoke UCSC Genome Browser in a tab of your default 
+* To examine the genomic content of an intra-chromosomal region,
+right-click the left, then the right boundary of the desired region in the
+stacked copy-number
+profile view. This will invoke UCSC Genome Browser in a tab of your default
 web browser
 
 ## Sectors Legend
 
-* Double click on a given sector row will launch single sector viewer
+* Right click on a sector in Sector legeng will open a context menu:
+
+![Sectors legned context menu](docs/figs/04-sectors-legend-context-menu.png)
+
+* Selecting 'Show sector view' displays single sector view for the selected
+sector
 ![Single sector window](docs/figs/single-sector-window.png)
 
 * Right click on a given sector row will display pathology image and notes for
 the selected sector
-![Single sector pathology window](docs/figs/single-sector-pathology-window.png)
+![Single sector pathology window](docs/figs/06-single-sector-patology.png)
 
