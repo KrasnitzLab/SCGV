@@ -214,11 +214,19 @@ from 'Show Profiles' button.
 Selected
 profiles will be visualized as stacked plot of copy number against the genomic
 coordinate:
-![Sample view window](docs/figs/03-profiles-window.png)
+
+|![Sample view window](docs/figs/03-profiles-window-dec.png)|
+|:--:|
+|*1-reset view; 2-undo; 3-redo; 4-move the image; 5-zoom in; 6-save an image snapshot; 7,8-individual profiles stacked view*|
+
+* Using zoom button (5) and reset button (1) you can inspect different regions
+of the profile.
+
+![Sample view window](docs/figs/03-profiles-window-context-menu.png)
 
 * To examine the genomic content of an intra-chromosomal region,
-right-click the left, then the right boundary of the desired region in the
-stacked copy-number
+right-click and use the context menu to select desired genomic position or region
+in the stacked copy-number
 profile view. This will invoke UCSC Genome Browser in a tab of your default
 web browser
 
