@@ -230,9 +230,9 @@ web browser
 
 * Selecting 'Show sector view' displays single sector view for the selected
 sector
-![Single sector window](docs/figs/single-sector-window.png)
+![Single sector window](docs/figs/05-single-sector.png)
 
-* Right click on a given sector row will display pathology image and notes for
+* Selecting 'Show sector patology' will display pathology image and notes for
 the selected sector
 ![Single sector pathology window](docs/figs/06-single-sector-patology.png)
 
