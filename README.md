@@ -234,12 +234,34 @@ web browser
 
 * Right click on a sector in Sector legeng will open a context menu:
 
-![Sectors legned context menu](docs/figs/04-sectors-legend-context-menu.png)
+    ![Sectors legned context menu](docs/figs/04-sectors-legend-context-menu.png)
 
 * Selecting 'Show sector view' displays single sector view for the selected
 sector
-![Single sector window](docs/figs/05-single-sector.png)
+
+    ![Single sector window](docs/figs/05-single-sector.png)
 
 * Selecting 'Show sector patology' will display pathology image and notes for
 the selected sector
-![Single sector pathology window](docs/figs/06-single-sector-patology.png)
+
+    ![Single sector pathology window](docs/figs/06-single-sector-patology.png)
+
+## Configurable Tracks
+
+Using 'Configure Tracks' (6) button you can configure tracks to be shown
+on bottom of the heatmap view.
+
+* When you click 'Configure Tracks' (6) button a dialog window is shown
+allowing you to select additional tracks to be displyed
+
+    ![Configure Tracks dialog window](docs/figs/07-configure-tracks.png)
+
+* Once selected the configured tracks are shown at the bottom of the heatmap
+view and are available from 'Track legend selector' (11):
+
+    ![Tracks Combo box](docs/figs/08-configure-tracks-combo.png)
+
+* The 'Selected track legend' (12) allows you additionally explore the
+selected track using context menu:
+
+    ![Single Track view](docs/figs/09-single-track-view.png)
