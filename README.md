@@ -179,7 +179,7 @@ into project main directory. The structure of the example dataset is as follows:
 
 |![SCGV start window](docs/figs/01-start-window-dec.png)|
 |:--:|
-|*1-open directory; 2-open archive; 3-opens feature view; 4-additional tracks confguration; 5-list of selected profiles; 6-show selected profiles; 7-clears list of selected profiles; 8-heatmap legend; 9-sectors legend; 10-order view by sectors; 11-track legend selector; 12-selected track legend; 13-order view by selected track*|
+|*1-open directory; 2-open archive; 3-open feature view; 4-additional tracks confguration; 5-list of selected profiles; 6-show selected profiles; 7-clears list of selected profiles; 8-heatmap legend; 9-sectors legend; 10-order view by sectors; 11-track legend selector; 12-selected track legend; 13-order view by selected track*|
 
 ## Select Dataset
 
@@ -235,4 +235,3 @@ sector
 * Selecting 'Show sector patology' will display pathology image and notes for
 the selected sector
 ![Single sector pathology window](docs/figs/06-single-sector-patology.png)
-
