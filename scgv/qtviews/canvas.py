@@ -97,14 +97,13 @@ class Canvas(FigureCanvas):
         sector_viewer = SectorViewer(self.model)
         sector_viewer.draw(ax_sector)
 
-        ax_tracks = []
+        last_track = ax_sector
+        last_viewer = sector_viewer
+
+        ax_tracks = [
+            ax_multiplier, ax_error, ax_sector,
+        ]
         rel_y_coords = self.TRACKS_Y_COORDS[3:]
-        last_track = ax_error
-        last_viewer = error_viewer
-        print(
-            "Tracks:",
-            "len=", len(ax_tracks),
-            "names=", [tn for _, tn, _, _ in self.model.tracks])
         for index, track_name, track, mapping in self.model.tracks:
             y_start, y_height = rel_y_coords[index]
             ax_track = self.fig.add_axes(
@@ -116,11 +115,6 @@ class Canvas(FigureCanvas):
             last_viewer = track_viewer
             last_track = ax_track
 
-        print(
-            "Tracks:",
-            "len=", len(ax_tracks),
-            "names=", [tn for _, tn, _, _ in self.model.tracks])
-
         last_viewer.draw_xlabels(last_track)
         self.ax_label = last_track
 
@@ -129,9 +123,6 @@ class Canvas(FigureCanvas):
         plt.setp(ax_subclone.get_xticklabels(), visible=False)
         plt.setp(ax_subclone.get_xticklines(), visible=False)
         plt.setp(ax_heat.get_xticklabels(), visible=False)
-        plt.setp(ax_multiplier.get_xticklabels(), visible=False)
-        plt.setp(ax_error.get_xticklabels(), visible=False)
-        plt.setp(ax_sector.get_xticklabels(), visible=False)
 
         if ax_tracks:
             for ax in ax_tracks[:-1]:
