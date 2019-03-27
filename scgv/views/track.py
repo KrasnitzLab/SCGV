@@ -13,16 +13,13 @@ class TrackViewer(ViewerBase):
 
         assert size <= 20
         if size > 12:
-            print("select_colormap: tab20")
             cmap = plt.get_cmap('tab20')
         elif size > 7:
-            print("select_colormap: Paired")
             cmap = plt.get_cmap('Paired')
         else:
-            print("select_colormap: tab10")
             cmap = plt.get_cmap('tab10')
-
-        return ListedColormap(cmap.colors[:size])
+        colors = cmap.colors[:size]
+        return ListedColormap(colors)
 
     def __init__(self, model, track_name, track, mapping):
         super(TrackViewer, self).__init__(model)

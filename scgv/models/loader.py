@@ -37,7 +37,7 @@ class DataLoader(object):
         self.ratio_df = self.data.get('ratio', None)
         self.clone_df = self.data.get('clone', None)
         self.tree_df = self.data.get('tree', None)
-        self.guide_df = self.data.get('guide', None)
+        self.guide_df = self._guide_clenup(self.data.get('guide', None))
         self.featuremat_df = self.data.get('featuremat', None)
         self.features_df = self.data.get('features', None)
         self.genome = self.data.get('genome', 'hg19')
@@ -45,6 +45,13 @@ class DataLoader(object):
         assert self.cell_df is not None
         assert self.seg_df is not None
         assert self.genome is not None
+
+    def _guide_clenup(self, guide_df):
+        if guide_df is None:
+            return None
+        for column in guide_df.select_dtypes(include=[object]).columns:
+            guide_df[column] = guide_df[column].str.strip()
+        return guide_df
 
     @classmethod
     def _organize_filenames(cls, namelist):

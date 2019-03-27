@@ -274,8 +274,6 @@ class BaseModel(object):
             return None
 
         sectors, sector_mapping = self.make_sector(self.ordering)
-        print(sector_mapping)
-
         pathology_mapping = {}
         for sector_key, sector_value in sector_mapping.items():
             sector_df = self.data.guide_df[
@@ -290,7 +288,11 @@ class BaseModel(object):
                           .format(
                                 sector_key,
                                 sector_df[self.PATHOLOGY_COLUMN].unique()))
-            pathology_mapping[str(pathology).strip()] = sector_value
+
+            pathology = str(pathology).strip()
+            assert pathology not in pathology_mapping
+
+            pathology_mapping[pathology] = sector_value
         return sectors, pathology_mapping
 
 
