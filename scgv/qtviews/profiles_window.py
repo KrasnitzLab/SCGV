@@ -3,7 +3,7 @@ import numpy as np
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
 from PyQt5.QtWidgets import QAction, QMenu
-from PyQt5.QtCore import QObject, pyqtSignal
+# from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtCore import Qt
 
 

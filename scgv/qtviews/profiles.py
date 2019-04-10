@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, \
     QListWidget, QPushButton
+from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
 from scgv.qtviews.profiles_window import ShowProfilesWindow
@@ -26,6 +27,12 @@ class ProfilesActions(QWidget):
             self.on_profiles_clear
         )
         layout.addWidget(self.profiles_clear_button)
+
+        self.profiles_add_button = QPushButton("Profiles Add")
+        self.profiles_add_button.clicked.connect(
+            self.on_profiles_add
+        )
+        layout.addWidget(self.profiles_add_button)
 
         self.model = None
 
@@ -56,3 +63,18 @@ class ProfilesActions(QWidget):
             self.model, profiles, self.main
         )
         show_profiles.show()
+
+    def on_profiles_add(self, *args, **kwargs):
+        if self.model is None:
+            return
+        profile, ok_pressed = QInputDialog.getText(
+            self.main, "SCGV Add Profile", "Profile:", QLineEdit.Normal, ""
+        )
+        if not ok_pressed or not profile:
+            return
+        if profile not in self.model.column_labels:
+            print(
+                "profile not found in current case:",
+                profile, self.model.column_labels)
+            return
+        self.on_profile_selected(profile)
