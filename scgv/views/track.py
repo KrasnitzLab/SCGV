@@ -10,7 +10,10 @@ class TrackViewer(ViewerBase):
     @classmethod
     def select_colormap(self, track_mapping):
         size = len(track_mapping)
+        return TrackViewer.select_colormap_size(size)
 
+    @classmethod
+    def select_colormap_size(self, size):
         assert size <= 20
         if size > 12:
             cmap = plt.get_cmap('tab20')
