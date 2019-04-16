@@ -98,7 +98,7 @@ class OpenButtons(object):
     def on_open_directory_click(self, s):
         dirname = QFileDialog.getExistingDirectory(
             self.window, "Open Directory")
-        self._load_model(dirname)
+        self.load_model(dirname)
 
     def on_open_archive_click(self, s):
         filter = "Zip File (*.zip)"
@@ -107,7 +107,7 @@ class OpenButtons(object):
             ".", filter)
         self._load_model(filename)
 
-    def _load_model(self, filename):
+    def load_model(self, filename):
 
         self.open_archive_action.setEnabled(False)
         self.open_dir_action.setEnabled(False)

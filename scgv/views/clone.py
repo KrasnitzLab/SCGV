@@ -34,7 +34,6 @@ class CloneViewer(ViewerBase):
         self.cmap = self._select_colormap_size(size)
 
     def draw_clone(self, ax):
-        print(self.model.clone)
 
         if self.model.clone is not None:
             ax.imshow(
@@ -53,7 +52,6 @@ class CloneViewer(ViewerBase):
         ax.set_yticklabels(["Clone"])
 
     def draw_subclone(self, ax):
-        print(self.model.subclone)
         if self.model.subclone is not None:
             ax.imshow(
                 [self.model.subclone],

@@ -40,7 +40,7 @@ class Canvas(FigureCanvas):
 
     def __init__(self, has_dendro=True):
         self.model = None
-        self.fig = Figure(figsize=(12, 8))
+        self.fig = Figure(figsize=(24, 16))
         super(Canvas, self).__init__(self.fig)
         self.has_dendro = has_dendro
         self.signals = CanvasSignals()
