@@ -194,8 +194,7 @@ class DataLoader(object):
         for c in df.columns[keep:]:
             if c in self.sample_names:
                 columns.append(c)
-
-        df = df.ix[:, columns].copy()
+        df = df.loc[:, columns].copy()
         return df
 
     def _filter_df_rows(self, df, cell_column):
@@ -233,7 +232,7 @@ class DataLoader(object):
         if self.tree_df is not None:
             assert len(self.sample_names) == len(self.tree_df) + 1, \
                 "tree file size mismatched"
-            self.tree_df = self.tree_df.ix[:, 0:4].copy()
+            self.tree_df = self.tree_df.iloc[:, 0:4].copy()
 
     def order_cells(self):
         order = self.cell_df.cell.values
@@ -270,12 +269,12 @@ class DataLoader(object):
         prefix = np.arange(0, keep)
         indices = np.hstack((prefix, indices))
         assert len(indices) == len(df.columns)
-        df = df.ix[:, indices]
+        df = df.iloc[:, indices]
         return df
 
     def _order_df_rows(self, order, df, col_name):
         indices = self._sort_indices(order, df[col_name].values)
-        df = df.ix[indices, :]
+        df = df.iloc[indices, :]
         df.reset_index(inplace=True)
         return df
 

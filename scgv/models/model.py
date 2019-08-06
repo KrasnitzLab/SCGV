@@ -24,7 +24,7 @@ class BaseModel(object):
 
     def __init__(self, data):
         self.data = data
-        self.seg_data = self.data.seg_df.ix[:, 3:].values
+        self.seg_data = self.data.seg_df.iloc[:, 3:].values
         self.bins, self.samples = self.seg_data.shape
         self.lmat = None
         self.Z = None
@@ -193,7 +193,7 @@ class BaseModel(object):
         if not np.all(list(self.data.featuremat_df.columns) ==
                       self.column_labels):
             self.data.featuremat_df = \
-                self.data.featuremat_df.ix[:, ordering].copy()
+                self.data.featuremat_df.loc[:, ordering].copy()
         assert np.all(list(self.data.featuremat_df.columns) ==
                       self.column_labels)
 
@@ -203,9 +203,9 @@ class BaseModel(object):
 
         # assert len(negative) + len(positive) == self.bins
         features[negative, :] = \
-            -1 * self.data.featuremat_df.ix[negative.index, :].values
+            -1 * self.data.featuremat_df.loc[negative.index, :].values
         features[positive, :] = \
-            +1 * self.data.featuremat_df.ix[positive.index, :].values
+            +1 * self.data.featuremat_df.loc[positive.index, :].values
 
         # psi = int(self.bins / 600)
         psi = 2
@@ -236,7 +236,7 @@ class BaseModel(object):
 
     def make_multiplier(self, ordering):
         data = self.data.seg_df.iloc[:self.chrom_x_index, 3:]
-        multiplier = data.mean().ix[ordering]
+        multiplier = data.mean().iloc[ordering]
         return multiplier.values
 
     def make_error(self, ordering):
