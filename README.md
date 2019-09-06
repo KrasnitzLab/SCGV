@@ -29,13 +29,13 @@ Short video introduction to SCGV can be found here:
 ### Install Anaconda
 
 * Go to anaconda web site 
-[https://www.continuum.io/downloads](https://www.continuum.io/downloads)
+[https://www.anaconda.com/distribution/](https://www.anaconda.com/distribution/)
 and download the latest anaconda installer for your operating system. SCGV uses
 *Python 3.6* or later so you need to choose the appropriate Anaconda installer.
 
 * Install anaconda into suitable place on your local machine following
 instructions from
-[https://docs.continuum.io/anaconda/install](https://docs.continuum.io/anaconda/install)
+[https://docs.anaconda.com/anaconda/install/](https://docs.anaconda.com/anaconda/install/)
 
 ### Create Anaconda `scgv` environment
 
