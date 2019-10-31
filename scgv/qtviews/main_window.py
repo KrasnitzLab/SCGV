@@ -105,7 +105,7 @@ class OpenButtons(object):
         filename, _ = QFileDialog.getOpenFileName(
             self.window, "Open Zip File",
             ".", filter)
-        self._load_model(filename)
+        self.load_model(filename)
 
     def load_model(self, filename):
 
