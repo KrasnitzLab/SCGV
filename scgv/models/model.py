@@ -193,7 +193,7 @@ class BaseModel(object):
         if not np.all(list(self.data.featuremat_df.columns) ==
                       self.column_labels):
             self.data.featuremat_df = \
-                self.data.featuremat_df.loc[:, ordering].copy()
+                self.data.featuremat_df.iloc[:, ordering].copy()
         assert np.all(list(self.data.featuremat_df.columns) ==
                       self.column_labels)
 
