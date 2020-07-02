@@ -98,6 +98,9 @@ class OpenButtons(object):
     def on_open_directory_click(self, s):
         dirname = QFileDialog.getExistingDirectory(
             self.window, "Open Directory")
+        if dirname is None or dirname == "":
+            print("open directory canceled...")
+            return
         self.load_model(dirname)
 
     def on_open_archive_click(self, s):
@@ -105,6 +108,9 @@ class OpenButtons(object):
         filename, _ = QFileDialog.getOpenFileName(
             self.window, "Open Zip File",
             ".", filter)
+        if filename is None or filename == "":
+            print("open archive canceled...")
+            return
         self.load_model(filename)
 
     def load_model(self, filename):
@@ -126,9 +132,13 @@ class OpenButtons(object):
         self.open_dir_action.setEnabled(True)
 
     def _build_model(self, filename, *args, **kwargs):
-        model = DataModel(filename)
-        model.make()
-        return model
+        try:
+            model = DataModel(filename)
+            model.make()
+            return model
+        except Exception:
+            self._load_error()
+            return None
 
 
 class ActionButtons(object):
@@ -182,6 +192,9 @@ class ActionButtons(object):
     def on_feature_view_action(self, *args, **kwargs):
         if self.model is None:
             return
+        if self.model.data.features_df is None:
+            return
+
         self.feature_view_action.setEnabled(False)
 
         features_model = FeaturematModel(self.model)
@@ -218,6 +231,8 @@ class MainWindow(QMainWindow):
         self.action_buttons = ActionButtons(self)
 
     def set_model(self, model):
+        if model is None:
+            return
         self._main.set_model(model)
         self.action_buttons.set_model(model)
 

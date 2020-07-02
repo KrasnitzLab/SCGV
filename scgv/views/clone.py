@@ -14,7 +14,8 @@ class CloneViewer(ViewerBase):
 
     def __init__(self, model):
         super(CloneViewer, self).__init__(model)
-        self._select_colormap()
+        if self.model.clone is not None and self.model.subclone is not None:
+            self._select_colormap()
 
     def _select_colormap_size(self, size):
         assert size <= 20

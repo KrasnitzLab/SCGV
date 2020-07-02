@@ -167,7 +167,7 @@ class BaseModel(object):
         unique.sort()
         mapping = {}
 
-        result = pd.Series(index=df.index)
+        result = pd.Series(index=df.index, dtype=np.float64)
         for val in unique:
             if val == 0:
                 result[df == val] = 0
