@@ -68,8 +68,10 @@ class BaseHeatmapWidget(QWidget):
         # self.tracks_legend.set_model(model)
 
     def update(self):
-        if self.model is not None:
-            self.canvas.redraw()
+        if self.model is None:
+            return
+
+        self.canvas.redraw()
         self.tracks_legend.set_model(self.model)
 
         super(BaseHeatmapWidget, self).update()
