@@ -30,7 +30,7 @@ class CloneViewer(ViewerBase):
         return ListedColormap(colors)
 
     def _select_colormap(self):
-        self.vmax = np.max(self.model.subclone)
+        self.vmax = max(np.max(self.model.clone), np.max(self.model.subclone))
         size = int(self.vmax)
         self.cmap = self._select_colormap_size(size)
 
