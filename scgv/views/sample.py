@@ -84,6 +84,10 @@ class SamplesViewer(ViewerBase):
             ax.set_xticklabels([])
 
             chrom_labels_pos = self.calc_chrom_labels_pos(self.chrom_lines)
+
+            assert len(chrom_labels_pos) <= len(self.CHROM_LABELS)
+            chrom_labels = self.CHROM_LABELS[:len(chrom_labels_pos)]
+
             ax.set_xticks(chrom_labels_pos)
-            ax.set_xticklabels(self.CHROM_LABELS, rotation='vertical')
+            ax.set_xticklabels(chrom_labels, rotation='vertical')
         fig.tight_layout()

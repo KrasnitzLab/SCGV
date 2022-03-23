@@ -242,8 +242,8 @@ class BaseModel(object):
     def make_error(self, ordering):
         if self.data.ratio_df is None:
             return None
-        df_s = self.data.seg_df.iloc[:self.chrom_x_index, 3:].values
-        df_r = self.data.ratio_df.iloc[:self.chrom_x_index, 3:].values
+        df_s = self.data.seg_df.iloc[:self.chrom_x_index, 3:].values + 1e-10
+        df_r = self.data.ratio_df.iloc[:self.chrom_x_index, 3:].values + 1e-10
         return np.sqrt(np.sum(((df_r - df_s) / df_s)**2, axis=0))[ordering]
 
     def make_track(self, track_name, ordering):
